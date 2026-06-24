@@ -9,12 +9,15 @@ import {
   type GrantTableRow,
   type ProposalTableRow,
 } from "./fpf-tables";
-import { FpfForms } from "./fpf-forms";
 
 export const dynamic = "force-dynamic";
 export const metadata = {
   title: "FPF · Coinholder Grants — ZEC Back-office",
 };
+
+/** FPF milestone intake form (CryptPad). Proposals are opened on GitHub. */
+const CRYPTPAD_MILESTONE_FORM =
+  "https://cryptpad.fr/form/#/2/form/view/qmTMynvJfBAdbpoCWHddUCT8LxdSbmsWXXLTwVBvY+Dc/";
 
 const GRANT_STATUS_LABEL: Record<string, string> = {
   completed: "Completed",
@@ -79,14 +82,24 @@ export default async function FpfCoinholderGrantsPage() {
         title="FPF · Coinholder Grants"
         subtitle="Retroactive grants directed by coinholder vote, not by a committee. Run by the Financial Privacy Foundation on a quarterly cadence."
         actions={
-          <a
-            href={PROPOSAL_LINKS.fpf}
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex items-center gap-1.5 rounded-lg bg-amber-500/90 px-3.5 py-2 text-sm font-medium text-stone-900 shadow-sm shadow-amber-900/30 transition hover:bg-amber-400"
-          >
-            Submit a proposal
-          </a>
+          <div className="flex flex-wrap items-center gap-2">
+            <a
+              href={PROPOSAL_LINKS.fpf}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-1.5 rounded-lg bg-amber-500/90 px-3.5 py-2 text-sm font-medium text-stone-900 shadow-sm shadow-amber-900/30 transition hover:bg-amber-400"
+            >
+              Submit a proposal ↗
+            </a>
+            <a
+              href={CRYPTPAD_MILESTONE_FORM}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-stone-300 bg-white px-3.5 py-2 text-sm font-medium text-stone-700 shadow-sm transition hover:border-stone-400 hover:bg-stone-50"
+            >
+              Submit a milestone ↗
+            </a>
+          </div>
         }
       />
 
@@ -100,13 +113,6 @@ export default async function FpfCoinholderGrantsPage() {
           regular ZCG track.
         </p>
       </Card>
-
-      <section className="mb-8">
-        <h2 className="mb-3 text-sm font-semibold text-stone-700">
-          Submit to the program
-        </h2>
-        <FpfForms />
-      </section>
 
       <section className="mb-8 grid grid-cols-2 gap-4 lg:grid-cols-3">
         <Stat
