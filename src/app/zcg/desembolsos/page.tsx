@@ -1,0 +1,104 @@
+import Link from "next/link";
+import { Card, PageHeader } from "@/components/ui";
+import { listDisbursements } from "@/lib/zcg/disbursements-repo";
+import { disbTypeLabel } from "@/lib/zcg/format";
+import { cn } from "@/lib/utils";
+import { DisbursementsTable, type DisbTableRow } from "./disbursements-table";
+
+export const dynamic = "force-dynamic";
+export const metadata = { title: "ZCG Disbursements · ZEC Back-office" };
+
+const SHEETS: { id?: string; label: string }[] = [
+  { id: undefined, label: "All" },
+  { id: "grants_disbursed", label: "Grants" },
+  { id: "ic_payments", label: "Contractors" },
+  { id: "coinholder_grants", label: "Coinholder" },
+  { id: "discretionary", label: "Discretionary" },
+  { id: "monthly", label: "Monthly" },
+];
+
+export default async function DesembolsosPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ sheet?: string; grant?: string }>;
+}) {
+  const { sheet, grant } = await searchParams;
+  const rows = await listDisbursements({ sheet, grant, limit: 400 });
+
+  const tableRows: DisbTableRow[] = rows.map((d) => {
+    const zec = d.zecDisbursedZat;
+    const isClawback = zec != null && zec < 0n;
+    return {
+      id: d.id,
+      recipient: d.recipientNameRaw,
+      type: disbTypeLabel(d.disbursementType),
+      detail: d.project ?? d.deliverable ?? "",
+      milestoneSeq: d.milestoneSeq,
+      category: d.category ?? "",
+      status: d.grantStatus,
+      date: d.paidOutDate ?? d.paidOutRaw ?? "",
+      _usdCents: d.amountUsdCents != null ? Number(d.amountUsdCents) : null,
+      _usd: d.amountUsdCents != null ? Number(d.amountUsdCents) : 0,
+      _zecZat: zec != null ? Number(zec) : null,
+      _zec: zec != null ? Number(zec) : 0,
+      isClawback,
+      settlementAsset: d.settlementAsset,
+    };
+  });
+
+  return (
+    <>
+      <PageHeader
+        title="Disbursements"
+        subtitle="ZCG off-chain ledger: each row is a milestone or payment (grant, contractor, bounty or monthly transfer) with budgeted USD, disbursed ZEC and the day's rate."
+      />
+
+      {grant ? (
+        <div className="mb-5 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-amber-500/20 bg-amber-500/[0.06] px-4 py-3">
+          <p className="text-sm text-amber-800/80">
+            Milestones for grant{" "}
+            <span className="font-medium text-amber-800">{grant}</span>
+          </p>
+          <Link
+            href="/zcg/grants"
+            className="text-xs text-stone-500 hover:text-stone-800"
+          >
+            All grants
+          </Link>
+        </div>
+      ) : null}
+
+      <div className="mb-5 flex flex-wrap gap-2">
+        {SHEETS.map((s) => {
+          const active = sheet === s.id || (!sheet && !s.id);
+          return (
+            <Link
+              key={s.id ?? "all"}
+              href={
+                s.id ? `/zcg/desembolsos?sheet=${s.id}` : "/zcg/desembolsos"
+              }
+              className={cn(
+                "rounded-full px-3 py-1 text-xs font-medium ring-1 ring-inset transition",
+                active
+                  ? "bg-amber-500/15 text-amber-700 ring-amber-500/30"
+                  : "bg-white text-stone-500 ring-stone-200 hover:text-stone-800",
+              )}
+            >
+              {s.label}
+            </Link>
+          );
+        })}
+      </div>
+
+      <Card className="overflow-hidden p-4">
+        <DisbursementsTable rows={tableRows} />
+      </Card>
+
+      <p className="mt-4 text-xs text-stone-400">
+        {rows.length} disbursements{" "}
+        {sheet ? "in this category" : "(most recent)"} · source: ZCG public
+        spreadsheet
+      </p>
+    </>
+  );
+}
