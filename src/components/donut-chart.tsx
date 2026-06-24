@@ -26,9 +26,12 @@ const COLORS = [
 export function DonutChart({
   items,
   maxSegments = 8,
+  format,
 }: {
   items: DonutItem[];
   maxSegments?: number;
+  /** Formats a raw value for the legend when an item has no `display` (e.g. the grouped "Other"). */
+  format?: (value: number) => string;
 }) {
   const filtered = [...items]
     .filter((i) => i.value > 0)
@@ -127,7 +130,7 @@ export function DonutChart({
               <span className="truncate text-stone-700">{it.label}</span>
             </span>
             <span className="shrink-0 text-stone-500 tnum">
-              {it.display ?? String(it.value)}
+              {it.display ?? (format ? format(it.value) : String(it.value))}
               <span className="ml-1 text-stone-400">
                 · {((it.value / total) * 100).toFixed(0)}%
               </span>

@@ -24,8 +24,9 @@ export default async function TotaisPage() {
   ]);
 
   const total = grand[0]?.usdPaidToDateCents ?? 0n;
-  const future = grand.reduce(
-    (s, g) => s + (g.usdFuturePipelineCents ?? 0n),
+  // The grand-total row has no future column; sum the per-recipient pipeline.
+  const future = recips.reduce(
+    (s, r) => s + (r.usdFuturePipelineCents ?? 0n),
     0n,
   );
   const external = recips.filter((r) => !r.isInternalBucket);
@@ -101,6 +102,7 @@ export default async function TotaisPage() {
       <TotalsCharts
         recipients={topRecipients}
         classifications={byClassification}
+        format={(v) => formatUsdCents(v, { compact: true })}
       />
 
       <TotalsTables categoryRows={categoryRows} recipientRows={recipientRows} />

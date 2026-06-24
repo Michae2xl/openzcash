@@ -95,6 +95,7 @@ export default async function CoinholderPage() {
       <TotalsCharts
         recipients={topRecipients}
         classifications={byClassification}
+        format={(v) => formatUsdCents(v, { compact: true })}
       />
 
       <TotalsTables categoryRows={categoryRows} recipientRows={recipientRows} />

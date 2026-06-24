@@ -10,9 +10,12 @@ import { DonutChart } from "@/components/donut-chart";
 export function TotalsCharts({
   recipients,
   classifications,
+  format,
 }: {
   recipients: BarItem[];
   classifications: BarItem[];
+  /** Formats raw values for the donut's grouped "Other" legend entry. */
+  format?: (value: number) => string;
 }) {
   const recip = recipients.filter((r) => r.value > 0).slice(0, 8);
   const cls = classifications.filter((c) => c.value > 0);
@@ -25,7 +28,7 @@ export function TotalsCharts({
           Share by classification
         </h2>
         <Card>
-          <DonutChart items={cls} />
+          <DonutChart items={cls} format={format} />
         </Card>
       </div>
       <div className="min-w-0">
