@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { getDb } from "@/lib/db/client";
 import { zcgDisbursements, zcgSheetImports } from "@/lib/db/schema";
 import { parseCsv } from "./csv";
@@ -366,7 +366,13 @@ export async function importDisbursements(): Promise<ImportResult[]> {
       await db.transaction(async (tx) => {
         await tx
           .delete(zcgDisbursements)
-          .where(eq(zcgDisbursements.sourceSheetGid, spec.gid));
+          .where(
+            and(
+              eq(zcgDisbursements.sourceSheetGid, spec.gid),
+              eq(zcgDisbursements.origin, "sheet"),
+              eq(zcgDisbursements.locked, false),
+            ),
+          );
         for (const batch of chunk(disbs, 400)) {
           await tx.insert(zcgDisbursements).values(batch).onConflictDoNothing();
         }

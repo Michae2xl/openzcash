@@ -1,8 +1,16 @@
 import { and, desc, eq, ilike, sql } from "drizzle-orm";
 import { getDb } from "@/lib/db/client";
-import { zcgDisbursements } from "@/lib/db/schema";
+import { zcgDisbursementOverrides, zcgDisbursements } from "@/lib/db/schema";
 
 export type DisbRow = typeof zcgDisbursements.$inferSelect;
+
+/** Ids of disbursements the admin has corrected (for the "edited" badge). */
+export async function overriddenDisbursementIds(): Promise<Set<string>> {
+  const rows = await getDb()
+    .select({ id: zcgDisbursementOverrides.disbursementId })
+    .from(zcgDisbursementOverrides);
+  return new Set(rows.map((r) => r.id));
+}
 
 export type DisbFilters = {
   sheet?: string;

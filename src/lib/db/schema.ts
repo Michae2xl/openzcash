@@ -11,6 +11,7 @@ import {
   boolean,
   date,
   integer,
+  jsonb,
   pgTable,
   primaryKey,
   text,
@@ -238,9 +239,33 @@ export const zcgDisbursements = pgTable("zcg_disbursements", {
   isTest: boolean("is_test").notNull().default(false),
   isPaid: boolean("is_paid").notNull().default(false),
   isInternal: boolean("is_internal").notNull().default(false),
-  sourceSheetGid: text("source_sheet_gid").notNull(),
-  sourceRowIndex: integer("source_row_index").notNull(),
+  /** Null para linhas autorais do admin (não vêm de uma aba da planilha). */
+  sourceSheetGid: text("source_sheet_gid"),
+  sourceRowIndex: integer("source_row_index"),
+  /** 'sheet' = espelho da planilha (apagável no import) | 'admin' = autoral. */
+  origin: text("origin").notNull().default("sheet"),
+  /** Admin travou esta linha: o import não a apaga nem sobrescreve. */
+  locked: boolean("locked").notNull().default(false),
   importedAt: timestamp("imported_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});
+
+/**
+ * Log de auditoria/reverter das edições do admin em desembolsos. A edição é
+ * MATERIALIZADA na própria linha (UPDATE + locked) para refletir nas agregações
+ * SQL (Grants/Recebedores/Totais); aqui guardamos o patch + os valores originais
+ * (para reverter) + o motivo. Chaveado pelo id estável do desembolso.
+ */
+export const zcgDisbursementOverrides = pgTable("zcg_disbursement_overrides", {
+  id: text("id").primaryKey(),
+  disbursementId: text("disbursement_id").notNull().unique(),
+  /** { campo: valorNovo } — serializado (bigints/datas como string). */
+  patch: jsonb("patch").notNull(),
+  /** { campo: valorAntigo } — para reverter. */
+  original: jsonb("original").notNull(),
+  reason: text("reason"),
+  createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()
     .defaultNow(),
 });
@@ -358,8 +383,13 @@ export const zcgProposals = pgTable(
     conditionNotes: text("condition_notes"),
     country: text("country"),
     orgOrIndividual: text("org_or_individual"),
-    sourceSheetGid: text("source_sheet_gid").notNull(),
-    sourceRowIndex: integer("source_row_index").notNull(),
+    /** Null para linhas autorais do admin (não vêm de uma aba da planilha). */
+    sourceSheetGid: text("source_sheet_gid"),
+    sourceRowIndex: integer("source_row_index"),
+    /** 'sheet' = espelho da planilha (apagável no import) | 'admin' = autoral. */
+    origin: text("origin").notNull().default("sheet"),
+    /** Admin travou esta linha: o import não a apaga nem sobrescreve. */
+    locked: boolean("locked").notNull().default(false),
     importedAt: timestamp("imported_at", { withTimezone: true })
       .notNull()
       .defaultNow(),

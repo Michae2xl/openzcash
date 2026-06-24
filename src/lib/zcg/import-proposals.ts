@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { getDb } from "@/lib/db/client";
 import { zcgProposals, zcgSheetImports } from "@/lib/db/schema";
 import { parseCsv } from "./csv";
@@ -283,7 +283,13 @@ export async function importProposals(): Promise<ProposalImportResult[]> {
       await db.transaction(async (tx) => {
         await tx
           .delete(zcgProposals)
-          .where(eq(zcgProposals.sourceSheetGid, spec.gid));
+          .where(
+            and(
+              eq(zcgProposals.sourceSheetGid, spec.gid),
+              eq(zcgProposals.origin, "sheet"),
+              eq(zcgProposals.locked, false),
+            ),
+          );
         for (const batch of chunk(proposals, 400)) {
           await tx.insert(zcgProposals).values(batch).onConflictDoNothing();
         }

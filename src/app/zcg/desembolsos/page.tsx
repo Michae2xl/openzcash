@@ -1,12 +1,20 @@
 import Link from "next/link";
 import { Card, PageHeader } from "@/components/ui";
-import { listDisbursements } from "@/lib/zcg/disbursements-repo";
+import {
+  listDisbursements,
+  overriddenDisbursementIds,
+} from "@/lib/zcg/disbursements-repo";
 import { disbTypeLabel } from "@/lib/zcg/format";
+import { getIsAdmin } from "@/lib/auth/admin";
 import { cn } from "@/lib/utils";
 import { DisbursementsTable, type DisbTableRow } from "./disbursements-table";
+import { NewDisbursementForm } from "./disbursement-admin";
+
+const money = (cents: bigint | null, div: number) =>
+  cents == null ? "" : String(Number(cents) / div);
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "ZCG Disbursements · ZEC Back-office" };
+export const metadata = { title: "ZCG Disbursements · ZBO" };
 
 const SHEETS: { id?: string; label: string }[] = [
   { id: undefined, label: "All" },
@@ -23,7 +31,11 @@ export default async function DesembolsosPage({
   searchParams: Promise<{ sheet?: string; grant?: string }>;
 }) {
   const { sheet, grant } = await searchParams;
-  const rows = await listDisbursements({ sheet, grant, limit: 400 });
+  const [isAdmin, rows, overridden] = await Promise.all([
+    getIsAdmin(),
+    listDisbursements({ sheet, grant, limit: 400 }),
+    overriddenDisbursementIds(),
+  ]);
 
   const tableRows: DisbTableRow[] = rows.map((d) => {
     const zec = d.zecDisbursedZat;
@@ -43,6 +55,21 @@ export default async function DesembolsosPage({
       _zec: zec != null ? Number(zec) : 0,
       isClawback,
       settlementAsset: d.settlementAsset,
+      origin: d.origin,
+      edited: overridden.has(d.id),
+      edit: {
+        recipientNameRaw: d.recipientNameRaw,
+        sourceSheet: d.sourceSheet,
+        project: d.project ?? "",
+        category: d.category ?? "",
+        milestoneLabel: d.milestoneLabel ?? "",
+        grantStatus: d.grantStatus ?? "",
+        amountUsd: money(d.amountUsdCents, 100),
+        usdDisbursed: money(d.usdDisbursedCents, 100),
+        zecDisbursed: money(d.zecDisbursedZat, 1e8),
+        paidOutDate: d.paidOutDate ?? "",
+        isPaid: d.isPaid,
+      },
     };
   });
 
@@ -51,6 +78,7 @@ export default async function DesembolsosPage({
       <PageHeader
         title="Disbursements"
         subtitle="ZCG off-chain ledger: each row is a milestone or payment (grant, contractor, bounty or monthly transfer) with budgeted USD, disbursed ZEC and the day's rate."
+        actions={isAdmin ? <NewDisbursementForm /> : undefined}
       />
 
       {grant ? (
@@ -91,13 +119,17 @@ export default async function DesembolsosPage({
       </div>
 
       <Card className="overflow-hidden p-4">
-        <DisbursementsTable rows={tableRows} />
+        <DisbursementsTable rows={tableRows} isAdmin={isAdmin} />
       </Card>
 
       <p className="mt-4 text-xs text-stone-400">
         {rows.length} disbursements{" "}
-        {sheet ? "in this category" : "(most recent)"} · source: ZCG public
-        spreadsheet
+        {sheet ? "in this category" : "(most recent)"} ·{" "}
+        <span className="text-stone-500">from spreadsheet</span> = mirrored from
+        the ZCG public sheet;{" "}
+        <span className="text-amber-700">admin entry</span> /{" "}
+        <span className="text-amber-700">admin-edited</span> = added or
+        corrected in this back-office
       </p>
     </>
   );

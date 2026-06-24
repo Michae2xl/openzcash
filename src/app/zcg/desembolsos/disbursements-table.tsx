@@ -5,6 +5,7 @@ import { DataTable, type Column } from "@/components/data-table";
 import { disbStatusLabel, formatUsdCents } from "@/lib/zcg/format";
 import { formatZec } from "@/lib/zcash/units";
 import { cn } from "@/lib/utils";
+import { DisbursementAdminControls, type DisbEdit } from "./disbursement-admin";
 
 /** Serializable row for the client DataTable (no bigint). */
 export type DisbTableRow = {
@@ -22,6 +23,9 @@ export type DisbTableRow = {
   _zec: number;
   isClawback: boolean;
   settlementAsset: string;
+  origin: string;
+  edited: boolean;
+  edit: DisbEdit;
 };
 
 function statusTone(status: string | null) {
@@ -32,11 +36,32 @@ function statusTone(status: string | null) {
   return "zinc" as const;
 }
 
-interface DisbursementsTableProps {
-  rows: DisbTableRow[];
+/** Public provenance marker: where this row's data came from. */
+function SourceTag({ origin, edited }: { origin: string; edited: boolean }) {
+  if (origin === "admin")
+    return (
+      <span className="rounded bg-amber-500/12 px-1 py-px text-[10px] font-medium text-amber-700 ring-1 ring-inset ring-amber-500/20">
+        admin entry
+      </span>
+    );
+  if (edited)
+    return (
+      <span className="rounded bg-amber-500/12 px-1 py-px text-[10px] font-medium text-amber-700 ring-1 ring-inset ring-amber-500/20">
+        admin-edited
+      </span>
+    );
+  return <span className="text-[10px] text-stone-400">from spreadsheet</span>;
 }
 
-export function DisbursementsTable({ rows }: DisbursementsTableProps) {
+interface DisbursementsTableProps {
+  rows: DisbTableRow[];
+  isAdmin?: boolean;
+}
+
+export function DisbursementsTable({
+  rows,
+  isAdmin = false,
+}: DisbursementsTableProps) {
   const columns: Column<DisbTableRow>[] = [
     {
       key: "recipient",
@@ -46,10 +71,15 @@ export function DisbursementsTable({ rows }: DisbursementsTableProps) {
       filterValue: (r) => `${r.recipient} ${r.type}`,
       render: (r) => (
         <div>
-          <span className="font-medium text-stone-900">{r.recipient}</span>
-          <span className="ml-2 text-[10px] uppercase tracking-wide text-stone-400">
-            {r.type}
-          </span>
+          <div>
+            <span className="font-medium text-stone-900">{r.recipient}</span>
+            <span className="ml-2 text-[10px] uppercase tracking-wide text-stone-400">
+              {r.type}
+            </span>
+          </div>
+          <div className="mt-0.5">
+            <SourceTag origin={r.origin} edited={r.edited} />
+          </div>
         </div>
       ),
     },
@@ -137,6 +167,22 @@ export function DisbursementsTable({ rows }: DisbursementsTableProps) {
       ),
     },
   ];
+
+  if (isAdmin) {
+    columns.push({
+      key: "manage",
+      header: "Manage",
+      align: "right",
+      render: (r) => (
+        <DisbursementAdminControls
+          id={r.id}
+          origin={r.origin}
+          edited={r.edited}
+          initial={r.edit}
+        />
+      ),
+    });
+  }
 
   return (
     <DataTable

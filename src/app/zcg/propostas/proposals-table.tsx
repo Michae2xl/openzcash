@@ -2,6 +2,7 @@
 
 import { Badge } from "@/components/ui";
 import { DataTable, type Column } from "@/components/data-table";
+import { ProposalAdminControls } from "./proposal-admin";
 
 /** Serializable shape for the DataTable (no bigint). */
 export type ProposalTableRow = {
@@ -84,14 +85,23 @@ const columns: Column<ProposalTableRow>[] = [
   },
 ];
 
+const manageColumn: Column<ProposalTableRow> = {
+  key: "manage",
+  header: "Manage",
+  align: "right",
+  render: (r) => <ProposalAdminControls id={r.id} status={r.status} />,
+};
+
 interface ProposalsTableProps {
   rows: ProposalTableRow[];
+  isAdmin?: boolean;
 }
 
-export function ProposalsTable({ rows }: ProposalsTableProps) {
+export function ProposalsTable({ rows, isAdmin = false }: ProposalsTableProps) {
+  const cols = isAdmin ? [...columns, manageColumn] : columns;
   return (
     <DataTable
-      columns={columns}
+      columns={cols}
       rows={rows}
       initialSort={{ key: "submitted", dir: "desc" }}
       maxHeight="max-h-[60vh]"

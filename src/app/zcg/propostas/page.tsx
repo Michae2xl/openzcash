@@ -5,10 +5,12 @@ import {
   type ProposalRow,
 } from "@/lib/zcg/proposals-repo";
 import { cn } from "@/lib/utils";
+import { getIsAdmin } from "@/lib/auth/admin";
 import { ProposalsTable, type ProposalTableRow } from "./proposals-table";
+import { NewProposalForm } from "./proposal-admin";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "ZCG Proposals · ZEC Back-office" };
+export const metadata = { title: "ZCG Proposals · ZBO" };
 
 const STATUS_LABEL: Record<string, string> = {
   approved: "Approved",
@@ -42,7 +44,8 @@ function toTableRow(p: ProposalRow): ProposalTableRow {
 }
 
 export default async function PropostasPage() {
-  const [funnel, all] = await Promise.all([
+  const [isAdmin, funnel, all] = await Promise.all([
+    getIsAdmin(),
     proposalsFunnel(),
     listProposals({}),
   ]);
@@ -61,6 +64,7 @@ export default async function PropostasPage() {
       <PageHeader
         title="Proposals · pipeline"
         subtitle="ZCG governance funnel: every submitted proposal, with its verdict. Upstream of grants, only the approved ones become funded projects."
+        actions={isAdmin ? <NewProposalForm /> : undefined}
       />
 
       <section className="mb-8 grid grid-cols-2 gap-4 lg:grid-cols-4">
@@ -69,7 +73,6 @@ export default async function PropostasPage() {
           label="Approved"
           value={String(approved)}
           sub={`${apprRate}% approval rate`}
-          tone="in"
         />
         <Stat
           label="Programs"
@@ -111,7 +114,7 @@ export default async function PropostasPage() {
       </section>
 
       <Card className="overflow-hidden">
-        <ProposalsTable rows={rows} />
+        <ProposalsTable rows={rows} isAdmin={isAdmin} />
       </Card>
     </>
   );
