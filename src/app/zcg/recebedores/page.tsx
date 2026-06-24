@@ -4,7 +4,7 @@ import { formatUsdCents } from "@/lib/zcg/format";
 import { RecipientsTable, type RecipientRow } from "./recipients-table";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Recipients ZCG · ZEC Back-office" };
+export const metadata = { title: "Recipients ZCG · ZBO" };
 
 export default async function RecebedoresPage() {
   const all = await recipientTotals();
@@ -38,7 +38,6 @@ export default async function RecebedoresPage() {
           label="Recipients"
           value={String(external.length)}
           sub="orgs and individuals"
-          tone="in"
         />
         <Stat
           label="Total distributed"

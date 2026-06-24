@@ -12,7 +12,7 @@ import {
 
 export const dynamic = "force-dynamic";
 export const metadata = {
-  title: "FPF · Coinholder Grants — ZEC Back-office",
+  title: "FPF · Coinholder Grants · ZBO",
 };
 
 /** FPF milestone intake form (CryptPad). Proposals are opened on GitHub. */
@@ -39,7 +39,7 @@ const PROPOSAL_VERDICT_LABEL: Record<string, string> = {
 };
 
 function grantStatusLabel(status: string | null): string {
-  if (!status) return "-";
+  if (!status) return "·";
   return GRANT_STATUS_LABEL[status] ?? disbStatusLabel(status);
 }
 
@@ -60,7 +60,7 @@ export default async function FpfCoinholderGrantsPage() {
   const grantRows: GrantTableRow[] = grants.map((g) => ({
     grantKey: g.grantKey,
     grantee: g.grantee,
-    category: g.category ?? "-",
+    category: g.category ?? "·",
     status: g.status,
     statusLabel: grantStatusLabel(g.status),
     _usd: Number(g.usdCents),
@@ -69,7 +69,7 @@ export default async function FpfCoinholderGrantsPage() {
   const proposalRows: ProposalTableRow[] = proposals.map((p) => ({
     id: p.id,
     title: p.title,
-    applicant: p.applicantsRaw ?? "-",
+    applicant: p.applicantsRaw ?? "·",
     status: p.status,
     verdictLabel: PROPOSAL_VERDICT_LABEL[p.status] ?? p.status,
     platformLink: p.platformLink,
@@ -119,7 +119,6 @@ export default async function FpfCoinholderGrantsPage() {
           label="Grants"
           value={String(grants.length)}
           sub="coinholder directed"
-          tone="in"
         />
         <Stat
           label="Total paid"

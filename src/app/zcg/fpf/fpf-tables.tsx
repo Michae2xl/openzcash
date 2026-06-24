@@ -145,7 +145,7 @@ const proposalColumns: Column<ProposalTableRow>[] = [
     sortValue: (r) => r._usd,
     render: (r): ReactNode => (
       <span className="text-stone-700">
-        {r._usd > 0 ? formatUsdCents(r._usd) : "-"}
+        {r._usd > 0 ? formatUsdCents(r._usd) : "·"}
       </span>
     ),
   },

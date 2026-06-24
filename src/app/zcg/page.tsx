@@ -14,7 +14,7 @@ import { formatZec, formatZecCompact } from "@/lib/zcash/units";
 import { ElectionsSection } from "./elections-section";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "ZCG · ZEC Back-office" };
+export const metadata = { title: "ZCG · ZBO" };
 
 export default async function ZcgPage() {
   const [s, lockbox, zcg] = await Promise.all([
@@ -93,13 +93,11 @@ export default async function ZcgPage() {
           label="ZEC distributed"
           value={formatZecCompact(s.zecTotalZat, { symbol: false })}
           sub="on-chain total"
-          tone="out"
         />
         <Stat
           label="Recipients"
           value={String(s.recipientCount)}
           sub="orgs and individuals"
-          tone="in"
         />
       </section>
 

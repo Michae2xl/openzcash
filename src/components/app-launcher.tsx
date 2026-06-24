@@ -198,8 +198,12 @@ export function AppLauncher({ isAdmin = false }: { isAdmin?: boolean }) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    // Loads the saved layout from localStorage on mount (client-only — reading
+    // it during render would break SSR hydration).
+    /* eslint-disable react-hooks/set-state-in-effect */
     setState(loadState());
     setMounted(true);
+    /* eslint-enable react-hooks/set-state-in-effect */
   }, []);
 
   function persist(next: State) {
@@ -298,7 +302,7 @@ export function AppLauncher({ isAdmin = false }: { isAdmin?: boolean }) {
               >
                 <span
                   className={cn(
-                    "flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br shadow-lg ring-1 ring-white/10",
+                    "flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br shadow-lg ring-1 ring-stone-900/5",
                     app.grad,
                   )}
                 >

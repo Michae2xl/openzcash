@@ -4,7 +4,7 @@ import { formatUsdCents } from "@/lib/zcg/format";
 import { formatZec } from "@/lib/zcash/units";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Maya Liquidity · ZEC Back-office" };
+export const metadata = { title: "Maya Liquidity · ZBO" };
 
 export default async function MayaPage() {
   const transfers = await mayaTransfers();
@@ -26,7 +26,6 @@ export default async function MayaPage() {
           label="ZEC contributed"
           value={formatZec(totalZec, { symbol: false })}
           sub="to the Maya LP"
-          tone="out"
         />
         <Stat
           label="Cost in USD"
@@ -37,13 +36,12 @@ export default async function MayaPage() {
           label="Contributions"
           value={String(transfers.length)}
           sub="transfers"
-          tone="in"
         />
       </section>
 
       <Card className="overflow-hidden p-0">
         <table className="w-full text-left text-sm">
-          <thead className="text-[11px] uppercase tracking-wider text-stone-500">
+          <thead className="tbl-head text-[11px] uppercase tracking-wider text-stone-500">
             <tr className="border-b border-stone-200">
               <th className="px-4 py-3 font-medium">Project</th>
               <th className="px-4 py-3 text-right font-medium">USD</th>

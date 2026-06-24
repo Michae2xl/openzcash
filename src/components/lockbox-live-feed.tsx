@@ -9,6 +9,7 @@ import {
   lockboxZecAt,
 } from "@/lib/zcash/lockbox";
 import { Card, Stat } from "@/components/ui";
+import { IconShield } from "@/components/icons";
 import { cn } from "@/lib/utils";
 
 const POLL_MS = 15_000;
@@ -54,8 +55,10 @@ export function LockboxLiveFeed({
   // deterministic — no Date.now() during render).
   useEffect(() => {
     const t = Date.now();
+    /* eslint-disable react-hooks/set-state-in-effect */
     setNow(t);
     if (initialHeight > 0) setBlocks([{ height: initialHeight, seenAt: t }]);
+    /* eslint-enable react-hooks/set-state-in-effect */
     const clock = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(clock);
   }, [initialHeight]);
@@ -136,7 +139,6 @@ export function LockboxLiveFeed({
           label="Per day"
           value={`~${perDayZec.toLocaleString("en-US", { maximumFractionDigits: 0 })}`}
           sub={`ZEC · ${BLOCKS_PER_DAY} blocks`}
-          tone="in"
         />
         <Stat
           label="ZCG grants"
@@ -164,7 +166,7 @@ export function LockboxLiveFeed({
                 style={i === 0 ? { animation: "none" } : undefined}
               >
                 <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-amber-500/10 text-amber-700">
-                  ⓩ
+                  <IconShield className="h-4 w-4" />
                 </span>
                 <div className="min-w-0 flex-1">
                   <p className="text-sm font-medium text-stone-900 tnum">

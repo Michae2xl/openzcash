@@ -25,7 +25,9 @@ const columns: Column<RecipientRow>[] = [
     header: "#",
     sortable: true,
     sortValue: (r) => r.rank,
-    render: (r) => <span className="text-xs text-stone-400 tnum">{r.rank}</span>,
+    render: (r) => (
+      <span className="text-xs text-stone-400 tnum">{r.rank}</span>
+    ),
   },
   {
     key: "recipient",
@@ -56,7 +58,7 @@ const columns: Column<RecipientRow>[] = [
     sortable: true,
     sortValue: (r) => r._zec,
     render: (r) =>
-      r._zec !== 0 ? formatZec(BigInt(r._zec), { symbol: false }) : ":",
+      r._zec !== 0 ? formatZec(BigInt(r._zec), { symbol: false }) : "·",
   },
   {
     key: "grantCount",
@@ -65,7 +67,7 @@ const columns: Column<RecipientRow>[] = [
     sortable: true,
     sortValue: (r) => r.grantCount,
     render: (r) => (
-      <span className="font-medium text-stone-700">{r.grantCount || ":"}</span>
+      <span className="font-medium text-stone-700">{r.grantCount || "·"}</span>
     ),
   },
   {
@@ -86,7 +88,7 @@ const columns: Column<RecipientRow>[] = [
     filterValue: (r) => r.lastPaid,
     render: (r) => (
       <span className="whitespace-nowrap text-xs text-stone-500">
-        {r.lastPaid || ":"}
+        {r.lastPaid || "·"}
       </span>
     ),
   },

@@ -4,7 +4,7 @@ import { formatUsdCents } from "@/lib/zcg/format";
 import { formatZec } from "@/lib/zcash/units";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "ZCG Budget · ZEC Back-office" };
+export const metadata = { title: "ZCG Budget · ZBO" };
 
 function pct(part: bigint, whole: bigint): number {
   if (whole <= 0n) return 0;
@@ -76,7 +76,7 @@ export default async function ZcgBudgetPage() {
           </p>
           <div className="mt-4 h-2 overflow-hidden rounded-full bg-stone-100">
             <div
-              className="h-full rounded-full bg-sky-500/70"
+              className="h-full rounded-full bg-amber-500/80"
               style={{ width: `${pct(spentZec, annualZec)}%` }}
             />
           </div>

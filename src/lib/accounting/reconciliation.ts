@@ -210,7 +210,7 @@ function classifyTx(
       reconStatus: "info",
       counterparty: principal?.address ?? null,
       matchedPaycheckId: null,
-      note: "Reclassificado manualmente pelo admin.",
+      note: "Manually reclassified by admin.",
     };
   }
 

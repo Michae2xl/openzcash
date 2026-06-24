@@ -5,7 +5,7 @@ import { formatUsdCents } from "@/lib/zcg/format";
 import { formatZec } from "@/lib/zcash/units";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Reconciliação ZCG — ZEC Back-office" };
+export const metadata = { title: "Reconciliation ZCG · ZBO" };
 
 export default async function ZcgReconciliacaoPage() {
   const r = await zcgReconciliation();
@@ -24,27 +24,27 @@ export default async function ZcgReconciliacaoPage() {
           </h2>
           <div className="mb-3 grid grid-cols-1 gap-4 sm:grid-cols-3">
             <Stat
-              label="Entrou (do Lockbox)"
+              label="In · from Lockbox"
               value={formatZec(r.onchain.inflowZat, { symbol: false })}
-              sub="recebido na cadeia"
+              sub="received on-chain"
               tone="in"
             />
             <Stat
-              label="Saiu (p/ pool blindado)"
+              label="Out · to shielded pool"
               value={formatZec(r.onchain.outflowZat, { symbol: false })}
-              sub="movido para pagamentos"
+              sub="moved to payments"
               tone="out"
             />
             <Stat
-              label="Saldo atual"
+              label="Current balance"
               value={formatZec(r.onchain.balanceZat, { symbol: false })}
-              sub="retido no tesouro"
+              sub="held in treasury"
             />
           </div>
 
           <Card className="flex flex-wrap items-center justify-between gap-3">
             <div className="text-sm text-stone-700">
-              Conferência de balanço:{" "}
+              Balance check:{" "}
               <span className="tnum text-stone-500">
                 {formatZec(r.onchain.inflowZat, { symbol: false })} −{" "}
                 {formatZec(r.onchain.outflowZat, { symbol: false })} ={" "}
@@ -52,10 +52,10 @@ export default async function ZcgReconciliacaoPage() {
               </span>
             </div>
             {r.onchain.reconciles ? (
-              <Badge tone="emerald">✓ entrou − saiu = saldo</Badge>
+              <Badge tone="emerald">✓ in − out = balance</Badge>
             ) : (
               <Badge tone="amber">
-                resíduo {formatZec(r.onchain.residualZat)}
+                residual {formatZec(r.onchain.residualZat)}
               </Badge>
             )}
           </Card>
@@ -63,7 +63,7 @@ export default async function ZcgReconciliacaoPage() {
           {r.onchain.outputs.length > 0 ? (
             <Card className="mt-3 p-0">
               <p className="border-b border-stone-200 px-5 py-3 text-[11px] font-medium uppercase tracking-wider text-stone-500">
-                Saídas transparentes detectadas
+                Transparent outputs detected
               </p>
               <div className="divide-y divide-stone-200">
                 {r.onchain.outputs.map((o) => (

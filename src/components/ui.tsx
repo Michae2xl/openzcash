@@ -52,11 +52,24 @@ export function PageHeader({
   );
 }
 
+// Gold is the brand default. `in`/`out` stay reserved for genuine cash flows
+// (treasury inflow/outflow, budget over/under) — everywhere else reads as gold.
+const GOLD_BAR = "bg-gradient-to-b from-amber-300 via-amber-500 to-amber-600";
+const GOLD_VALUE =
+  "bg-gradient-to-br from-amber-700 via-amber-600 to-amber-500 bg-clip-text text-transparent";
+
 const STAT_ACCENT = {
-  default: { bar: "bg-stone-400", value: "text-stone-900" },
-  in: { bar: "bg-emerald-500", value: "text-emerald-600" },
-  out: { bar: "bg-rose-500", value: "text-rose-600" },
-  warn: { bar: "bg-amber-500", value: "text-amber-700" },
+  default: { bar: GOLD_BAR, value: GOLD_VALUE },
+  gold: { bar: GOLD_BAR, value: GOLD_VALUE },
+  warn: { bar: GOLD_BAR, value: GOLD_VALUE },
+  in: {
+    bar: "bg-gradient-to-b from-emerald-300 to-emerald-600",
+    value: "text-emerald-700",
+  },
+  out: {
+    bar: "bg-gradient-to-b from-rose-300 to-rose-600",
+    value: "text-rose-700",
+  },
 } as const;
 
 export function Stat({
@@ -72,26 +85,28 @@ export function Stat({
 }) {
   const a = STAT_ACCENT[tone];
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-stone-200 bg-gradient-to-b from-white to-stone-50 p-4 shadow-sm shadow-stone-300/40 ring-1 ring-inset ring-stone-900/5 transition hover:border-stone-300">
+    <div className="group relative overflow-hidden rounded-2xl border border-stone-200/80 bg-gradient-to-b from-white to-stone-50 p-4 shadow-sm shadow-stone-300/40 ring-1 ring-inset ring-stone-900/5 transition duration-300 hover:-translate-y-0.5 hover:border-amber-500/30 hover:shadow-lg hover:shadow-amber-700/10">
+      {/* soft gold glow, brightening on hover */}
+      <span className="pointer-events-none absolute -right-6 -top-8 h-24 w-24 rounded-full bg-amber-400/15 blur-2xl transition-opacity duration-300 group-hover:bg-amber-400/25" />
       <span
         className={cn(
-          "absolute left-0 top-4 h-[calc(100%-2rem)] w-1 rounded-r-full",
+          "absolute left-0 top-4 h-[calc(100%-2rem)] w-1 rounded-r-full shadow-[0_0_8px] shadow-amber-500/20",
           a.bar,
         )}
       />
-      <p className="pl-3 text-[11px] font-medium uppercase tracking-wider text-stone-500">
+      <p className="relative pl-3 text-[11px] font-medium uppercase tracking-wider text-stone-500">
         {label}
       </p>
       <p
         className={cn(
-          "num-lg mt-1.5 pl-3 pr-2 text-2xl font-semibold leading-none tracking-tight tnum",
+          "num-lg relative mt-1.5 pl-3 pr-2 text-2xl font-semibold leading-none tracking-tight tnum",
           a.value,
         )}
       >
         {value}
       </p>
       {sub ? (
-        <p className="mt-1.5 truncate pl-3 text-xs text-stone-500 tnum">
+        <p className="relative mt-1.5 truncate pl-3 text-xs text-stone-500 tnum">
           {sub}
         </p>
       ) : null}

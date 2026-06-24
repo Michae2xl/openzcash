@@ -6,7 +6,7 @@ import { formatUsdCents } from "@/lib/zcg/format";
 import { formatZec } from "@/lib/zcash/units";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Grant detail — ZBO" };
+export const metadata = { title: "Grant detail · ZBO" };
 
 const STATUS_LABEL: Record<string, string> = {
   completed: "Completed",
@@ -60,13 +60,11 @@ export default async function GrantDetailPage({
           label="Paid"
           value={formatUsdCents(paidUsd, { compact: true })}
           sub={`${paid.length} milestones`}
-          tone="in"
         />
         <Stat
           label="Open"
           value={formatUsdCents(openUsd, { compact: true })}
           sub={`${open.length} milestones`}
-          tone="out"
         />
         <Stat
           label="Status"

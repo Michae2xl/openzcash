@@ -77,8 +77,8 @@ function scriptToAddress(s: Buffer): string | null {
 export function parseTransparent(raw: Buffer): ParsedTx {
   // header(4) + nVersionGroupId(4) + nConsensusBranchId(4) + lockTime(4) + nExpiryHeight(4)
   let o = 20;
-  let nin: number;
-  [nin, o] = readVarint(raw, o);
+  const [nin, oAfterNin] = readVarint(raw, o);
+  o = oAfterNin;
   const inputs: TxInput[] = [];
   for (let i = 0; i < nin; i++) {
     const prevTxid = Buffer.from(raw.subarray(o, o + 32))
@@ -92,8 +92,8 @@ export function parseTransparent(raw: Buffer): ParsedTx {
     o += sl + 4; // script + sequence
     inputs.push({ prevTxid, prevIndex });
   }
-  let nout: number;
-  [nout, o] = readVarint(raw, o);
+  const [nout, oAfterNout] = readVarint(raw, o);
+  o = oAfterNout;
   const outputs: TxOutput[] = [];
   for (let i = 0; i < nout; i++) {
     const valueZat = raw.readBigUInt64LE(o);

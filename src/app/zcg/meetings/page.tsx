@@ -7,7 +7,7 @@ import {
 } from "@/lib/zcg/meetings";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Meetings — ZBO" };
+export const metadata = { title: "Meetings · ZBO" };
 
 function formatDate(iso: string): string {
   const [y, m, d] = iso.split("-").map(Number);

@@ -186,7 +186,7 @@ export function LedgerRow({
           <ReclassifyControl
             treasuryId={entry.treasuryId}
             txid={entry.txid}
-            overridden={entry.note === "Reclassificado manualmente pelo admin."}
+            overridden={entry.note === "Manually reclassified by admin."}
           />
         </div>
       ) : null}

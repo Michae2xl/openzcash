@@ -60,4 +60,4 @@ export const PROPOSAL_LINKS = {
 };
 
 export const ZCG_FORUM_CATEGORY =
-  "https://forum.zcashcommunity.com/c/community-grants-updates";
+  "https://forum.zcashcommunity.com/c/grants/zomg-updates/34";

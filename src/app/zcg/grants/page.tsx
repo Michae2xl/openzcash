@@ -4,7 +4,7 @@ import { formatUsdCents } from "@/lib/zcg/format";
 import { GrantsTable, type GrantTableRow } from "./grants-table";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Grants ZCG · ZEC Back-office" };
+export const metadata = { title: "Grants ZCG · ZBO" };
 
 const STATUS_LABELS: Record<string, string> = {
   completed: "Completed",
@@ -48,7 +48,6 @@ export default async function GrantsPage() {
           label="Grants"
           value={String(summary.grantCount)}
           sub="approved projects"
-          tone="in"
         />
         <Stat
           label="Committed"
@@ -65,7 +64,6 @@ export default async function GrantsPage() {
           label="Open"
           value={formatUsdCents(summary.futureCents, { compact: true })}
           sub="committed, still to pay"
-          tone="out"
         />
       </section>
 

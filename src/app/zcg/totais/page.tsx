@@ -12,7 +12,7 @@ import {
 } from "./totals-tables";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Totals ZCG · ZEC Back-office" };
+export const metadata = { title: "Totals ZCG · ZBO" };
 
 export default async function TotaisPage() {
   const [cats, recips, grand] = await Promise.all([
@@ -59,7 +59,6 @@ export default async function TotaisPage() {
           label="Future pipeline"
           value={formatUsdCents(future, { compact: true })}
           sub="milestones to pay"
-          tone="out"
         />
         <Stat
           label="Categories"
@@ -70,16 +69,15 @@ export default async function TotaisPage() {
           label="Recipients"
           value={String(external.length)}
           sub="orgs (excludes internal buckets)"
-          tone="in"
         />
       </section>
 
       <TotalsTables categoryRows={categoryRows} recipientRows={recipientRows} />
 
       <Card className="mt-6 flex items-center justify-between gap-3 border-emerald-500/20 bg-emerald-500/[0.05]">
-        <p className="text-sm text-emerald-100/80">
+        <p className="text-sm text-emerald-800/80">
           Spreadsheet grand total:{" "}
-          <span className="font-medium text-emerald-200 tnum">
+          <span className="font-medium text-emerald-800 tnum">
             {formatUsdCents(total)}
           </span>{" "}
           paid to recipients, matching the sum of categories.
