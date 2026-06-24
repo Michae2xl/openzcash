@@ -106,10 +106,10 @@ export default async function DesembolsosPage({
                 s.id ? `/zcg/desembolsos?sheet=${s.id}` : "/zcg/desembolsos"
               }
               className={cn(
-                "rounded-full px-3 py-1 text-xs font-medium ring-1 ring-inset transition",
+                "rounded-lg px-3.5 py-1.5 text-xs font-medium shadow-sm ring-1 ring-inset transition",
                 active
-                  ? "bg-amber-500/15 text-amber-700 ring-amber-500/30"
-                  : "bg-white text-stone-500 ring-stone-200 hover:text-stone-800",
+                  ? "bg-amber-500/15 text-amber-700 shadow-amber-900/5 ring-amber-500/40"
+                  : "bg-white text-stone-600 shadow-stone-300/30 ring-stone-200 hover:text-stone-900 hover:ring-stone-300",
               )}
             >
               {s.label}

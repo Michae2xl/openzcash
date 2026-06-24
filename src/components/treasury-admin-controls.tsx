@@ -94,7 +94,7 @@ export function TreasuryAdminControls({
             setEditing(true);
           }}
           disabled={busy}
-          className="inline-flex items-center gap-1 rounded-full bg-stone-100 px-2.5 py-1 text-xs font-medium text-stone-700 ring-1 ring-inset ring-stone-200 transition hover:bg-stone-200/70 disabled:opacity-50"
+          className="inline-flex items-center gap-1 rounded-lg bg-stone-100 px-2.5 py-1 text-xs font-medium text-stone-700 ring-1 ring-inset ring-stone-200 transition hover:bg-stone-200/70 disabled:opacity-50"
         >
           <IconPencil className="h-3 w-3" /> Rename
         </button>
@@ -109,7 +109,7 @@ export function TreasuryAdminControls({
             : "Hidden from the public view (admin only)"
         }
         className={cn(
-          "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ring-1 ring-inset transition disabled:opacity-50",
+          "inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-medium ring-1 ring-inset transition disabled:opacity-50",
           isPublic
             ? "bg-emerald-500/10 text-emerald-700 ring-emerald-500/25 hover:bg-emerald-500/20"
             : "bg-stone-100 text-stone-500 ring-stone-200 hover:bg-stone-200/70",
@@ -127,7 +127,7 @@ export function TreasuryAdminControls({
       <button
         onClick={remove}
         disabled={busy}
-        className="ml-auto inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium text-rose-600 ring-1 ring-inset ring-rose-500/25 transition hover:bg-rose-500/10 disabled:opacity-50"
+        className="ml-auto inline-flex items-center gap-1 rounded-lg px-2.5 py-1 text-xs font-medium text-rose-600 ring-1 ring-inset ring-rose-500/25 transition hover:bg-rose-500/10 disabled:opacity-50"
       >
         Delete
       </button>

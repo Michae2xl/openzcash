@@ -248,10 +248,10 @@ export function AppLauncher({ isAdmin = false }: { isAdmin?: boolean }) {
         <button
           onClick={() => setEditing((e) => !e)}
           className={cn(
-            "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium ring-1 ring-inset transition",
+            "inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium shadow-sm ring-1 ring-inset transition",
             editing
-              ? "bg-amber-500/15 text-amber-700 ring-amber-500/30"
-              : "bg-white text-stone-500 ring-stone-200 hover:text-stone-800",
+              ? "bg-amber-500/15 text-amber-700 shadow-amber-900/5 ring-amber-500/40"
+              : "bg-white text-stone-600 shadow-stone-300/30 ring-stone-200 hover:text-stone-900 hover:ring-stone-300",
           )}
         >
           <IconPencil className="h-3.5 w-3.5" />
