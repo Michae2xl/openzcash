@@ -41,9 +41,14 @@ function ago(seenAt: number, now: number): string {
 export function LockboxLiveFeed({
   initialHeight,
   zecUsd,
+  baselineZec,
+  baselineHeight,
 }: {
   initialHeight: number;
   zecUsd: number;
+  /** Real Lockbox balance from the spreadsheet snapshot, and its block. */
+  baselineZec: number;
+  baselineHeight: number;
 }) {
   const [height, setHeight] = useState(initialHeight);
   const [live, setLive] = useState(initialHeight > 0);
@@ -97,7 +102,14 @@ export function LockboxLiveFeed({
     };
   }, []);
 
-  const totalZec = lockboxZecAt(height);
+  // Anchor to the real spreadsheet balance + accrue 0.1875 ZEC per block since,
+  // so this matches the snapshot screens at the baseline and only the live
+  // blocks pull it ahead. Falls back to the from-genesis math if no snapshot.
+  const totalZec =
+    baselineHeight > 0
+      ? baselineZec +
+        Math.max(0, height - baselineHeight) * LOCKBOX_ZEC_PER_BLOCK
+      : lockboxZecAt(height);
   const perDayZec = LOCKBOX_ZEC_PER_BLOCK * BLOCKS_PER_DAY;
 
   return (

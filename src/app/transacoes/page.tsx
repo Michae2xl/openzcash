@@ -2,6 +2,7 @@ import { PageHeader } from "@/components/ui";
 import { LockboxLiveFeed } from "@/components/lockbox-live-feed";
 import { zecUnitPrice } from "@/lib/pricing/price-oracle";
 import { getCurrentHeight } from "@/lib/zcash/real/lwd/lwd-client";
+import { latestSnapshot } from "@/lib/zcg/snapshots-repo";
 
 export const metadata = { title: "Lockbox · live funding · ZBO" };
 export const dynamic = "force-dynamic";
@@ -25,13 +26,26 @@ export default async function TransacoesPage() {
   }
   const zecUsd = zecUnitPrice("USD");
 
+  // Anchor the live total to the spreadsheet's real Lockbox balance so it
+  // agrees with the other screens; live blocks only add to it from there.
+  const snap = await latestSnapshot("lockbox_coinholder");
+  const baselineZec = snap?.zecBalanceZat
+    ? Number(snap.zecBalanceZat) / 1e8
+    : 0;
+  const baselineHeight = snap?.blockHeight ? Number(snap.blockHeight) : 0;
+
   return (
     <>
       <PageHeader
         title="Lockbox · live funding"
         subtitle="Real-time view of the Zcash deferred Dev Fund. Every block mined adds 0.1875 ZEC (12% of the block subsidy) to the in-protocol Lockbox. This is the protocol funding stream read straight from the chain tip, not viewing-key data."
       />
-      <LockboxLiveFeed initialHeight={initialHeight} zecUsd={zecUsd} />
+      <LockboxLiveFeed
+        initialHeight={initialHeight}
+        zecUsd={zecUsd}
+        baselineZec={baselineZec}
+        baselineHeight={baselineHeight}
+      />
     </>
   );
 }
