@@ -60,7 +60,7 @@ export async function TreasuryOverview() {
   const priceCents = op?.zecusdPriceCents ?? lock?.zecusdPriceCents ?? null;
 
   return (
-    <section className="mb-10">
+    <section className="mt-12">
       <div className="mb-3 flex items-baseline justify-between gap-3">
         <h2 className="text-sm font-semibold text-stone-700">
           Treasury at a glance

@@ -45,9 +45,9 @@ export default async function LauncherPage() {
           </div>
         </header>
 
-        <TreasuryOverview />
-
         <AppLauncher isAdmin={isAdmin} />
+
+        <TreasuryOverview />
 
         <p className="mt-10 text-center text-xs text-stone-400">
           Public transparency for the Zcash Dev Fund · ZCG and FPF grant
