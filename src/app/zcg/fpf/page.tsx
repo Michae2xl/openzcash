@@ -1,5 +1,5 @@
 import { Card, PageHeader, Stat } from "@/components/ui";
-import { grantsSummary, listGrants } from "@/lib/zcg/grants-repo";
+import { listGrants } from "@/lib/zcg/grants-repo";
 import { listProposals, proposalsFunnel } from "@/lib/zcg/proposals-repo";
 import { getLinks } from "@/lib/zcg/governance-repo";
 import { disbStatusLabel, formatUsdCents } from "@/lib/zcg/format";
@@ -40,9 +40,8 @@ function grantStatusLabel(status: string | null): string {
 }
 
 export default async function FpfCoinholderGrantsPage() {
-  const [grants, summary, proposals, funnel, links] = await Promise.all([
+  const [grants, proposals, funnel, links] = await Promise.all([
     listGrants({ program: "coinholder" }),
-    grantsSummary(),
     listProposals({ program: "coinholder" }),
     proposalsFunnel(),
     getLinks(),

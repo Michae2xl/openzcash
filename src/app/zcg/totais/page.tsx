@@ -5,7 +5,7 @@ import {
   recipientTotalsFromSheet,
 } from "@/lib/zcg/totals-repo";
 import { formatUsdCents } from "@/lib/zcg/format";
-import { BarList } from "@/components/bar-list";
+import { TotalsCharts } from "../totals-charts";
 import { BudgetCards } from "../budget-cards";
 import {
   TotalsTables,
@@ -98,24 +98,10 @@ export default async function TotaisPage() {
         />
       </section>
 
-      <section className="mb-8 grid gap-6 lg:grid-cols-2">
-        <div className="min-w-0">
-          <h2 className="mb-3 text-sm font-semibold text-stone-700">
-            Top recipients · USD paid to date
-          </h2>
-          <Card>
-            <BarList items={topRecipients} />
-          </Card>
-        </div>
-        <div className="min-w-0">
-          <h2 className="mb-3 text-sm font-semibold text-stone-700">
-            By classification · USD paid to date
-          </h2>
-          <Card>
-            <BarList items={byClassification} />
-          </Card>
-        </div>
-      </section>
+      <TotalsCharts
+        recipients={topRecipients}
+        classifications={byClassification}
+      />
 
       <TotalsTables categoryRows={categoryRows} recipientRows={recipientRows} />
 

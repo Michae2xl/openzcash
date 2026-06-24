@@ -7,7 +7,7 @@ import {
 } from "@/lib/zcg/totals-repo";
 import { formatUsdCents } from "@/lib/zcg/format";
 import { formatZec } from "@/lib/zcash/units";
-import { BarList } from "@/components/bar-list";
+import { TotalsCharts } from "../totals-charts";
 import {
   TotalsTables,
   type CategoryRow,
@@ -92,24 +92,10 @@ export default async function CoinholderPage() {
         />
       </section>
 
-      <section className="mb-8 grid gap-6 lg:grid-cols-2">
-        <div className="min-w-0">
-          <h2 className="mb-3 text-sm font-semibold text-stone-700">
-            Top recipients · USD value paid out to date
-          </h2>
-          <Card>
-            <BarList items={topRecipients} />
-          </Card>
-        </div>
-        <div className="min-w-0">
-          <h2 className="mb-3 text-sm font-semibold text-stone-700">
-            By grant classification · USD paid out to date
-          </h2>
-          <Card>
-            <BarList items={byClassification} />
-          </Card>
-        </div>
-      </section>
+      <TotalsCharts
+        recipients={topRecipients}
+        classifications={byClassification}
+      />
 
       <TotalsTables categoryRows={categoryRows} recipientRows={recipientRows} />
 
