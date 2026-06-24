@@ -2,7 +2,7 @@ import { OnboardingForm } from "@/components/onboarding-form";
 import { PageHeader } from "@/components/ui";
 import { getOnboardingPublicKey } from "@/lib/onboarding/seal";
 
-export const metadata = { title: "Register treasury · ZEC Back-office" };
+export const metadata = { title: "Register treasury · ZBO" };
 export const dynamic = "force-dynamic";
 
 export default async function OnboardingPage({

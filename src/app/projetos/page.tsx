@@ -3,7 +3,7 @@ import { PageHeader } from "@/components/ui";
 import { getOnboardingPublicKey } from "@/lib/onboarding/seal";
 import { listProjects } from "@/lib/projects/project-repo";
 
-export const metadata = { title: "Projects · ZEC Back-office" };
+export const metadata = { title: "Projects · ZBO" };
 export const dynamic = "force-dynamic";
 
 export default async function ProjetosPage() {

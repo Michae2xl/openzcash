@@ -37,15 +37,17 @@ export function LoginForm() {
   return (
     <form
       onSubmit={submit}
-      className="w-full max-w-sm space-y-4 rounded-xl border border-stone-200 bg-white p-6"
+      className="w-full max-w-sm space-y-4 rounded-xl border border-stone-200 bg-gradient-to-b from-white to-stone-50 p-6 shadow-sm ring-1 ring-inset ring-stone-900/5"
     >
       <div>
-        <div className="flex items-center gap-2">
-          <span className="flex h-7 w-7 items-center justify-center rounded-md bg-amber-500/15 font-mono text-sm font-bold text-amber-700">
-            ⓩ
-          </span>
+        <div className="flex items-center gap-2.5">
+          <img
+            src="/zbo-emblem.png"
+            alt="Zcash Back Office"
+            className="h-8 w-8 object-contain"
+          />
           <span className="text-sm font-semibold text-stone-900">
-            ZEC Back-office
+            Zcash Back Office
           </span>
         </div>
         <p className="mt-2 text-sm text-stone-500">
@@ -63,7 +65,7 @@ export function LoginForm() {
       <button
         type="submit"
         disabled={busy}
-        className="w-full rounded-lg bg-amber-500/20 px-3 py-2.5 text-sm font-semibold text-amber-800 ring-1 ring-inset ring-amber-500/40 transition hover:bg-amber-500/30 disabled:opacity-50"
+        className="w-full rounded-lg bg-amber-500 px-3 py-2.5 text-sm font-semibold text-stone-900 shadow-sm shadow-amber-900/20 transition hover:bg-amber-400 disabled:opacity-50"
       >
         {busy ? "Signing in…" : "Sign in"}
       </button>

@@ -10,7 +10,7 @@ import { formatZec, formatZecCompact } from "@/lib/zcash/units";
 import { formatFiat, zatoshisToFiat } from "@/lib/pricing/price-oracle";
 import { cn } from "@/lib/utils";
 
-export const metadata = { title: "Treasuries · ZEC Back-office" };
+export const metadata = { title: "Treasuries · ZBO" };
 export const dynamic = "force-dynamic";
 
 export default async function ViewingKeysPage() {
@@ -20,7 +20,7 @@ export default async function ViewingKeysPage() {
 
   const consolidated =
     realBalanceZat ?? treasuries.reduce((s, t) => s + t.balanceZat, 0n);
-  // inZat/outZat já são EXTERNOS (o interno é contado à parte).
+  // inZat/outZat are already EXTERNAL (internal flow is counted separately).
   const totalIn = treasuries.reduce((s, t) => s + t.inZat, 0n);
   const totalOut = treasuries.reduce((s, t) => s + t.outZat, 0n);
   const internalVolume = treasuries.reduce((s, t) => s + t.internalOutZat, 0n);
@@ -33,7 +33,7 @@ export default async function ViewingKeysPage() {
         actions={
           <Link
             href="/onboarding"
-            className="rounded-lg bg-amber-500/15 px-3 py-2 text-sm font-medium text-amber-700 ring-1 ring-inset ring-amber-500/30 hover:bg-amber-500/25"
+            className="rounded-lg bg-amber-500 px-3.5 py-2 text-sm font-medium text-stone-900 shadow-sm shadow-amber-900/20 transition hover:bg-amber-400"
           >
             + Add treasury
           </Link>
@@ -55,7 +55,6 @@ export default async function ViewingKeysPage() {
           label="Consolidated balance"
           value={formatZecCompact(consolidated, { symbol: false })}
           sub={formatFiat(zatoshisToFiat(consolidated, "USD"), "USD")}
-          tone="in"
         />
         <Stat
           label="External inflows"
@@ -124,7 +123,7 @@ export default async function ViewingKeysPage() {
                     ↑ {formatZec(t?.outZat ?? 0n, { symbol: false })}
                   </p>
                   {t && (t.internalInZat > 0n || t.internalOutZat > 0n) ? (
-                    <p className="mt-0.5 text-sky-600">
+                    <p className="mt-0.5 text-amber-700">
                       ↹{" "}
                       {formatZec(t.internalInZat + t.internalOutZat, {
                         symbol: false,
@@ -140,7 +139,7 @@ export default async function ViewingKeysPage() {
               </div>
 
               <div className="mt-4 flex flex-wrap items-center gap-2">
-                <Badge tone={vk.kind === "ufvk" ? "sky" : "zinc"}>
+                <Badge tone={vk.kind === "ufvk" ? "amber" : "zinc"}>
                   {vk.kind.toUpperCase()}
                 </Badge>
                 {vk.pools.map((p) => (

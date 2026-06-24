@@ -91,7 +91,7 @@ export function InvitesAdmin({ invites }: { invites: readonly InviteRow[] }) {
             type="button"
             disabled={busy}
             onClick={generate}
-            className="rounded-lg bg-amber-500/20 px-4 py-2 text-sm font-semibold text-amber-800 ring-1 ring-inset ring-amber-500/40 transition hover:bg-amber-500/30 disabled:opacity-50"
+            className="rounded-lg bg-amber-500 px-4 py-2 text-sm font-semibold text-stone-900 shadow-sm shadow-amber-900/20 transition hover:bg-amber-400 disabled:opacity-50"
           >
             {busy ? "Generating…" : "Generate link"}
           </button>

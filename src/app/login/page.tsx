@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { LoginForm } from "@/components/login-form";
 
-export const metadata = { title: "Sign in · ZEC Back-office" };
+export const metadata = { title: "Sign in · ZBO" };
 export const dynamic = "force-dynamic";
 
 export default function LoginPage() {

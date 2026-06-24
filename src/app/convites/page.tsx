@@ -2,7 +2,7 @@ import { InvitesAdmin } from "@/components/invites-admin";
 import { PageHeader } from "@/components/ui";
 import { listInvites } from "@/lib/onboarding/invites";
 
-export const metadata = { title: "Invites · ZEC Back-office" };
+export const metadata = { title: "Invites · ZBO" };
 export const dynamic = "force-dynamic";
 
 export default async function ConvitesPage() {
