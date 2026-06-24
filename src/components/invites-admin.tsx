@@ -5,12 +5,12 @@ import { useRouter } from "next/navigation";
 import type { InviteRow, InviteStatus } from "@/lib/onboarding/invites";
 import { Badge } from "@/components/ui";
 
-const STATUS_TONE: Record<InviteStatus, "emerald" | "sky" | "rose" | "amber"> =
+const STATUS_TONE: Record<InviteStatus, "emerald" | "rose" | "amber" | "zinc"> =
   {
     pending: "emerald",
-    used: "sky",
+    used: "zinc",
     revoked: "rose",
-    expired: "amber",
+    expired: "zinc",
   };
 
 const inputClass =
@@ -63,7 +63,7 @@ export function InvitesAdmin({ invites }: { invites: readonly InviteRow[] }) {
 
   return (
     <div className="space-y-6">
-      <div className="rounded-xl border border-stone-200 bg-white p-5">
+      <div className="rounded-2xl border border-stone-200 bg-gradient-to-b from-white to-stone-50 shadow-sm shadow-stone-300/40 ring-1 ring-inset ring-stone-900/5 p-5">
         <div className="flex flex-wrap items-end gap-3">
           <label className="min-w-48 flex-1">
             <span className="mb-1 block text-xs text-stone-500">
@@ -117,7 +117,7 @@ export function InvitesAdmin({ invites }: { invites: readonly InviteRow[] }) {
         ) : null}
       </div>
 
-      <div className="rounded-xl border border-stone-200 bg-white p-0">
+      <div className="rounded-2xl border border-stone-200 bg-gradient-to-b from-white to-stone-50 shadow-sm shadow-stone-300/40 ring-1 ring-inset ring-stone-900/5 p-0">
         <table className="w-full text-left text-sm">
           <thead className="border-b border-stone-200 text-xs uppercase tracking-wide text-stone-500">
             <tr>

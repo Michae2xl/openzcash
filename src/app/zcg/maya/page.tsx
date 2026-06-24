@@ -58,7 +58,7 @@ export default async function MayaPage() {
                 className="tbl-row border-b border-stone-200 last:border-0"
               >
                 <td className="px-4 py-2.5 font-medium text-stone-900">
-                  {t.project ?? "—"}
+                  {t.project ?? "·"}
                 </td>
                 <td className="px-4 py-2.5 text-right text-stone-700 tnum">
                   {formatUsdCents(t.amountUsdCents)}
@@ -66,10 +66,10 @@ export default async function MayaPage() {
                 <td className="px-4 py-2.5 text-right text-stone-700 tnum">
                   {t.zecTransferredZat != null
                     ? formatZec(t.zecTransferredZat, { symbol: false })
-                    : "—"}
+                    : "·"}
                 </td>
                 <td className="hidden px-4 py-2.5 text-right text-xs text-stone-500 sm:table-cell tnum">
-                  {t.transferredAt ?? "—"}
+                  {t.transferredAt ?? "·"}
                 </td>
               </tr>
             ))}

@@ -74,7 +74,7 @@ export function ProjectsAdmin({
 
   return (
     <div className="space-y-6">
-      <div className="max-w-xl space-y-4 rounded-xl border border-stone-200 bg-white p-5">
+      <div className="max-w-xl space-y-4 rounded-2xl border border-stone-200 bg-gradient-to-b from-white to-stone-50 shadow-sm shadow-stone-300/40 ring-1 ring-inset ring-stone-900/5 p-5">
         <p className="text-sm font-medium text-stone-800">Register project</p>
         <div className="grid grid-cols-2 gap-3">
           <label className="block">
@@ -124,7 +124,7 @@ export function ProjectsAdmin({
                 setBirthHeight(e.target.value.replace(/\D/g, ""))
               }
               inputMode="numeric"
-              placeholder="ex.: 2867500"
+              placeholder="e.g. 2867500"
             />
           </label>
           <label className="block">
@@ -157,13 +157,13 @@ export function ProjectsAdmin({
       {projects.map((p) => (
         <div
           key={p.id}
-          className="rounded-xl border border-stone-200 bg-white p-5"
+          className="rounded-2xl border border-stone-200 bg-gradient-to-b from-white to-stone-50 shadow-sm shadow-stone-300/40 ring-1 ring-inset ring-stone-900/5 p-5"
         >
           <div className="mb-3 flex items-center gap-2">
             <span className="text-sm font-medium text-stone-900">
               {p.projectName}
             </span>
-            <Badge tone={p.paymentKind === "bounty" ? "sky" : "emerald"}>
+            <Badge tone={p.paymentKind === "bounty" ? "zinc" : "amber"}>
               {p.paymentKind}
             </Badge>
             <span className="text-xs text-stone-400">

@@ -32,7 +32,7 @@ export function TreasuryTypeSelect({ id, type }: { id: string; type: string }) {
       disabled={busy}
       onChange={(e) => change(e.target.value)}
       aria-label="Treasury type"
-      className="cursor-pointer rounded-full bg-stone-100 px-2.5 py-1 text-xs font-medium text-stone-800 outline-none ring-1 ring-inset ring-stone-300 transition hover:ring-stone-300 focus:ring-amber-500/40 disabled:opacity-50"
+      className="cursor-pointer rounded-lg bg-stone-100 px-2.5 py-1 text-xs font-medium text-stone-800 outline-none ring-1 ring-inset ring-stone-300 transition hover:ring-stone-300 focus:ring-amber-500/40 disabled:opacity-50"
     >
       {TYPES.map((t) => (
         <option key={t.v} value={t.v}>

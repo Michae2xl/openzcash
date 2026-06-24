@@ -173,7 +173,7 @@ export async function ElectionsSection() {
                 rel="noreferrer"
                 className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-white shadow-sm shadow-emerald-900/25 transition hover:bg-emerald-400"
               >
-                → Vote now on the forum ↗
+                Vote now on the forum ↗
               </a>
             </div>
           </Card>
@@ -188,7 +188,7 @@ export async function ElectionsSection() {
           {past.map((e) => (
             <div
               key={e.id}
-              className="flex items-center justify-between gap-3 rounded-xl border border-stone-200 bg-white px-4 py-3 text-sm transition hover:border-stone-300 hover:bg-stone-50"
+              className="flex items-center justify-between gap-3 rounded-lg border border-stone-200 bg-white px-4 py-3 text-sm transition hover:border-stone-300 hover:bg-stone-50"
             >
               <a
                 href={e.url}
@@ -196,7 +196,7 @@ export async function ElectionsSection() {
                 rel="noreferrer"
                 className="flex min-w-0 flex-1 items-center justify-between gap-3"
               >
-                <span className="flex items-center gap-2">
+                <span className="flex min-w-0 items-center gap-2">
                   <span className="font-medium text-stone-900">{e.title}</span>
                   <span className="text-xs text-stone-500">
                     {e.seats} seats

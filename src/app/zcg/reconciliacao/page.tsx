@@ -13,14 +13,14 @@ export default async function ZcgReconciliacaoPage() {
   return (
     <>
       <PageHeader
-        title="Reconciliação on-chain"
-        subtitle="Cruzamento entre o fluxo do tesouro ZCG na cadeia e o que a planilha registra como distribuído. Os pagamentos individuais aos grantees saem do pool blindado — só o fluxo agregado é visível na cadeia."
+        title="Reconciliation · on-chain"
+        subtitle="Cross-check between ZCG's on-chain treasury flow and what the spreadsheet records as distributed. Individual grantee payments leave the shielded pool · only the aggregate flow is visible on-chain."
       />
 
       {r.onchain ? (
         <section className="mb-8">
           <h2 className="mb-3 text-sm font-semibold text-stone-700">
-            Fluxo do tesouro {r.onchain.treasuryLabel} (on-chain)
+            Treasury flow · {r.onchain.treasuryLabel} (on-chain)
           </h2>
           <div className="mb-3 grid grid-cols-1 gap-4 sm:grid-cols-3">
             <Stat
@@ -52,7 +52,7 @@ export default async function ZcgReconciliacaoPage() {
               </span>
             </div>
             {r.onchain.reconciles ? (
-              <Badge tone="emerald">✓ in − out = balance</Badge>
+              <Badge tone="emerald">in − out = balance</Badge>
             ) : (
               <Badge tone="amber">
                 residual {formatZec(r.onchain.residualZat)}
@@ -71,10 +71,10 @@ export default async function ZcgReconciliacaoPage() {
                     key={o.txid}
                     className="flex items-center justify-between gap-3 px-5 py-3 text-sm"
                   >
-                    <span className="text-stone-500 tnum">{o.date ?? "—"}</span>
+                    <span className="text-stone-500 tnum">{o.date ?? "·"}</span>
                     <span className="flex items-center gap-2 text-stone-700">
                       <IconShield className="h-3.5 w-3.5 text-amber-700/70" />
-                      enviado ao pool blindado
+                      sent to the shielded pool
                     </span>
                     <span className="font-medium text-rose-600 tnum">
                       {formatZec(o.zecZat, { symbol: false })}
@@ -89,43 +89,43 @@ export default async function ZcgReconciliacaoPage() {
 
       <section className="mb-8">
         <h2 className="mb-3 text-sm font-semibold text-stone-700">
-          Distribuição segundo a planilha (acumulado histórico)
+          Distribution per the spreadsheet (historical cumulative)
         </h2>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           <Stat
-            label="ZEC pago a grantees"
+            label="ZEC paid to grantees"
             value={formatZec(r.sheet.zecPaidZat, { symbol: false })}
-            sub={`${r.sheet.zecPaymentCount} pagamentos em ZEC`}
+            sub={`${r.sheet.zecPaymentCount} ZEC payments`}
             tone="warn"
           />
           <Stat
-            label="USD pago"
+            label="USD paid"
             value={formatUsdCents(r.sheet.usdPaidCents, { compact: true })}
-            sub="valor orçado dos pagos"
+            sub="budgeted value of paid items"
           />
           <Stat
-            label="Pagamentos"
+            label="Payments"
             value={String(r.sheet.paidCount)}
-            sub={`${r.sheet.offchainCount} em USD/USDC (off-chain)`}
+            sub={`${r.sheet.offchainCount} in USD/USDC (off-chain)`}
           />
         </div>
       </section>
 
-      <Card className="flex items-start gap-3 border-sky-500/20 bg-sky-500/[0.06]">
-        <IconShield className="mt-0.5 h-5 w-5 shrink-0 text-sky-600" />
-        <div className="text-sm text-sky-800/80">
-          <p className="font-medium text-sky-800">
-            Por que não há casamento 1:1 por pagamento
+      <Card className="flex items-start gap-3 border-amber-500/20 bg-amber-500/[0.06]">
+        <IconShield className="mt-0.5 h-5 w-5 shrink-0 text-amber-700/70" />
+        <div className="text-sm text-amber-800/80">
+          <p className="font-medium text-amber-800">
+            Why there is no 1:1 match per payment
           </p>
-          <p className="mt-1 text-sky-800/70">
-            O tesouro transparente do ZCG só revela o fluxo agregado: ele recebe
-            do Lockbox e move blocos de ZEC para o pool blindado. Os{" "}
-            {r.sheet.zecPaymentCount} pagamentos individuais aos grantees saem
-            do pool Orchard (blindado) ou de endereços históricos — privados por
-            design. Para auditar cada pagamento por-grantee, seria necessária a{" "}
-            <strong>UFVK shielded do ZCG</strong>. A reconciliação possível hoje
-            é a de <strong>fluxo do tesouro</strong> (acima) e o{" "}
-            <strong>integrity-check</strong> da planilha.
+          <p className="mt-1 text-amber-800/70">
+            The ZCG transparent treasury only reveals the aggregate flow: it
+            receives from the Lockbox and moves blocks of ZEC into the shielded
+            pool. The {r.sheet.zecPaymentCount} individual grantee payments
+            leave the Orchard (shielded) pool or historical addresses · private
+            by design. Auditing each per-grantee payment would require the{" "}
+            <strong>ZCG shielded UFVK</strong>. The reconciliation possible
+            today is the <strong>treasury flow</strong> (above) plus the
+            spreadsheet <strong>integrity-check</strong>.
           </p>
         </div>
       </Card>

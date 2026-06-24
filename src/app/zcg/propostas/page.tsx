@@ -64,7 +64,7 @@ export default async function PropostasPage() {
   return (
     <>
       <PageHeader
-        title="Proposals · pipeline"
+        title="Proposals · Pipeline"
         subtitle="ZCG governance funnel: every submitted proposal, with its verdict. Upstream of grants, only the approved ones become funded projects."
         actions={
           <a
@@ -73,7 +73,7 @@ export default async function PropostasPage() {
             rel="noreferrer"
             className="rounded-lg bg-amber-500 px-3.5 py-2 text-sm font-medium text-stone-900 shadow-sm shadow-amber-900/20 transition hover:bg-amber-400"
           >
-            + Submit a proposal ↗
+            Submit a proposal ↗
           </a>
         }
       />

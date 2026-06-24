@@ -35,13 +35,14 @@ type AppDef = {
   admin?: boolean;
 };
 
+// All gold/stone — the brand reserves color for genuine status/flows only.
 const GRAD: Record<string, string> = {
-  amber: "from-amber-400 to-orange-600",
-  sky: "from-sky-400 to-blue-600",
-  emerald: "from-emerald-400 to-teal-600",
-  violet: "from-violet-400 to-purple-600",
-  rose: "from-rose-400 to-pink-600",
-  zinc: "from-zinc-500 to-zinc-700",
+  amber: "from-amber-400 to-amber-600",
+  sky: "from-amber-300 to-amber-500",
+  emerald: "from-amber-500 to-amber-700",
+  violet: "from-amber-400 to-orange-500",
+  rose: "from-amber-500 to-orange-600",
+  zinc: "from-stone-400 to-stone-600",
 };
 
 const APPS: AppDef[] = [

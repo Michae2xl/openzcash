@@ -34,7 +34,7 @@ export default async function ZcgPage() {
         subtitle="Public accounting for Zcash Community Grants, imported from the official spreadsheet. An off-chain disbursement ledger that can be cross-referenced with the on-chain Lockbox/ZCG outflows."
       />
 
-      <section className="mb-6 grid gap-5 lg:grid-cols-2">
+      <section className="mb-8 grid gap-6 lg:grid-cols-2">
         <div className="relative overflow-hidden rounded-2xl border border-amber-500/15 bg-gradient-to-br from-amber-500/[0.07] via-stone-50 to-stone-50 p-5 shadow-lg shadow-stone-300/40 ring-1 ring-inset ring-stone-900/5">
           <div className="pointer-events-none absolute -right-12 -top-12 h-44 w-44 rounded-full bg-amber-500/10 blur-3xl" />
           <div className="relative flex items-start justify-between gap-3">
@@ -45,7 +45,7 @@ export default async function ZcgPage() {
               <p className="mt-1.5 text-3xl font-bold leading-none tracking-tight text-stone-900 tnum">
                 {lockbox?.zecBalanceZat != null
                   ? formatZec(lockbox.zecBalanceZat)
-                  : "—"}
+                  : "·"}
               </p>
               <p className="mt-2 text-xs text-stone-500">
                 protocol pool (ZIP 1015/1016) · balance via spreadsheet
@@ -64,7 +64,7 @@ export default async function ZcgPage() {
               <p className="mt-1.5 text-3xl font-bold leading-none tracking-tight text-stone-900 tnum">
                 {zcg?.zecBalanceZat != null
                   ? formatZec(zcg.zecBalanceZat)
-                  : "—"}
+                  : "·"}
               </p>
               <p className="mt-2 text-xs text-stone-500 tnum">
                 {zcg?.usdCashBalanceCents != null
@@ -72,7 +72,7 @@ export default async function ZcgPage() {
                   : "transparent address t3ev37Q2…"}
               </p>
             </div>
-            <Badge tone="sky">t-addr</Badge>
+            <Badge tone="zinc">t-addr</Badge>
           </div>
         </div>
       </section>
@@ -152,7 +152,7 @@ export default async function ZcgPage() {
             </Link>
             <Link href="/zcg/desembolsos" className="block">
               <Card interactive className="flex items-center gap-3">
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-sky-500/10 text-sky-600">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-amber-500/10 text-amber-700">
                   <IconList className="h-4 w-4" />
                 </span>
                 <div>
@@ -167,7 +167,7 @@ export default async function ZcgPage() {
             </Link>
             <Link href="/zcg/recebedores" className="block">
               <Card interactive className="flex items-center gap-3">
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-600">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-amber-500/10 text-amber-700">
                   <IconCheck className="h-4 w-4" />
                 </span>
                 <div>

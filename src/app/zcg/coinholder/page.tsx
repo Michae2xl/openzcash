@@ -109,7 +109,7 @@ export default async function CoinholderPage() {
             </span>{" "}
             paid out to date.
           </p>
-          <Badge tone="emerald">✓ imported</Badge>
+          <Badge tone="emerald">Imported</Badge>
         </Card>
       ) : null}
     </>

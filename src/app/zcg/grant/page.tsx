@@ -69,7 +69,7 @@ export default async function GrantDetailPage({
         <Stat
           label="Status"
           value={
-            STATUS_LABEL[head.grantStatus ?? ""] ?? head.grantStatus ?? "—"
+            STATUS_LABEL[head.grantStatus ?? ""] ?? head.grantStatus ?? "·"
           }
           sub="grant level"
           tone={head.grantStatus === "completed" ? "in" : "warn"}
@@ -103,11 +103,11 @@ export default async function GrantDetailPage({
                     className="tbl-row border-b border-stone-200 last:border-0"
                   >
                     <td className="px-4 py-2.5 font-medium text-stone-900">
-                      {m.milestoneLabel ?? "—"}
+                      {m.milestoneLabel ?? "·"}
                     </td>
                     <td className="max-w-[20rem] px-4 py-2.5 text-stone-500">
                       <span className="block truncate">
-                        {m.deliverable ?? m.project ?? "—"}
+                        {m.deliverable ?? m.project ?? "·"}
                       </span>
                     </td>
                     <td className="px-4 py-2.5 text-right font-medium text-amber-700/90 tnum">
@@ -147,7 +147,7 @@ export default async function GrantDetailPage({
                   className="tbl-row border-b border-stone-200 last:border-0"
                 >
                   <td className="px-4 py-2.5 font-medium text-stone-900">
-                    {m.milestoneLabel ?? "—"}
+                    {m.milestoneLabel ?? "·"}
                   </td>
                   <td className="px-4 py-2.5 text-right font-medium text-amber-700/90 tnum">
                     {formatUsdCents(m.amountUsdCents)}
@@ -155,15 +155,15 @@ export default async function GrantDetailPage({
                   <td className="px-4 py-2.5 text-right text-stone-700 tnum">
                     {m.zecDisbursedZat != null
                       ? formatZec(m.zecDisbursedZat, { symbol: false })
-                      : "—"}
+                      : "·"}
                   </td>
                   <td className="px-4 py-2.5 text-right text-stone-500 tnum">
                     {m.usdDisbursedZecRateCents != null
                       ? formatUsdCents(m.usdDisbursedZecRateCents)
-                      : "—"}
+                      : "·"}
                   </td>
                   <td className="whitespace-nowrap px-4 py-2.5 text-right text-xs text-stone-500 tnum">
-                    {m.paidOutDate ?? "—"}
+                    {m.paidOutDate ?? "·"}
                   </td>
                 </tr>
               ))}

@@ -93,7 +93,7 @@ export default async function MeetingsPage() {
       <h2 className="mb-3 flex items-center gap-2 text-sm font-semibold text-stone-700">
         Latest meeting minutes
         {latest ? (
-          <Badge tone="emerald">newest {formatDate(latest.meetingDate)}</Badge>
+          <Badge tone="amber">newest {formatDate(latest.meetingDate)}</Badge>
         ) : null}
       </h2>
 
@@ -101,7 +101,7 @@ export default async function MeetingsPage() {
         {meetings.map((m) => (
           <div
             key={m.id}
-            className="flex items-center gap-3 rounded-xl px-3 py-3 transition hover:bg-stone-100"
+            className="flex items-center gap-3 rounded-lg px-3 py-3 transition hover:bg-stone-100"
           >
             <a
               href={m.url}

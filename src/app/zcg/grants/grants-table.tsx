@@ -51,7 +51,7 @@ export function GrantsTable({ rows }: GrantsTableProps) {
             {r.grantKey}
           </Link>
           {r.program === "coinholder" ? (
-            <span className="text-[10px] uppercase tracking-wide text-sky-600/70">
+            <span className="text-[10px] uppercase tracking-wide text-amber-700/70">
               coinholder
             </span>
           ) : null}
@@ -117,7 +117,7 @@ export function GrantsTable({ rows }: GrantsTableProps) {
           href={`/zcg/grant?g=${encodeURIComponent(r.grantKey)}`}
           className="inline-flex items-center gap-0.5 rounded-md px-2 py-1 text-xs tnum ring-1 ring-inset ring-stone-200 hover:ring-amber-500/40"
         >
-          <span className="text-emerald-600">{r.paidCount}</span>
+          <span className="text-amber-700">{r.paidCount}</span>
           <span className="text-stone-400">/{r.milestoneCount}</span>
         </Link>
       ),

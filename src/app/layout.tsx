@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Zcash Back Office (ZBO)",
   description:
-    "Tesouraria e transparência do Dev Fund Zcash — auditoria read-only via viewing keys e a contabilidade pública do ZCG.",
+    "Treasury and transparency for the Zcash Dev Fund · read-only auditing via viewing keys and the public ZCG accounting.",
 };
 
 export default async function RootLayout({

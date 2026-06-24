@@ -114,14 +114,13 @@ export function Stat({
   );
 }
 
-type Tone = "emerald" | "rose" | "amber" | "zinc" | "sky";
+type Tone = "emerald" | "rose" | "amber" | "zinc";
 
 const toneClasses: Record<Tone, string> = {
   emerald: "bg-emerald-500/10 text-emerald-700 ring-emerald-500/25",
   rose: "bg-rose-500/10 text-rose-700 ring-rose-500/25",
   amber: "bg-amber-500/10 text-amber-700 ring-amber-500/25",
   zinc: "bg-stone-100 text-stone-700 ring-stone-300",
-  sky: "bg-sky-500/10 text-sky-700 ring-sky-500/25",
 };
 
 export function Badge({
@@ -151,7 +150,7 @@ export function StatusPill({
   const map = {
     matched: { tone: "emerald" as const, label: "Reconciled" },
     exception: { tone: "rose" as const, label: "Exception" },
-    info: { tone: "sky" as const, label: "Informational" },
+    info: { tone: "zinc" as const, label: "Informational" },
   };
   const { tone, label } = map[status];
   return <Badge tone={tone}>{label}</Badge>;

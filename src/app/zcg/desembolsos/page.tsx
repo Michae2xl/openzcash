@@ -82,7 +82,7 @@ export default async function DesembolsosPage({
       />
 
       {grant ? (
-        <div className="mb-5 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-amber-500/20 bg-amber-500/[0.06] px-4 py-3">
+        <div className="mb-8 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-amber-500/20 bg-amber-500/[0.06] px-4 py-3">
           <p className="text-sm text-amber-800/80">
             Milestones for grant{" "}
             <span className="font-medium text-amber-800">{grant}</span>
@@ -96,7 +96,7 @@ export default async function DesembolsosPage({
         </div>
       ) : null}
 
-      <div className="mb-5 flex flex-wrap gap-2">
+      <div className="mb-8 flex flex-wrap gap-2">
         {SHEETS.map((s) => {
           const active = sheet === s.id || (!sheet && !s.id);
           return (
@@ -118,7 +118,7 @@ export default async function DesembolsosPage({
         })}
       </div>
 
-      <Card className="overflow-hidden p-4">
+      <Card className="overflow-hidden">
         <DisbursementsTable rows={tableRows} isAdmin={isAdmin} />
       </Card>
 

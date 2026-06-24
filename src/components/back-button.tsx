@@ -21,7 +21,7 @@ export function BackButton() {
   return (
     <Link
       href={dest.href}
-      className="group inline-flex items-center gap-1.5 rounded-full border border-stone-200 bg-white py-1.5 pl-2 pr-3 text-xs font-medium text-stone-600 shadow-sm shadow-stone-300/30 transition hover:border-stone-300 hover:text-stone-900"
+      className="group inline-flex items-center gap-1.5 rounded-lg border border-stone-200 bg-white py-1.5 pl-2 pr-3 text-xs font-medium text-stone-600 shadow-sm shadow-stone-300/30 transition hover:border-stone-300 hover:text-stone-900"
     >
       <svg
         width="14"

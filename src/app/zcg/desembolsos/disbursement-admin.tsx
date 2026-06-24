@@ -346,7 +346,7 @@ export function DisbursementAdminControls({
   return (
     <div className="flex items-center justify-end gap-1.5">
       {edited ? (
-        <span className="rounded-full bg-amber-500/15 px-1.5 py-0.5 text-[10px] font-medium text-amber-700">
+        <span className="rounded-md bg-amber-500/15 px-1.5 py-0.5 text-[10px] font-medium text-amber-700">
           edited
         </span>
       ) : null}
