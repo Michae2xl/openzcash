@@ -137,7 +137,7 @@ export function TotalsTables({
   recipientRows,
 }: TotalsTablesProps) {
   return (
-    <div className="grid gap-6 lg:grid-cols-2">
+    <div className="space-y-6">
       <section className="min-w-0">
         <h2 className="mb-3 text-sm font-semibold text-stone-700">
           By recipient

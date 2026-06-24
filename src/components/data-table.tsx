@@ -278,7 +278,7 @@ export function DataTable<T>({
                         <button
                           type="button"
                           onClick={() => toggleSort(col.key)}
-                          className="group/sort inline-flex items-center gap-1.5 uppercase tracking-wider transition-colors hover:text-stone-900"
+                          className="group/sort inline-flex items-center gap-1.5 whitespace-nowrap uppercase tracking-wider transition-colors hover:text-stone-900"
                         >
                           <span>{col.header}</span>
                           <SortIcon
@@ -286,7 +286,7 @@ export function DataTable<T>({
                           />
                         </button>
                       ) : (
-                        <span>{col.header}</span>
+                        <span className="whitespace-nowrap">{col.header}</span>
                       )}
 
                       {col.filterable ? (
