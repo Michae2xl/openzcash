@@ -6,8 +6,8 @@ import {
 } from "@/lib/zcg/proposals-repo";
 import { cn } from "@/lib/utils";
 import { getIsAdmin } from "@/lib/auth/admin";
+import { getLinks } from "@/lib/zcg/governance-repo";
 import { ProposalsTable, type ProposalTableRow } from "./proposals-table";
-import { NewProposalForm } from "./proposal-admin";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "ZCG Proposals · ZBO" };
@@ -44,11 +44,13 @@ function toTableRow(p: ProposalRow): ProposalTableRow {
 }
 
 export default async function PropostasPage() {
-  const [isAdmin, funnel, all] = await Promise.all([
+  const [isAdmin, funnel, all, links] = await Promise.all([
     getIsAdmin(),
     proposalsFunnel(),
     listProposals({}),
+    getLinks(),
   ]);
+  const submitUrl = links.proposal_zcg ?? "#";
   const proposals = all.slice(0, 400);
   const rows = proposals.map(toTableRow);
 
@@ -64,7 +66,16 @@ export default async function PropostasPage() {
       <PageHeader
         title="Proposals · pipeline"
         subtitle="ZCG governance funnel: every submitted proposal, with its verdict. Upstream of grants, only the approved ones become funded projects."
-        actions={isAdmin ? <NewProposalForm /> : undefined}
+        actions={
+          <a
+            href={submitUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="rounded-lg bg-amber-500 px-3.5 py-2 text-sm font-medium text-stone-900 shadow-sm shadow-amber-900/20 transition hover:bg-amber-400"
+          >
+            + Submit a proposal ↗
+          </a>
+        }
       />
 
       <section className="mb-8 grid grid-cols-2 gap-4 lg:grid-cols-4">

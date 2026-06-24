@@ -8,6 +8,7 @@ export type CategoryRow = {
   key: string;
   category: string;
   _usd: number;
+  _pct: number;
 };
 
 export type RecipientRow = {
@@ -15,12 +16,40 @@ export type RecipientRow = {
   rank: number;
   recipient: string;
   _usd: number;
+  _pct: number;
 };
 
 interface TotalsTablesProps {
   categoryRows: CategoryRow[];
   recipientRows: RecipientRow[];
 }
+
+/** Share-of-total cell: a thin gold bar + the percentage. */
+function PctCell({ pct }: { pct: number }) {
+  return (
+    <div className="flex items-center justify-end gap-2">
+      <span
+        className="hidden h-1 w-14 overflow-hidden rounded-full bg-stone-100 sm:block"
+        aria-hidden
+      >
+        <span
+          className="block h-full rounded-full bg-amber-500/70"
+          style={{ width: `${Math.min(pct, 100)}%` }}
+        />
+      </span>
+      <span className="tnum text-xs text-stone-500">{pct.toFixed(1)}%</span>
+    </div>
+  );
+}
+
+const pctColumn = {
+  key: "pct",
+  header: "% of total",
+  align: "right" as const,
+  sortable: true,
+  sortValue: (r: { _pct: number }) => r._pct,
+  render: (r: { _pct: number }) => <PctCell pct={r._pct} />,
+};
 
 const categoryColumns: Column<CategoryRow>[] = [
   {
@@ -47,6 +76,7 @@ const categoryColumns: Column<CategoryRow>[] = [
       </span>
     ),
   },
+  pctColumn,
 ];
 
 const recipientColumns: Column<RecipientRow>[] = [
@@ -81,6 +111,7 @@ const recipientColumns: Column<RecipientRow>[] = [
       </span>
     ),
   },
+  pctColumn,
 ];
 
 export function TotalsTables({

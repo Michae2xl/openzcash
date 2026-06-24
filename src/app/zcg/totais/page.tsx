@@ -5,6 +5,7 @@ import {
   recipientTotalsFromSheet,
 } from "@/lib/zcg/totals-repo";
 import { formatUsdCents } from "@/lib/zcg/format";
+import { BudgetCards } from "../budget-cards";
 import {
   TotalsTables,
   type CategoryRow,
@@ -27,11 +28,15 @@ export default async function TotaisPage() {
     0n,
   );
   const external = recips.filter((r) => !r.isInternalBucket);
+  const totalNum = Number(total);
+  const share = (cents: bigint) =>
+    totalNum > 0 ? (Number(cents) / totalNum) * 100 : 0;
 
   const categoryRows: CategoryRow[] = cats.map((c) => ({
     key: `${c.pool}:${c.label}`,
     category: c.label,
     _usd: Number(c.usdPaidToDateCents),
+    _pct: share(c.usdPaidToDateCents),
   }));
 
   const recipientRows: RecipientRow[] = external.map((r, i) => ({
@@ -39,6 +44,7 @@ export default async function TotaisPage() {
     rank: i + 1,
     recipient: r.label,
     _usd: Number(r.usdPaidToDateCents),
+    _pct: share(r.usdPaidToDateCents),
   }));
 
   return (
@@ -47,6 +53,13 @@ export default async function TotaisPage() {
         title="Totals & integrity check"
         subtitle="Official aggregates from the spreadsheet (paid amounts by recipient and by category). They serve as a cross-check against the ledger: the spreadsheet sums the payments that were actually settled."
       />
+
+      <section className="mb-8">
+        <h2 className="mb-3 text-sm font-semibold text-stone-700">
+          Discretionary budget
+        </h2>
+        <BudgetCards />
+      </section>
 
       <section className="mb-8 grid grid-cols-2 gap-4 lg:grid-cols-4">
         <Stat

@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import {
   IconBalance,
-  IconChart,
   IconCheck,
   IconClose,
   IconCoins,
@@ -112,14 +111,6 @@ const APPS: AppDef[] = [
     href: "/zcg/recebedores",
     Icon: IconUsers,
     grad: GRAD.emerald,
-  },
-  {
-    id: "budget",
-    label: "Budget",
-    sub: "Annual budget",
-    href: "/zcg/budget",
-    Icon: IconChart,
-    grad: GRAD.rose,
   },
   {
     id: "propostas",
