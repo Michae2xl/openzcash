@@ -2,6 +2,7 @@ import Link from "next/link";
 import { AppLauncher } from "@/components/app-launcher";
 import { LogoutButton } from "@/components/logout-button";
 import { getIsAdmin } from "@/lib/auth/admin";
+import { TreasuryOverview } from "./treasury-overview";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "ZBO · Zcash Back Office" };
@@ -43,6 +44,8 @@ export default async function LauncherPage() {
             )}
           </div>
         </header>
+
+        <TreasuryOverview />
 
         <AppLauncher isAdmin={isAdmin} />
 
