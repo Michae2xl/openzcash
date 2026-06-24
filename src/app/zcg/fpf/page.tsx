@@ -1,7 +1,7 @@
 import { Card, PageHeader, Stat } from "@/components/ui";
 import { grantsSummary, listGrants } from "@/lib/zcg/grants-repo";
 import { listProposals, proposalsFunnel } from "@/lib/zcg/proposals-repo";
-import { PROPOSAL_LINKS } from "@/lib/zcg/meetings";
+import { getLinks } from "@/lib/zcg/governance-repo";
 import { disbStatusLabel, formatUsdCents } from "@/lib/zcg/format";
 import {
   FpfGrantsTable,
@@ -14,10 +14,6 @@ export const dynamic = "force-dynamic";
 export const metadata = {
   title: "FPF · Coinholder Grants · ZBO",
 };
-
-/** FPF milestone intake form (CryptPad). Proposals are opened on GitHub. */
-const CRYPTPAD_MILESTONE_FORM =
-  "https://cryptpad.fr/form/#/2/form/view/qmTMynvJfBAdbpoCWHddUCT8LxdSbmsWXXLTwVBvY+Dc/";
 
 const GRANT_STATUS_LABEL: Record<string, string> = {
   completed: "Completed",
@@ -44,12 +40,15 @@ function grantStatusLabel(status: string | null): string {
 }
 
 export default async function FpfCoinholderGrantsPage() {
-  const [grants, summary, proposals, funnel] = await Promise.all([
+  const [grants, summary, proposals, funnel, links] = await Promise.all([
     listGrants({ program: "coinholder" }),
     grantsSummary(),
     listProposals({ program: "coinholder" }),
     proposalsFunnel(),
+    getLinks(),
   ]);
+  const proposalFpf = links.proposal_fpf ?? "#";
+  const cryptpadMilestone = links.cryptpad_milestone ?? "#";
 
   // Paid USD restricted to the coinholder grants shown here.
   const coinholderPaidCents = grants.reduce((acc, g) => acc + g.usdCents, 0n);
@@ -84,7 +83,7 @@ export default async function FpfCoinholderGrantsPage() {
         actions={
           <div className="flex flex-wrap items-center gap-2">
             <a
-              href={PROPOSAL_LINKS.fpf}
+              href={proposalFpf}
               target="_blank"
               rel="noreferrer"
               className="inline-flex items-center gap-1.5 rounded-lg bg-amber-500/90 px-3.5 py-2 text-sm font-medium text-stone-900 shadow-sm shadow-amber-900/30 transition hover:bg-amber-400"
@@ -92,7 +91,7 @@ export default async function FpfCoinholderGrantsPage() {
               Submit a proposal ↗
             </a>
             <a
-              href={CRYPTPAD_MILESTONE_FORM}
+              href={cryptpadMilestone}
               target="_blank"
               rel="noreferrer"
               className="inline-flex items-center gap-1.5 rounded-lg border border-stone-300 bg-white px-3.5 py-2 text-sm font-medium text-stone-700 shadow-sm transition hover:border-stone-400 hover:bg-stone-50"

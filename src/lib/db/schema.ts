@@ -420,3 +420,47 @@ export const zcgTotals = pgTable(
   },
   (t) => [unique().on(t.pool, t.rowKind, t.label, t.capturedAt)],
 );
+
+// ── Governança editável pelo admin (substitui os arrays hardcoded em TS). ──
+
+/** Atas das reuniões do ZCG (links do fórum). */
+export const zcgMeetings = pgTable("zcg_meetings", {
+  id: text("id").primaryKey(),
+  title: text("title").notNull(),
+  meetingDate: date("meeting_date").notNull(),
+  url: text("url").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});
+
+/** Eleições do comitê ZCG (atual + passadas). */
+export const zcgElections = pgTable("zcg_elections", {
+  id: text("id").primaryKey(),
+  title: text("title").notNull(),
+  /** voting | closed */
+  status: text("status").notNull(),
+  seats: integer("seats").notNull().default(1),
+  url: text("url").notNull(),
+  nominationsClose: date("nominations_close"),
+  communityCall: date("community_call"),
+  votingCloses: date("voting_closes"),
+  resultsBy: date("results_by"),
+  /** Array de nomes eleitos (jsonb). */
+  elected: jsonb("elected"),
+  note: text("note"),
+  sortOrder: integer("sort_order").notNull().default(0),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});
+
+/** Links de configuração (submissão de propostas, fórum, form do CryptPad). */
+export const zcgLinks = pgTable("zcg_links", {
+  key: text("key").primaryKey(),
+  label: text("label").notNull(),
+  url: text("url").notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});

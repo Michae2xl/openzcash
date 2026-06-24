@@ -1,10 +1,12 @@
 import { Badge, Card, PageHeader } from "@/components/ui";
 import { IconList } from "@/components/icons";
+import { getIsAdmin } from "@/lib/auth/admin";
+import { getLinkRows, getLinks, getMeetings } from "@/lib/zcg/governance-repo";
 import {
-  PROPOSAL_LINKS,
-  ZCG_FORUM_CATEGORY,
-  ZCG_MEETINGS,
-} from "@/lib/zcg/meetings";
+  LinksAdmin,
+  MeetingControls,
+  NewMeetingButton,
+} from "../governance-admin";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Meetings · ZBO" };
@@ -28,8 +30,16 @@ function formatDate(iso: string): string {
   return `${month} ${d}, ${y}`;
 }
 
-export default function MeetingsPage() {
-  const latest = ZCG_MEETINGS[0];
+export default async function MeetingsPage() {
+  const [isAdmin, meetings, links, linkRows] = await Promise.all([
+    getIsAdmin(),
+    getMeetings(),
+    getLinks(),
+    getLinkRows(),
+  ]);
+  const latest = meetings[0];
+  const proposalZcg = links.proposal_zcg ?? "#";
+  const forumCategory = links.forum_category ?? "#";
 
   return (
     <>
@@ -37,19 +47,22 @@ export default function MeetingsPage() {
         title="Governance & meetings"
         subtitle="The latest Zcash Community Grants committee meeting minutes, straight from the community forum. New grant proposals are opened on GitHub."
         actions={
-          <a
-            href={PROPOSAL_LINKS.zcg}
-            target="_blank"
-            rel="noreferrer"
-            className="rounded-lg bg-amber-500/15 px-3 py-2 text-sm font-medium text-amber-700 ring-1 ring-inset ring-amber-500/30 hover:bg-amber-500/25"
-          >
-            Submit a proposal
-          </a>
+          <div className="flex items-center gap-2">
+            {isAdmin ? <NewMeetingButton /> : null}
+            <a
+              href={proposalZcg}
+              target="_blank"
+              rel="noreferrer"
+              className="rounded-lg bg-amber-500/15 px-3 py-2 text-sm font-medium text-amber-700 ring-1 ring-inset ring-amber-500/30 hover:bg-amber-500/25"
+            >
+              Submit a proposal
+            </a>
+          </div>
         }
       />
 
       <div className="mb-6 grid gap-4 sm:grid-cols-2">
-        <a href={ZCG_FORUM_CATEGORY} target="_blank" rel="noreferrer">
+        <a href={forumCategory} target="_blank" rel="noreferrer">
           <Card interactive className="h-full">
             <p className="text-[11px] font-medium uppercase tracking-wider text-stone-500">
               Community forum
@@ -62,7 +75,7 @@ export default function MeetingsPage() {
             </p>
           </Card>
         </a>
-        <a href={PROPOSAL_LINKS.zcg} target="_blank" rel="noreferrer">
+        <a href={proposalZcg} target="_blank" rel="noreferrer">
           <Card interactive className="h-full">
             <p className="text-[11px] font-medium uppercase tracking-wider text-stone-500">
               GitHub
@@ -80,37 +93,62 @@ export default function MeetingsPage() {
       <h2 className="mb-3 flex items-center gap-2 text-sm font-semibold text-stone-700">
         Latest meeting minutes
         {latest ? (
-          <Badge tone="emerald">newest {formatDate(latest.date)}</Badge>
+          <Badge tone="emerald">newest {formatDate(latest.meetingDate)}</Badge>
         ) : null}
       </h2>
 
       <Card className="space-y-1 p-2">
-        {ZCG_MEETINGS.map((m) => (
-          <a
-            key={m.url}
-            href={m.url}
-            target="_blank"
-            rel="noreferrer"
+        {meetings.map((m) => (
+          <div
+            key={m.id}
             className="flex items-center gap-3 rounded-xl px-3 py-3 transition hover:bg-stone-100"
           >
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-amber-500/10 text-amber-700">
-              <IconList className="h-4 w-4" />
-            </span>
-            <div className="min-w-0 flex-1">
-              <p className="text-sm font-medium text-stone-900">
-                Meeting minutes
-              </p>
-              <p className="truncate text-xs text-stone-500">
-                Zcash Community Grants committee
-              </p>
-            </div>
-            <span className="shrink-0 text-xs text-stone-500 tnum">
-              {formatDate(m.date)}
-            </span>
-            <span className="shrink-0 text-stone-400">›</span>
-          </a>
+            <a
+              href={m.url}
+              target="_blank"
+              rel="noreferrer"
+              className="flex min-w-0 flex-1 items-center gap-3"
+            >
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-amber-500/10 text-amber-700">
+                <IconList className="h-4 w-4" />
+              </span>
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-medium text-stone-900">{m.title}</p>
+                <p className="truncate text-xs text-stone-500">
+                  Zcash Community Grants committee
+                </p>
+              </div>
+              <span className="shrink-0 text-xs text-stone-500 tnum">
+                {formatDate(m.meetingDate)}
+              </span>
+            </a>
+            {isAdmin ? (
+              <MeetingControls
+                id={m.id}
+                title={m.title}
+                meetingDate={m.meetingDate}
+                url={m.url}
+              />
+            ) : (
+              <span className="shrink-0 text-stone-400">›</span>
+            )}
+          </div>
         ))}
       </Card>
+
+      {isAdmin ? (
+        <section className="mt-8">
+          <h2 className="mb-3 text-sm font-semibold text-stone-700">
+            Config links
+            <span className="ml-2 text-xs font-normal text-stone-400">
+              admin · used across the site
+            </span>
+          </h2>
+          <Card>
+            <LinksAdmin links={linkRows} />
+          </Card>
+        </section>
+      ) : null}
     </>
   );
 }

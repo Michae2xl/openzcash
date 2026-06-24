@@ -1,13 +1,19 @@
 import { Badge, Card } from "@/components/ui";
+import { getIsAdmin } from "@/lib/auth/admin";
 import {
-  ZCG_ELECTIONS,
-  currentElection,
   type Election,
-} from "@/lib/zcg/elections";
+  currentElection,
+  getElections,
+} from "@/lib/zcg/governance-repo";
 import { cn } from "@/lib/utils";
+import {
+  type ElectionForm,
+  ElectionControls,
+  NewElectionButton,
+} from "./governance-admin";
 
-function fmt(iso?: string): string {
-  if (!iso) return "—";
+function fmt(iso?: string | null): string {
+  if (!iso) return "·";
   return new Date(`${iso}T00:00:00Z`).toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
@@ -16,10 +22,25 @@ function fmt(iso?: string): string {
   });
 }
 
-function daysLeft(iso?: string): number | null {
+function daysLeft(iso?: string | null): number | null {
   if (!iso) return null;
   const end = new Date(`${iso}T20:00:00Z`).getTime();
   return Math.ceil((end - Date.now()) / 86_400_000);
+}
+
+function toForm(e: Election): ElectionForm {
+  return {
+    title: e.title,
+    status: e.status,
+    seats: String(e.seats),
+    url: e.url,
+    nominationsClose: e.nominationsClose ?? "",
+    communityCall: e.communityCall ?? "",
+    votingCloses: e.votingCloses ?? "",
+    resultsBy: e.resultsBy ?? "",
+    elected: (e.elected ?? []).join(", "),
+    note: e.note ?? "",
+  };
 }
 
 function KeyDate({
@@ -53,18 +74,23 @@ function KeyDate({
   );
 }
 
-export function ElectionsSection() {
-  const current = currentElection();
-  const past = ZCG_ELECTIONS.filter(
-    (e): e is Election => e.status === "closed",
-  );
+export async function ElectionsSection() {
+  const [isAdmin, elections] = await Promise.all([
+    getIsAdmin(),
+    getElections(),
+  ]);
+  const current = currentElection(elections);
+  const past = elections.filter((e) => e.status === "closed");
   const left = current ? daysLeft(current.votingCloses) : null;
 
   return (
     <section className="mb-8">
-      <h2 className="mb-3 text-sm font-semibold text-stone-700">
-        Committee elections
-      </h2>
+      <div className="mb-3 flex items-center justify-between">
+        <h2 className="text-sm font-semibold text-stone-700">
+          Committee elections
+        </h2>
+        {isAdmin ? <NewElectionButton /> : null}
+      </div>
 
       {current ? (
         <Card className="border-amber-500/25 bg-gradient-to-br from-amber-500/[0.06] to-white">
@@ -78,6 +104,9 @@ export function ElectionsSection() {
                 <span className="text-xs text-stone-500">
                   {current.seats} seats
                 </span>
+                {isAdmin ? (
+                  <ElectionControls id={current.id} initial={toForm(current)} />
+                ) : null}
               </div>
               {current.note ? (
                 <p className="mt-1.5 max-w-xl text-xs leading-relaxed text-stone-500">
@@ -108,7 +137,7 @@ export function ElectionsSection() {
             />
             <KeyDate
               label="Community call"
-              value={`${fmt(current.communityCall)}`}
+              value={fmt(current.communityCall)}
               state="done"
             />
             <KeyDate
@@ -138,21 +167,30 @@ export function ElectionsSection() {
             Past elections
           </p>
           {past.map((e) => (
-            <a
+            <div
               key={e.id}
-              href={e.url}
-              target="_blank"
-              rel="noreferrer"
               className="flex items-center justify-between gap-3 rounded-xl border border-stone-200 bg-white px-4 py-3 text-sm transition hover:border-stone-300 hover:bg-stone-50"
             >
-              <span className="flex items-center gap-2">
-                <span className="font-medium text-stone-900">{e.title}</span>
-                <span className="text-xs text-stone-500">{e.seats} seats</span>
-              </span>
-              <span className="truncate text-xs text-stone-500">
-                {e.elected ? `Elected: ${e.elected.join(", ")}` : "Results ↗"}
-              </span>
-            </a>
+              <a
+                href={e.url}
+                target="_blank"
+                rel="noreferrer"
+                className="flex min-w-0 flex-1 items-center justify-between gap-3"
+              >
+                <span className="flex items-center gap-2">
+                  <span className="font-medium text-stone-900">{e.title}</span>
+                  <span className="text-xs text-stone-500">
+                    {e.seats} seats
+                  </span>
+                </span>
+                <span className="truncate text-xs text-stone-500">
+                  {e.elected ? `Elected: ${e.elected.join(", ")}` : "Results ↗"}
+                </span>
+              </a>
+              {isAdmin ? (
+                <ElectionControls id={e.id} initial={toForm(e)} />
+              ) : null}
+            </div>
           ))}
         </div>
       ) : null}

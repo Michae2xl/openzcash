@@ -20,6 +20,9 @@ const ADMIN_APIS = [
   "/api/treasuries",
   "/api/zcg/proposals",
   "/api/zcg/disbursements",
+  "/api/zcg/meetings",
+  "/api/zcg/elections",
+  "/api/zcg/links",
   "/api/onboarding/invites",
   "/api/logout",
 ];
