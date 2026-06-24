@@ -141,6 +141,16 @@ export default async function GrantDetailPage({
               </tr>
             </thead>
             <tbody>
+              {paid.length === 0 ? (
+                <tr>
+                  <td
+                    colSpan={5}
+                    className="px-4 py-8 text-center text-sm text-stone-400"
+                  >
+                    No milestones paid yet.
+                  </td>
+                </tr>
+              ) : null}
               {paid.map((m) => (
                 <tr
                   key={m.id}

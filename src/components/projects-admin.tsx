@@ -154,6 +154,12 @@ export function ProjectsAdmin({
         ) : null}
       </div>
 
+      {projects.length === 0 ? (
+        <div className="rounded-2xl border border-stone-200 bg-gradient-to-b from-white to-stone-50 p-8 text-center text-sm text-stone-400 shadow-sm shadow-stone-300/40 ring-1 ring-inset ring-stone-900/5">
+          No projects yet. Register the first one above.
+        </div>
+      ) : null}
+
       {projects.map((p) => (
         <div
           key={p.id}

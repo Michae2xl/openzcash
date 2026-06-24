@@ -103,7 +103,7 @@ export default async function DesembolsosPage({
             <Link
               key={s.id ?? "all"}
               href={
-                s.id ? `/zcg/desembolsos?sheet=${s.id}` : "/zcg/desembolsos"
+                s.id ? `/zcg/disbursements?sheet=${s.id}` : "/zcg/disbursements"
               }
               className={cn(
                 "rounded-lg px-3.5 py-1.5 text-xs font-medium shadow-sm ring-1 ring-inset transition",

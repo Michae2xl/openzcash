@@ -3,7 +3,7 @@ import { BarList, type BarItem } from "@/components/bar-list";
 import { DonutChart } from "@/components/donut-chart";
 
 /**
- * Shared totals charts (used by /zcg/totais and /zcg/coinholder): a donut for
+ * Shared totals charts (used by /zcg/totals and /zcg/coinholder): a donut for
  * the classification split and a bar list of the top recipients. Empty ($0)
  * series are dropped so the layout stays balanced.
  */

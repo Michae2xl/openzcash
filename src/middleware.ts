@@ -4,7 +4,7 @@ import { SESSION_COOKIE, verifySession } from "@/lib/auth/session";
 /**
  * Acesso PÚBLICO por padrão (transparência da comunidade). Só as ROTAS DE ADMIN
  * exigem sessão de admin válida:
- *   - páginas de gestão: /admin, /viewing-keys (tesouros), /projetos, /convites;
+ *   - páginas de gestão: /admin, /viewing-keys (tesouros), /projects, /invites;
  *   - APIs que mutam ou expõem dados sensíveis (viewing keys, overrides, scan...).
  * Todo o resto (ZCG, Incoming, onboarding de terceiro, login) é público.
  *
@@ -12,7 +12,7 @@ import { SESSION_COOKIE, verifySession } from "@/lib/auth/session";
  * (sempre sobrescrevendo o que o cliente enviar), que o layout e as páginas leem
  * para decidir o que renderizar — sem reverificar a sessão em cada componente.
  */
-const ADMIN_PAGES = ["/admin", "/viewing-keys", "/projetos", "/convites"];
+const ADMIN_PAGES = ["/admin", "/viewing-keys", "/projects", "/invites"];
 const ADMIN_APIS = [
   "/api/overrides",
   "/api/projects",

@@ -12,7 +12,7 @@ import {
   TotalsTables,
   type CategoryRow,
   type RecipientRow,
-} from "../totais/totals-tables";
+} from "../totals/totals-tables";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Coinholder Grants · ZBO" };

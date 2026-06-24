@@ -82,7 +82,7 @@ export const derivedAddresses = pgTable(
     projectId: text("project_id")
       .notNull()
       .references(() => projectRecipients.id),
-    /** UNIQUE = detecção de colisão (um endereço nunca serve a 2 meses/projetos). */
+    /** UNIQUE = detecção de colisão (um endereço nunca serve a 2 meses/projects). */
     address: text("address").notNull().unique(),
     diversifierIndex: bigint("diversifier_index", { mode: "bigint" }).notNull(),
     issuedMonth: text("issued_month").notNull(), // YYYY-MM

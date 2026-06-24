@@ -52,6 +52,16 @@ export default async function MayaPage() {
             </tr>
           </thead>
           <tbody>
+            {transfers.length === 0 ? (
+              <tr>
+                <td
+                  colSpan={4}
+                  className="px-4 py-12 text-center text-sm text-stone-400"
+                >
+                  No Maya liquidity contributions recorded yet.
+                </td>
+              </tr>
+            ) : null}
             {transfers.map((t) => (
               <tr
                 key={t.id}

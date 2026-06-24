@@ -150,7 +150,7 @@ export default async function ZcgPage() {
                 </div>
               </Card>
             </Link>
-            <Link href="/zcg/desembolsos" className="block">
+            <Link href="/zcg/disbursements" className="block">
               <Card interactive className="flex items-center gap-3">
                 <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-amber-500/10 text-amber-700">
                   <IconList className="h-4 w-4" />
@@ -165,7 +165,7 @@ export default async function ZcgPage() {
                 </div>
               </Card>
             </Link>
-            <Link href="/zcg/recebedores" className="block">
+            <Link href="/zcg/recipients" className="block">
               <Card interactive className="flex items-center gap-3">
                 <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-amber-500/10 text-amber-700">
                   <IconCheck className="h-4 w-4" />

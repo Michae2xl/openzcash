@@ -11,7 +11,7 @@ import { usePathname } from "next/navigation";
  */
 const DRILLDOWN: Record<string, { href: string; label: string }> = {
   "/zcg/grant": { href: "/zcg/grants", label: "Grants" },
-  "/zcg/reconciliacao": { href: "/zcg", label: "ZCG" },
+  "/zcg/reconciliation": { href: "/zcg", label: "ZCG" },
 };
 
 export function BackButton() {

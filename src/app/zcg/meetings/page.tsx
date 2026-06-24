@@ -98,6 +98,11 @@ export default async function MeetingsPage() {
       </h2>
 
       <Card className="space-y-1 p-2">
+        {meetings.length === 0 ? (
+          <p className="px-3 py-6 text-center text-xs text-stone-500">
+            No meeting minutes recorded yet.
+          </p>
+        ) : null}
         {meetings.map((m) => (
           <div
             key={m.id}
