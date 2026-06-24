@@ -1,33 +1,31 @@
 import { Badge, Card, PageHeader, Stat } from "@/components/ui";
+import { latestSnapshot } from "@/lib/zcg/snapshots-repo";
 import {
   categoryTotals,
   grandTotal,
   recipientTotalsFromSheet,
 } from "@/lib/zcg/totals-repo";
 import { formatUsdCents } from "@/lib/zcg/format";
+import { formatZec } from "@/lib/zcash/units";
 import { BarList } from "@/components/bar-list";
-import { BudgetCards } from "../budget-cards";
 import {
   TotalsTables,
   type CategoryRow,
   type RecipientRow,
-} from "./totals-tables";
+} from "../totais/totals-tables";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Totals ZCG · ZBO" };
+export const metadata = { title: "Coinholder Grants · ZBO" };
 
-export default async function TotaisPage() {
-  const [cats, recips, grand] = await Promise.all([
-    categoryTotals("zcg_grants"),
-    recipientTotalsFromSheet("zcg_grants"),
-    grandTotal("zcg_grants"),
+export default async function CoinholderPage() {
+  const [snap, cats, recips, grand] = await Promise.all([
+    latestSnapshot("lockbox_coinholder"),
+    categoryTotals("coinholder"),
+    recipientTotalsFromSheet("coinholder"),
+    grandTotal("coinholder"),
   ]);
 
   const total = grand[0]?.usdPaidToDateCents ?? 0n;
-  const future = grand.reduce(
-    (s, g) => s + (g.usdFuturePipelineCents ?? 0n),
-    0n,
-  );
   const external = recips.filter((r) => !r.isInternalBucket);
   const totalNum = Number(total);
   const share = (cents: bigint) =>
@@ -60,48 +58,44 @@ export default async function TotaisPage() {
     display: formatUsdCents(c._usd, { compact: true }),
   }));
 
+  const zec = snap?.zecBalanceZat ?? 0n;
+  const holdings = snap?.usdTotalHoldingsCents ?? 0n;
+  const receivables = snap?.zecReceivablesZat ?? 0n;
+
   return (
     <>
       <PageHeader
-        title="Totals & integrity check"
-        subtitle="Official aggregates from the spreadsheet (paid amounts by recipient and by category). They serve as a cross-check against the ledger: the spreadsheet sums the payments that were actually settled."
+        title="Coinholder Grants"
+        subtitle="The FPF-run Coinholder Grants program, funded from the ZIP-1016 Lockbox pool. Balances and totals mirror the ZCG public spreadsheet."
       />
-
-      <section className="mb-8">
-        <h2 className="mb-3 text-sm font-semibold text-stone-700">
-          Discretionary budget
-        </h2>
-        <BudgetCards />
-      </section>
 
       <section className="mb-8 grid grid-cols-2 gap-4 lg:grid-cols-4">
         <Stat
-          label="Total paid"
+          label="Current ZEC balance"
+          value={formatZec(zec, { symbol: false })}
+          sub="Lockbox · ZIP-1016 pool"
+        />
+        <Stat
+          label="USD value of holdings"
+          value={formatUsdCents(holdings, { compact: true })}
+          sub="at the day's price"
+        />
+        <Stat
+          label="USD value paid out to date"
           value={formatUsdCents(total, { compact: true })}
-          sub="cumulative (spreadsheet)"
-          tone="warn"
+          sub="to recipients"
         />
         <Stat
-          label="Future pipeline"
-          value={formatUsdCents(future, { compact: true })}
-          sub="milestones to pay"
-        />
-        <Stat
-          label="Categories"
-          value={String(cats.length)}
-          sub="ZCG classifications"
-        />
-        <Stat
-          label="Recipients"
-          value={String(external.length)}
-          sub="orgs (excludes internal buckets)"
+          label="ZEC receivables"
+          value={formatZec(receivables, { symbol: false })}
+          sub="pending to the pool"
         />
       </section>
 
       <section className="mb-8 grid gap-6 lg:grid-cols-2">
         <div className="min-w-0">
           <h2 className="mb-3 text-sm font-semibold text-stone-700">
-            Top recipients · USD paid to date
+            Top recipients · USD value paid out to date
           </h2>
           <Card>
             <BarList items={topRecipients} />
@@ -109,7 +103,7 @@ export default async function TotaisPage() {
         </div>
         <div className="min-w-0">
           <h2 className="mb-3 text-sm font-semibold text-stone-700">
-            By classification · USD paid to date
+            By grant classification · USD paid out to date
           </h2>
           <Card>
             <BarList items={byClassification} />
@@ -119,16 +113,18 @@ export default async function TotaisPage() {
 
       <TotalsTables categoryRows={categoryRows} recipientRows={recipientRows} />
 
-      <Card className="mt-6 flex items-center justify-between gap-3 border-emerald-500/20 bg-emerald-500/[0.05]">
-        <p className="text-sm text-emerald-800/80">
-          Spreadsheet grand total:{" "}
-          <span className="font-medium text-emerald-800 tnum">
-            {formatUsdCents(total)}
-          </span>{" "}
-          paid to recipients, matching the sum of categories.
-        </p>
-        <Badge tone="emerald">✓ imported</Badge>
-      </Card>
+      {total > 0n ? (
+        <Card className="mt-6 flex items-center justify-between gap-3 border-emerald-500/20 bg-emerald-500/[0.05]">
+          <p className="text-sm text-emerald-800/80">
+            Coinholder Grants grand total:{" "}
+            <span className="font-medium text-emerald-800 tnum">
+              {formatUsdCents(total)}
+            </span>{" "}
+            paid out to date.
+          </p>
+          <Badge tone="emerald">✓ imported</Badge>
+        </Card>
+      ) : null}
     </>
   );
 }

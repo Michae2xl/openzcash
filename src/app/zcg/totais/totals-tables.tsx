@@ -4,6 +4,8 @@ import { Card } from "@/components/ui";
 import { DataTable, type Column } from "@/components/data-table";
 import { formatUsdCents } from "@/lib/zcg/format";
 
+// Headers mirror the ZCG spreadsheet so the team recognizes each column.
+
 export type CategoryRow = {
   key: string;
   category: string;
@@ -16,6 +18,7 @@ export type RecipientRow = {
   rank: number;
   recipient: string;
   _usd: number;
+  _future: number;
   _pct: number;
 };
 
@@ -54,7 +57,7 @@ const pctColumn = {
 const categoryColumns: Column<CategoryRow>[] = [
   {
     key: "category",
-    header: "Category",
+    header: "Classification",
     sortable: true,
     filterable: true,
     filterType: "select",
@@ -66,7 +69,7 @@ const categoryColumns: Column<CategoryRow>[] = [
   },
   {
     key: "usd",
-    header: "USD paid",
+    header: "USD paid out to date",
     align: "right",
     sortable: true,
     sortValue: (r) => r._usd,
@@ -90,7 +93,7 @@ const recipientColumns: Column<RecipientRow>[] = [
   },
   {
     key: "recipient",
-    header: "Recipient",
+    header: "Recipient or Classification",
     sortable: true,
     filterable: true,
     render: (r) => (
@@ -101,7 +104,7 @@ const recipientColumns: Column<RecipientRow>[] = [
   },
   {
     key: "usd",
-    header: "USD paid",
+    header: "USD value paid out to date",
     align: "right",
     sortable: true,
     sortValue: (r) => r._usd,
@@ -110,6 +113,21 @@ const recipientColumns: Column<RecipientRow>[] = [
         {formatUsdCents(r._usd, { compact: true })}
       </span>
     ),
+  },
+  {
+    key: "future",
+    header: "Future milestones",
+    align: "right",
+    sortable: true,
+    sortValue: (r) => r._future,
+    render: (r) =>
+      r._future > 0 ? (
+        <span className="text-stone-600 tnum">
+          {formatUsdCents(r._future, { compact: true })}
+        </span>
+      ) : (
+        <span className="text-stone-400">·</span>
+      ),
   },
   pctColumn,
 ];
@@ -122,12 +140,12 @@ export function TotalsTables({
     <div className="grid gap-6 lg:grid-cols-2">
       <section className="min-w-0">
         <h2 className="mb-3 text-sm font-semibold text-stone-700">
-          By category
+          By recipient
         </h2>
         <Card className="overflow-hidden p-0">
           <DataTable
-            columns={categoryColumns}
-            rows={categoryRows}
+            columns={recipientColumns}
+            rows={recipientRows}
             initialSort={{ key: "usd", dir: "desc" }}
             className="p-4"
             maxHeight="max-h-[60vh]"
@@ -137,12 +155,12 @@ export function TotalsTables({
 
       <section className="min-w-0">
         <h2 className="mb-3 text-sm font-semibold text-stone-700">
-          By recipient
+          By classification
         </h2>
         <Card className="overflow-hidden p-0">
           <DataTable
-            columns={recipientColumns}
-            rows={recipientRows}
+            columns={categoryColumns}
+            rows={categoryRows}
             initialSort={{ key: "usd", dir: "desc" }}
             className="p-4"
             maxHeight="max-h-[60vh]"

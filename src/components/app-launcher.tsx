@@ -145,6 +145,14 @@ const APPS: AppDef[] = [
     grad: GRAD.violet,
   },
   {
+    id: "coinholder",
+    label: "Coinholder",
+    sub: "Lockbox pool totals",
+    href: "/zcg/coinholder",
+    Icon: IconCoins,
+    grad: GRAD.amber,
+  },
+  {
     id: "maya",
     label: "Maya",
     sub: "LP liquidity",
