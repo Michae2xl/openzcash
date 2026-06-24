@@ -2,13 +2,29 @@ import Link from "next/link";
 import { AppLauncher } from "@/components/app-launcher";
 import { LogoutButton } from "@/components/logout-button";
 import { getIsAdmin } from "@/lib/auth/admin";
+import { latestImportAt, maybeAutoRefresh } from "@/lib/zcg/freshness";
 import { TreasuryOverview } from "./treasury-overview";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "ZBO · Zcash Back Office" };
 
+function syncedAgo(at: Date | null): string {
+  if (!at) return "not imported yet";
+  const mins = Math.floor((Date.now() - at.getTime()) / 60_000);
+  if (mins < 1) return "synced just now";
+  if (mins < 60) return `synced ${mins}m ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `synced ${hrs}h ago`;
+  return `synced ${Math.floor(hrs / 24)}d ago`;
+}
+
 export default async function LauncherPage() {
-  const isAdmin = await getIsAdmin();
+  const [isAdmin, lastImport] = await Promise.all([
+    getIsAdmin(),
+    latestImportAt(),
+  ]);
+  // Self-heal: kick a background re-import if the spreadsheet data is stale.
+  void maybeAutoRefresh();
 
   return (
     <div className="app-vignette min-h-screen">
@@ -52,6 +68,8 @@ export default async function LauncherPage() {
         <p className="mt-10 text-center text-xs text-stone-400">
           Public transparency for the Zcash Dev Fund · ZCG and FPF grant
           accounting.
+          <span className="mx-1 text-stone-300">·</span>
+          Spreadsheet {syncedAgo(lastImport)}, auto-refreshes every 6h
         </p>
       </div>
     </div>
