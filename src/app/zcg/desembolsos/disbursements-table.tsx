@@ -104,6 +104,7 @@ export function DisbursementsTable({
       header: "Category",
       sortable: true,
       filterable: true,
+      filterType: "select",
       render: (r) =>
         r.category ? (
           <span className="text-xs text-stone-500">{r.category}</span>
@@ -160,6 +161,7 @@ export function DisbursementsTable({
       header: "Status",
       sortable: true,
       filterable: true,
+      filterType: "select",
       filterValue: (r) => disbStatusLabel(r.status),
       sortValue: (r) => disbStatusLabel(r.status),
       render: (r) => (

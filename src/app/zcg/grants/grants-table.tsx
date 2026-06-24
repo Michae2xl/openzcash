@@ -71,6 +71,7 @@ export function GrantsTable({ rows }: GrantsTableProps) {
       header: "Category",
       sortable: true,
       filterable: true,
+      filterType: "select",
       filterValue: (r) => r.category,
       render: (r) => (
         <span className="text-xs text-stone-500">{r.category || "·"}</span>
@@ -126,6 +127,7 @@ export function GrantsTable({ rows }: GrantsTableProps) {
       header: "Status",
       sortable: true,
       filterable: true,
+      filterType: "select",
       sortValue: (r) => r.statusText,
       filterValue: (r) => r.statusText,
       render: (r) => <Badge tone={statusTone(r.status)}>{r.statusText}</Badge>,

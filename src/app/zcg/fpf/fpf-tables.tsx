@@ -75,6 +75,7 @@ const grantColumns: Column<GrantTableRow>[] = [
     header: "Category",
     sortable: true,
     filterable: true,
+    filterType: "select",
     render: (r): ReactNode => (
       <span className="text-xs text-stone-500">{r.category}</span>
     ),
@@ -96,6 +97,7 @@ const grantColumns: Column<GrantTableRow>[] = [
     header: "Status",
     sortable: true,
     filterable: true,
+    filterType: "select",
     sortValue: (r) => r.statusLabel,
     filterValue: (r) => r.statusLabel,
     render: (r): ReactNode => (
@@ -154,6 +156,7 @@ const proposalColumns: Column<ProposalTableRow>[] = [
     header: "Verdict",
     sortable: true,
     filterable: true,
+    filterType: "select",
     sortValue: (r) => r.verdictLabel,
     filterValue: (r) => r.verdictLabel,
     render: (r): ReactNode => (

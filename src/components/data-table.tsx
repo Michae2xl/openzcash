@@ -51,6 +51,12 @@ export interface Column<T> {
   sortValue?: (row: T) => string | number;
   /** Texto-alvo do filtro. Se ausente, deriva texto da célula. */
   filterValue?: (row: T) => string;
+  /**
+   * "text" (default) = input de busca por substring.
+   * "select" = checklist dos valores existentes na coluna (marca/desmarca),
+   * para colunas com conjunto fixo (Status, Verdict, Categoria, Tipo…).
+   */
+  filterType?: "text" | "select";
 }
 
 type SortDir = "asc" | "desc";
@@ -117,6 +123,8 @@ export function DataTable<T>({
     initialSort ?? null,
   );
   const [filters, setFilters] = useState<Record<string, string>>({});
+  /** Valores marcados por coluna no modo "select" (vazio = sem filtro). */
+  const [picks, setPicks] = useState<Record<string, string[]>>({});
   const [openFilter, setOpenFilter] = useState<string | null>(null);
   const [query, setQuery] = useState("");
 
@@ -125,6 +133,38 @@ export function DataTable<T>({
     for (const c of columns) m.set(c.key, c);
     return m;
   }, [columns]);
+
+  /** Valores distintos (ordenados) por coluna "select", derivados das linhas. */
+  const distinctByCol = useMemo(() => {
+    const out = new Map<string, string[]>();
+    for (const col of columns) {
+      if (col.filterType !== "select") continue;
+      const set = new Set<string>();
+      for (const row of rows) {
+        const v = cellText(col, row).trim();
+        if (v) set.add(v);
+      }
+      out.set(
+        col.key,
+        [...set].sort((a, b) => a.localeCompare(b)),
+      );
+    }
+    return out;
+  }, [columns, rows]);
+
+  function hasColFilter(key: string): boolean {
+    return (filters[key] ?? "").trim() !== "" || (picks[key] ?? []).length > 0;
+  }
+
+  function togglePick(key: string, value: string) {
+    setPicks((prev) => {
+      const cur = prev[key] ?? [];
+      const next = cur.includes(value)
+        ? cur.filter((v) => v !== value)
+        : [...cur, value];
+      return { ...prev, [key]: next };
+    });
+  }
 
   function toggleSort(key: string) {
     setSort((prev) => {
@@ -136,16 +176,25 @@ export function DataTable<T>({
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    const active = Object.entries(filters).filter(([, v]) => v.trim() !== "");
+    const activeText = Object.entries(filters).filter(
+      ([, v]) => v.trim() !== "",
+    );
+    const activePicks = Object.entries(picks).filter(([, v]) => v.length > 0);
 
     return rows.filter((row) => {
-      // AND entre os filtros por coluna.
-      for (const [key, value] of active) {
+      // AND entre os filtros por coluna (texto = substring).
+      for (const [key, value] of activeText) {
         const col = colByKey.get(key);
         if (!col) continue;
         if (!cellText(col, row).toLowerCase().includes(value.toLowerCase())) {
           return false;
         }
+      }
+      // AND entre os filtros por coluna (select = pertence ao conjunto marcado).
+      for (const [key, values] of activePicks) {
+        const col = colByKey.get(key);
+        if (!col) continue;
+        if (!values.includes(cellText(col, row).trim())) return false;
       }
       // Search global: OR sobre todas as colunas.
       if (q !== "") {
@@ -156,7 +205,7 @@ export function DataTable<T>({
       }
       return true;
     });
-  }, [rows, filters, query, columns, colByKey]);
+  }, [rows, filters, picks, query, columns, colByKey]);
 
   const sorted = useMemo(() => {
     if (!sort) return filtered;
@@ -174,7 +223,9 @@ export function DataTable<T>({
   }, [filtered, sort, colByKey]);
 
   const isFiltered =
-    query.trim() !== "" || Object.values(filters).some((v) => v.trim() !== "");
+    query.trim() !== "" ||
+    Object.values(filters).some((v) => v.trim() !== "") ||
+    Object.values(picks).some((v) => v.length > 0);
 
   function setColumnFilter(key: string, value: string) {
     setFilters((prev) => ({ ...prev, [key]: value }));
@@ -207,7 +258,10 @@ export function DataTable<T>({
                 const align = ALIGN_CLASS[col.align ?? "left"];
                 const isSorted = sort?.key === col.key;
                 const isOpen = openFilter === col.key;
-                const hasFilter = (filters[col.key] ?? "").trim() !== "";
+                const hasFilter = hasColFilter(col.key);
+                const isSelect = col.filterType === "select";
+                const options = distinctByCol.get(col.key) ?? [];
+                const selected = picks[col.key] ?? [];
                 return (
                   <th
                     key={col.key}
@@ -257,16 +311,82 @@ export function DataTable<T>({
                     </div>
 
                     {col.filterable && isOpen ? (
-                      <input
-                        type="text"
-                        autoFocus
-                        value={filters[col.key] ?? ""}
-                        onChange={(e) =>
-                          setColumnFilter(col.key, e.target.value)
-                        }
-                        placeholder="Filter…"
-                        className="mt-1.5 w-full rounded bg-white px-2 py-1 text-xs font-normal normal-case tracking-normal text-stone-800 ring-1 ring-stone-200 placeholder:text-stone-400 focus:ring-amber-500/40"
-                      />
+                      isSelect ? (
+                        <div
+                          className={cn(
+                            "mt-1.5 max-h-56 w-max min-w-[9rem] max-w-[16rem] overflow-auto rounded-lg bg-white p-1 text-xs font-normal normal-case tracking-normal shadow-lg ring-1 ring-stone-200",
+                            col.align === "right" && "ml-auto",
+                          )}
+                        >
+                          {selected.length > 0 ? (
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setPicks((p) => ({ ...p, [col.key]: [] }))
+                              }
+                              className="mb-1 block w-full rounded px-2 py-1 text-left text-[11px] text-stone-500 hover:bg-stone-100"
+                            >
+                              Clear ({selected.length})
+                            </button>
+                          ) : null}
+                          {options.length === 0 ? (
+                            <p className="px-2 py-1 text-stone-400">
+                              No values
+                            </p>
+                          ) : (
+                            options.map((opt) => {
+                              const on = selected.includes(opt);
+                              return (
+                                <button
+                                  key={opt}
+                                  type="button"
+                                  onClick={() => togglePick(col.key, opt)}
+                                  className="flex w-full items-center gap-2 rounded px-2 py-1 text-left text-stone-700 hover:bg-stone-100"
+                                >
+                                  <span
+                                    className={cn(
+                                      "flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded-[4px] ring-1 ring-inset",
+                                      on
+                                        ? "bg-amber-500 text-white ring-amber-500"
+                                        : "bg-white ring-stone-300",
+                                    )}
+                                  >
+                                    {on ? (
+                                      <svg
+                                        width="9"
+                                        height="9"
+                                        viewBox="0 0 10 10"
+                                        fill="none"
+                                        aria-hidden
+                                      >
+                                        <path
+                                          d="M1.5 5.2 L4 7.5 L8.5 2.5"
+                                          stroke="currentColor"
+                                          strokeWidth="1.6"
+                                          strokeLinecap="round"
+                                          strokeLinejoin="round"
+                                        />
+                                      </svg>
+                                    ) : null}
+                                  </span>
+                                  <span className="truncate">{opt}</span>
+                                </button>
+                              );
+                            })
+                          )}
+                        </div>
+                      ) : (
+                        <input
+                          type="text"
+                          autoFocus
+                          value={filters[col.key] ?? ""}
+                          onChange={(e) =>
+                            setColumnFilter(col.key, e.target.value)
+                          }
+                          placeholder="Filter…"
+                          className="mt-1.5 w-full rounded bg-white px-2 py-1 text-xs font-normal normal-case tracking-normal text-stone-800 ring-1 ring-stone-200 placeholder:text-stone-400 focus:ring-amber-500/40"
+                        />
+                      )
                     ) : null}
                   </th>
                 );

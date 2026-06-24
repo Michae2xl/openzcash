@@ -28,6 +28,7 @@ const categoryColumns: Column<CategoryRow>[] = [
     header: "Category",
     sortable: true,
     filterable: true,
+    filterType: "select",
     render: (r) => (
       <span className="block max-w-[16rem] truncate font-medium text-stone-900">
         {r.category}

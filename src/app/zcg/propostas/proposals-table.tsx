@@ -79,6 +79,7 @@ const columns: Column<ProposalTableRow>[] = [
     header: "Verdict",
     sortable: true,
     filterable: true,
+    filterType: "select",
     sortValue: (r) => r.statusLabel.toLowerCase(),
     filterValue: (r) => r.statusLabel,
     render: (r) => <Badge tone={tone(r.status)}>{r.statusLabel}</Badge>,
