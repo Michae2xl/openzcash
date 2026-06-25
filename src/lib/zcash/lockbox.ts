@@ -18,7 +18,11 @@ export const ZCG_ZEC_PER_BLOCK = 0.125; // 8% of the subsidy (ZCG/FPF)
 export const MINER_ZEC_PER_BLOCK = 1.25; // 80% of the subsidy
 export const BLOCKS_PER_DAY = 1152; // ~75s target block time
 
-/** ZEC accrued to the Lockbox up to (and including) the given block height. */
+/**
+ * ZEC accrued to the Lockbox by the given block height, counting blocks mined
+ * since the lockbox start height (start block exclusive), clamped at the 3rd
+ * halving. See lockbox.test.ts for the encoded convention.
+ */
 export function lockboxZecAt(height: number): number {
   const end = Math.min(height, THIRD_HALVING_HEIGHT);
   const blocks = Math.max(0, end - LOCKBOX_START_HEIGHT);

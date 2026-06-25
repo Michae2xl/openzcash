@@ -5,6 +5,7 @@ import {
   BLOCKS_PER_DAY,
   BLOCK_SUBSIDY_ZEC,
   LOCKBOX_ZEC_PER_BLOCK,
+  THIRD_HALVING_HEIGHT,
   ZCG_ZEC_PER_BLOCK,
   lockboxZecAt,
 } from "@/lib/zcash/lockbox";
@@ -105,10 +106,12 @@ export function LockboxLiveFeed({
   // Anchor to the real spreadsheet balance + accrue 0.1875 ZEC per block since,
   // so this matches the snapshot screens at the baseline and only the live
   // blocks pull it ahead. Falls back to the from-genesis math if no snapshot.
+  // Accrual stops at the 3rd halving (funding-model end), matching lockboxZecAt.
+  const effHeight = Math.min(height, THIRD_HALVING_HEIGHT);
   const totalZec =
     baselineHeight > 0
       ? baselineZec +
-        Math.max(0, height - baselineHeight) * LOCKBOX_ZEC_PER_BLOCK
+        Math.max(0, effHeight - baselineHeight) * LOCKBOX_ZEC_PER_BLOCK
       : lockboxZecAt(height);
   const perDayZec = LOCKBOX_ZEC_PER_BLOCK * BLOCKS_PER_DAY;
 

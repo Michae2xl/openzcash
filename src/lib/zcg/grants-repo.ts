@@ -101,17 +101,20 @@ export async function grantsSummary(): Promise<GrantsSummary> {
     .select({
       grantCount: sql<number>`count(distinct ${zcgDisbursements.project})::int`,
       committedCents: sql<string>`coalesce(sum(${zcgDisbursements.amountUsdCents}) filter (where ${zcgDisbursements.grantStatus} is distinct from 'cancelled'),0)`,
-      paidCents: sql<string>`coalesce(sum(${zcgDisbursements.amountUsdCents}) filter (where ${zcgDisbursements.isPaid}),0)`,
+      // Paid must use the SAME non-cancelled population as committed, otherwise
+      // a partially-paid-then-cancelled grant would understate the open figure.
+      paidCents: sql<string>`coalesce(sum(${zcgDisbursements.amountUsdCents}) filter (where ${zcgDisbursements.isPaid} and ${zcgDisbursements.grantStatus} is distinct from 'cancelled'),0)`,
     })
     .from(zcgDisbursements)
     .where(and(GRANT_SHEETS, sql`${zcgDisbursements.project} is not null`));
 
   const committed = BigInt(r?.committedCents ?? "0");
   const paid = BigInt(r?.paidCents ?? "0");
+  const future = committed - paid;
   return {
     grantCount: r?.grantCount ?? 0,
     committedCents: committed,
     paidCents: paid,
-    futureCents: committed - paid,
+    futureCents: future > 0n ? future : 0n,
   };
 }
