@@ -7,7 +7,8 @@ import { loadAudit } from "@/lib/app-data";
 import { formatDateTime } from "@/lib/format";
 import { summarizeTreasuries } from "@/lib/accounting/treasuries";
 import { formatZec, formatZecCompact } from "@/lib/zcash/units";
-import { formatFiat, zatoshisToFiat } from "@/lib/pricing/price-oracle";
+import { currentZecUsdCents, zatToUsdCents } from "@/lib/pricing/live-price";
+import { formatUsdCents } from "@/lib/zcg/format";
 import { cn } from "@/lib/utils";
 
 export const metadata = { title: "Treasuries · OpenZcash" };
@@ -15,6 +16,7 @@ export const dynamic = "force-dynamic";
 
 export default async function ViewingKeysPage() {
   const { viewingKeys, access, recon, realBalanceZat } = await loadAudit();
+  const liveCents = await currentZecUsdCents();
   const labelById = new Map(viewingKeys.map((v) => [v.id, v.accountLabel]));
   const treasuries = summarizeTreasuries(viewingKeys, recon.entries);
 
@@ -54,7 +56,11 @@ export default async function ViewingKeysPage() {
         <Stat
           label="Consolidated balance"
           value={formatZecCompact(consolidated, { symbol: false })}
-          sub={formatFiat(zatoshisToFiat(consolidated, "USD"), "USD")}
+          sub={
+            liveCents != null
+              ? formatUsdCents(zatToUsdCents(consolidated, liveCents))
+              : undefined
+          }
         />
         <Stat
           label="External inflows"
@@ -112,7 +118,10 @@ export default async function ViewingKeysPage() {
                     {formatZec(balanceZat)}
                   </p>
                   <p className="text-xs text-stone-600 tnum">
-                    ≈ {formatFiat(zatoshisToFiat(balanceZat, "USD"), "USD")}
+                    ≈{" "}
+                    {liveCents != null
+                      ? formatUsdCents(zatToUsdCents(balanceZat, liveCents))
+                      : "—"}
                   </p>
                 </div>
                 <div className="text-right text-xs tnum">

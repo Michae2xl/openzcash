@@ -1,5 +1,6 @@
 import { latestSnapshot } from "@/lib/zcg/snapshots-repo";
 import { currentLockboxZec } from "@/lib/zcash/lockbox-live";
+import { currentZecUsdCents, zatToUsdCents } from "@/lib/pricing/live-price";
 import { formatUsdCents } from "@/lib/zcg/format";
 import { formatZec } from "@/lib/zcash/units";
 
@@ -51,16 +52,29 @@ function PoolCard({
 }
 
 export async function TreasuryOverview() {
-  const [op, lock] = await Promise.all([
+  const [op, lock, liveCents] = await Promise.all([
     latestSnapshot("zcg_operating"),
     currentLockboxZec(),
+    currentZecUsdCents(),
   ]);
   if (!op && !lock) return null;
 
   const height =
     lock?.height ?? (op?.blockHeight != null ? Number(op.blockHeight) : null);
+  // Live market price preferred; fall back to the spreadsheet's recorded price.
   const priceCents =
-    op?.zecusdPriceCents ?? lock?.snap?.zecusdPriceCents ?? null;
+    liveCents ?? op?.zecusdPriceCents ?? lock?.snap?.zecusdPriceCents ?? null;
+
+  // Value each pool at the current price (ZEC × live price, + any USD cash).
+  const opUsdCents =
+    priceCents != null && op?.zecBalanceZat != null
+      ? zatToUsdCents(op.zecBalanceZat, priceCents) +
+        (op.usdCashBalanceCents ?? 0n)
+      : (op?.usdTotalHoldingsCents ?? 0n);
+  const lockUsdCents =
+    priceCents != null && lock
+      ? zatToUsdCents(lock.zat, priceCents)
+      : (lock?.snap?.usdTotalHoldingsCents ?? 0n);
 
   return (
     <section className="mt-12">
@@ -81,9 +95,7 @@ export async function TreasuryOverview() {
             name="ZCG operating"
             tag="Coinbase address"
             zec={formatZec(op.zecBalanceZat ?? 0n, { symbol: false })}
-            usd={formatUsdCents(op.usdTotalHoldingsCents ?? 0n, {
-              compact: true,
-            })}
+            usd={formatUsdCents(opUsdCents, { compact: true })}
             sub={
               op.usdCashBalanceCents != null
                 ? `${formatUsdCents(op.usdCashBalanceCents, { compact: true })} cash`
@@ -96,9 +108,7 @@ export async function TreasuryOverview() {
             name="Lockbox · Coinholder"
             tag="ZIP-1016 pool · live"
             zec={formatZec(lock.zat, { symbol: false })}
-            usd={formatUsdCents(lock.snap?.usdTotalHoldingsCents ?? 0n, {
-              compact: true,
-            })}
+            usd={formatUsdCents(lockUsdCents, { compact: true })}
           />
         ) : null}
       </div>

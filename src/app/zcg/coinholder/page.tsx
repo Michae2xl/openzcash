@@ -1,5 +1,6 @@
 import { Badge, Card, PageHeader, Stat } from "@/components/ui";
 import { currentLockboxZec } from "@/lib/zcash/lockbox-live";
+import { currentZecUsdCents, zatToUsdCents } from "@/lib/pricing/live-price";
 import {
   categoryTotals,
   grandTotal,
@@ -18,11 +19,12 @@ export const dynamic = "force-dynamic";
 export const metadata = { title: "Coinholder Grants · OpenZcash" };
 
 export default async function CoinholderPage() {
-  const [lock, cats, recips, grand] = await Promise.all([
+  const [lock, cats, recips, grand, liveCents] = await Promise.all([
     currentLockboxZec(),
     categoryTotals("coinholder"),
     recipientTotalsFromSheet("coinholder"),
     grandTotal("coinholder"),
+    currentZecUsdCents(),
   ]);
 
   const total = grand[0]?.usdPaidToDateCents ?? 0n;
@@ -59,7 +61,11 @@ export default async function CoinholderPage() {
   }));
 
   const zec = lock?.zat ?? 0n;
-  const holdings = lock?.snap?.usdTotalHoldingsCents ?? 0n;
+  const priceCents = liveCents ?? lock?.snap?.zecusdPriceCents ?? null;
+  const holdings =
+    priceCents != null
+      ? zatToUsdCents(zec, priceCents)
+      : (lock?.snap?.usdTotalHoldingsCents ?? 0n);
   const receivables = lock?.snap?.zecReceivablesZat ?? 0n;
 
   return (
@@ -78,7 +84,7 @@ export default async function CoinholderPage() {
         <Stat
           label="USD value of holdings"
           value={formatUsdCents(holdings, { compact: true })}
-          sub="at the day's price"
+          sub={liveCents != null ? "at live price" : "at the day's price"}
         />
         <Stat
           label="USD value paid out to date"

@@ -1,6 +1,6 @@
 import { PageHeader } from "@/components/ui";
 import { LockboxLiveFeed } from "@/components/lockbox-live-feed";
-import { zecUnitPrice } from "@/lib/pricing/price-oracle";
+import { currentZecUsdCents } from "@/lib/pricing/live-price";
 import { getCurrentHeight } from "@/lib/zcash/real/lwd/lwd-client";
 import { latestSnapshot } from "@/lib/zcg/snapshots-repo";
 
@@ -24,8 +24,6 @@ export default async function TransacoesPage() {
   } catch {
     initialHeight = 0;
   }
-  const zecUsd = zecUnitPrice("USD");
-
   // Anchor the live total to the spreadsheet's real Lockbox balance so it
   // agrees with the other screens; live blocks only add to it from there.
   const snap = await latestSnapshot("lockbox_coinholder");
@@ -33,6 +31,10 @@ export default async function TransacoesPage() {
     ? Number(snap.zecBalanceZat) / 1e8
     : 0;
   const baselineHeight = snap?.blockHeight ? Number(snap.blockHeight) : 0;
+
+  // Live market price (CoinGecko, ~10 min cache); fall back to the sheet price.
+  const liveCents = await currentZecUsdCents();
+  const zecUsd = (liveCents ?? Number(snap?.zecusdPriceCents ?? 39_200)) / 100;
 
   return (
     <>
