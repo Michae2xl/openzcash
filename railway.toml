@@ -17,7 +17,7 @@ builder = "NIXPACKS"
 # `next start` honors $PORT. Migrations run from inside Railway's network — the
 # Postgres host is only reachable on the private network. Healthcheck hits a
 # DB-free page so app-boot is what's measured, not data readiness.
-startCommand = "node scripts/migrate.mjs && npm run start"
+startCommand = "node scripts/migrate.mjs && node scripts/seed-governance.mjs && npm run start"
 healthcheckPath = "/login"
 healthcheckTimeout = 120
 restartPolicyType = "ON_FAILURE"
