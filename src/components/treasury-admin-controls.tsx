@@ -82,7 +82,7 @@ export function TreasuryAdminControls({
           </button>
           <button
             onClick={() => setEditing(false)}
-            className="px-1 text-xs text-stone-500"
+            className="px-1 text-xs text-stone-600"
           >
             Cancel
           </button>
@@ -112,7 +112,7 @@ export function TreasuryAdminControls({
           "inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-medium ring-1 ring-inset transition disabled:opacity-50",
           isPublic
             ? "bg-emerald-500/10 text-emerald-700 ring-emerald-500/25 hover:bg-emerald-500/20"
-            : "bg-stone-100 text-stone-500 ring-stone-200 hover:bg-stone-200/70",
+            : "bg-stone-100 text-stone-600 ring-stone-200 hover:bg-stone-200/70",
         )}
       >
         <span

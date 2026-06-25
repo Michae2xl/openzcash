@@ -65,7 +65,7 @@ const grantColumns: Column<GrantTableRow>[] = [
     sortable: true,
     filterable: true,
     render: (r): ReactNode => (
-      <span className="block max-w-[14rem] truncate text-stone-500">
+      <span className="block max-w-[14rem] truncate text-stone-600">
         {r.grantee}
       </span>
     ),
@@ -77,7 +77,7 @@ const grantColumns: Column<GrantTableRow>[] = [
     filterable: true,
     filterType: "select",
     render: (r): ReactNode => (
-      <span className="text-xs text-stone-500">{r.category}</span>
+      <span className="text-xs text-stone-600">{r.category}</span>
     ),
   },
   {
@@ -134,7 +134,7 @@ const proposalColumns: Column<ProposalTableRow>[] = [
     sortable: true,
     filterable: true,
     render: (r): ReactNode => (
-      <span className="block max-w-[14rem] truncate text-stone-500">
+      <span className="block max-w-[14rem] truncate text-stone-600">
         {r.applicant}
       </span>
     ),

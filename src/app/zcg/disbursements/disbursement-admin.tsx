@@ -143,14 +143,14 @@ function DisbModal({
           <button
             type="button"
             onClick={onClose}
-            className="text-xs text-stone-500 hover:text-stone-800"
+            className="text-xs text-stone-600 hover:text-stone-800"
           >
             Close
           </button>
         </div>
 
         <div className="grid grid-cols-2 gap-3">
-          <label className="col-span-2 text-xs text-stone-500">
+          <label className="col-span-2 text-xs text-stone-600">
             Recipient
             <input
               required
@@ -161,7 +161,7 @@ function DisbModal({
             />
           </label>
           {mode === "create" ? (
-            <label className="text-xs text-stone-500">
+            <label className="text-xs text-stone-600">
               Kind
               <select
                 value={f.sourceSheet}
@@ -176,7 +176,7 @@ function DisbModal({
               </select>
             </label>
           ) : null}
-          <label className="text-xs text-stone-500">
+          <label className="text-xs text-stone-600">
             Status
             <select
               value={f.grantStatus}
@@ -190,7 +190,7 @@ function DisbModal({
               ))}
             </select>
           </label>
-          <label className="col-span-2 text-xs text-stone-500">
+          <label className="col-span-2 text-xs text-stone-600">
             Grant / project
             <input
               value={f.project}
@@ -199,7 +199,7 @@ function DisbModal({
               placeholder="Grant name (groups milestones)"
             />
           </label>
-          <label className="text-xs text-stone-500">
+          <label className="text-xs text-stone-600">
             Category
             <input
               value={f.category}
@@ -208,7 +208,7 @@ function DisbModal({
               placeholder="e.g. Infrastructure"
             />
           </label>
-          <label className="text-xs text-stone-500">
+          <label className="text-xs text-stone-600">
             Milestone
             <input
               value={f.milestoneLabel}
@@ -217,7 +217,7 @@ function DisbModal({
               placeholder="e.g. m1"
             />
           </label>
-          <label className="text-xs text-stone-500">
+          <label className="text-xs text-stone-600">
             Budgeted USD
             <input
               type="number"
@@ -228,7 +228,7 @@ function DisbModal({
               placeholder="e.g. 25000"
             />
           </label>
-          <label className="text-xs text-stone-500">
+          <label className="text-xs text-stone-600">
             USD disbursed
             <input
               type="number"
@@ -238,7 +238,7 @@ function DisbModal({
               className={cn(INPUT, "mt-1")}
             />
           </label>
-          <label className="text-xs text-stone-500">
+          <label className="text-xs text-stone-600">
             ZEC disbursed
             <input
               type="number"
@@ -249,7 +249,7 @@ function DisbModal({
               placeholder="negative = clawback"
             />
           </label>
-          <label className="text-xs text-stone-500">
+          <label className="text-xs text-stone-600">
             Paid-out date
             <input
               value={f.paidOutDate}

@@ -50,7 +50,7 @@ function SourceTag({ origin, edited }: { origin: string; edited: boolean }) {
         admin-edited
       </span>
     );
-  return <span className="text-[10px] text-stone-400">from spreadsheet</span>;
+  return <span className="text-[10px] text-stone-500">from spreadsheet</span>;
 }
 
 interface DisbursementsTableProps {
@@ -73,7 +73,7 @@ export function DisbursementsTable({
         <div>
           <div>
             <span className="font-medium text-stone-900">{r.recipient}</span>
-            <span className="ml-2 text-[10px] uppercase tracking-wide text-stone-400">
+            <span className="ml-2 text-[10px] uppercase tracking-wide text-stone-500">
               {r.type}
             </span>
           </div>
@@ -91,10 +91,10 @@ export function DisbursementsTable({
       filterValue: (r) =>
         `${r.detail}${r.milestoneSeq ? ` m${r.milestoneSeq}` : ""}`,
       render: (r) => (
-        <span className="block max-w-[22rem] truncate text-stone-500">
+        <span className="block max-w-[22rem] truncate text-stone-600">
           {r.detail || "·"}
           {r.milestoneSeq ? (
-            <span className="text-stone-400"> · m{r.milestoneSeq}</span>
+            <span className="text-stone-500"> · m{r.milestoneSeq}</span>
           ) : null}
         </span>
       ),
@@ -107,9 +107,9 @@ export function DisbursementsTable({
       filterType: "select",
       render: (r) =>
         r.category ? (
-          <span className="text-xs text-stone-500">{r.category}</span>
+          <span className="text-xs text-stone-600">{r.category}</span>
         ) : (
-          <span className="text-stone-400">·</span>
+          <span className="text-stone-500">·</span>
         ),
     },
     {
@@ -151,7 +151,7 @@ export function DisbursementsTable({
       filterable: true,
       sortValue: (r) => r.date,
       render: (r) => (
-        <span className="whitespace-nowrap text-xs text-stone-500">
+        <span className="whitespace-nowrap text-xs text-stone-600">
           {r.date || "·"}
         </span>
       ),

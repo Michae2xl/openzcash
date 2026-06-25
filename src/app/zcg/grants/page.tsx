@@ -73,7 +73,7 @@ export default async function GrantsPage() {
         </div>
       </Card>
 
-      <p className="mt-4 text-xs text-stone-400">
+      <p className="mt-4 text-xs text-stone-500">
         {grants.length} grants · one project per row · click to view its
         milestones
       </p>

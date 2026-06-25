@@ -42,7 +42,7 @@ export function PageHeader({
           {title}
         </h1>
         {subtitle ? (
-          <p className="mt-1.5 max-w-2xl text-sm leading-relaxed text-stone-500">
+          <p className="mt-1.5 max-w-2xl text-sm leading-relaxed text-stone-600">
             {subtitle}
           </p>
         ) : null}
@@ -94,7 +94,7 @@ export function Stat({
           a.bar,
         )}
       />
-      <p className="relative pl-3 text-[11px] font-medium uppercase tracking-wider text-stone-500">
+      <p className="relative pl-3 text-[11px] font-semibold uppercase tracking-wider text-stone-600">
         {label}
       </p>
       <p
@@ -106,7 +106,7 @@ export function Stat({
         {value}
       </p>
       {sub ? (
-        <p className="relative mt-1.5 truncate pl-3 text-xs text-stone-500 tnum">
+        <p className="relative mt-1.5 truncate pl-3 text-xs text-stone-600 tnum">
           {sub}
         </p>
       ) : null}
@@ -171,7 +171,7 @@ export function Mono({
       ? `${value.slice(0, head)}…${value.slice(-tail)}`
       : value;
   return (
-    <span className="font-mono text-xs text-stone-500" title={value}>
+    <span className="font-mono text-xs text-stone-600" title={value}>
       {short}
     </span>
   );

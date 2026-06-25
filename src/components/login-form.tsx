@@ -50,7 +50,7 @@ export function LoginForm() {
             Zcash Back Office
           </span>
         </div>
-        <p className="mt-2 text-sm text-stone-500">
+        <p className="mt-2 text-sm text-stone-600">
           Restricted access: enter the administrator password.
         </p>
       </div>

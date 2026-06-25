@@ -41,7 +41,7 @@ export default async function MayaPage() {
 
       <Card className="overflow-hidden p-0">
         <table className="w-full text-left text-sm">
-          <thead className="tbl-head text-[11px] uppercase tracking-wider text-stone-500">
+          <thead className="tbl-head text-[11px] uppercase tracking-wider text-stone-600">
             <tr className="border-b border-stone-200">
               <th className="px-4 py-3 font-medium">Project</th>
               <th className="px-4 py-3 text-right font-medium">USD</th>
@@ -56,7 +56,7 @@ export default async function MayaPage() {
               <tr>
                 <td
                   colSpan={4}
-                  className="px-4 py-12 text-center text-sm text-stone-400"
+                  className="px-4 py-12 text-center text-sm text-stone-500"
                 >
                   No Maya liquidity contributions recorded yet.
                 </td>
@@ -78,7 +78,7 @@ export default async function MayaPage() {
                     ? formatZec(t.zecTransferredZat, { symbol: false })
                     : "·"}
                 </td>
-                <td className="hidden px-4 py-2.5 text-right text-xs text-stone-500 sm:table-cell tnum">
+                <td className="hidden px-4 py-2.5 text-right text-xs text-stone-600 sm:table-cell tnum">
                   {t.transferredAt ?? "·"}
                 </td>
               </tr>

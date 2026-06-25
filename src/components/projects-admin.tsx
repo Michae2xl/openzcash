@@ -78,7 +78,7 @@ export function ProjectsAdmin({
         <p className="text-sm font-medium text-stone-800">Register project</p>
         <div className="grid grid-cols-2 gap-3">
           <label className="block">
-            <span className="mb-1 block text-xs text-stone-500">Name</span>
+            <span className="mb-1 block text-xs text-stone-600">Name</span>
             <input
               className={inputClass}
               value={name}
@@ -87,7 +87,7 @@ export function ProjectsAdmin({
             />
           </label>
           <label className="block">
-            <span className="mb-1 block text-xs text-stone-500">Category</span>
+            <span className="mb-1 block text-xs text-stone-600">Category</span>
             <select
               className={inputClass}
               value={kind}
@@ -99,7 +99,7 @@ export function ProjectsAdmin({
           </label>
         </div>
         <label className="block">
-          <span className="mb-1 block text-xs text-stone-500">
+          <span className="mb-1 block text-xs text-stone-600">
             Project viewing key (uview1…/zxviews1…)
           </span>
           <textarea
@@ -114,7 +114,7 @@ export function ProjectsAdmin({
         </label>
         <div className="grid grid-cols-2 gap-3">
           <label className="block">
-            <span className="mb-1 block text-xs text-stone-500">
+            <span className="mb-1 block text-xs text-stone-600">
               Birthday height (optional)
             </span>
             <input
@@ -128,7 +128,7 @@ export function ProjectsAdmin({
             />
           </label>
           <label className="block">
-            <span className="mb-1 block text-xs text-stone-500">
+            <span className="mb-1 block text-xs text-stone-600">
               Months to derive
             </span>
             <input
@@ -155,7 +155,7 @@ export function ProjectsAdmin({
       </div>
 
       {projects.length === 0 ? (
-        <div className="rounded-2xl border border-stone-200 bg-gradient-to-b from-white to-stone-50 p-8 text-center text-sm text-stone-400 shadow-sm shadow-stone-300/40 ring-1 ring-inset ring-stone-900/5">
+        <div className="rounded-2xl border border-stone-200 bg-gradient-to-b from-white to-stone-50 p-8 text-center text-sm text-stone-500 shadow-sm shadow-stone-300/40 ring-1 ring-inset ring-stone-900/5">
           No projects yet. Register the first one above.
         </div>
       ) : null}
@@ -172,12 +172,12 @@ export function ProjectsAdmin({
             <Badge tone={p.paymentKind === "bounty" ? "zinc" : "amber"}>
               {p.paymentKind}
             </Badge>
-            <span className="text-xs text-stone-400">
+            <span className="text-xs text-stone-500">
               {p.addresses.length} addresses
             </span>
           </div>
           <table className="w-full text-left text-sm">
-            <thead className="border-b border-stone-200 text-xs uppercase tracking-wide text-stone-500">
+            <thead className="border-b border-stone-200 text-xs uppercase tracking-wide text-stone-600">
               <tr>
                 <th className="py-2 font-medium">Month</th>
                 <th className="py-2 font-medium">Address</th>
@@ -198,7 +198,7 @@ export function ProjectsAdmin({
                       </span>
                     ) : null}
                   </td>
-                  <td className="py-2 font-mono text-xs text-stone-500">
+                  <td className="py-2 font-mono text-xs text-stone-600">
                     {a.address.slice(0, 24)}…{a.address.slice(-8)}
                   </td>
                   <td className="py-2 text-right">

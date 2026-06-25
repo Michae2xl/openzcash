@@ -61,7 +61,7 @@ function KeyDate({
           : "border-stone-200 bg-white",
       )}
     >
-      <p className="flex items-center gap-1 text-[10px] font-medium uppercase tracking-wider text-stone-500">
+      <p className="flex items-center gap-1 text-[10px] font-medium uppercase tracking-wider text-stone-600">
         {state === "done" ? (
           <span className="text-emerald-600">✓</span>
         ) : state === "active" ? (
@@ -116,7 +116,7 @@ export async function ElectionsSection() {
                   <p className="text-sm font-semibold text-stone-900">
                     {current.title}
                   </p>
-                  <span className="text-xs text-stone-500">
+                  <span className="text-xs text-stone-600">
                     {current.seats} seats
                   </span>
                   {isAdmin ? (
@@ -127,7 +127,7 @@ export async function ElectionsSection() {
                   ) : null}
                 </div>
                 {current.note ? (
-                  <p className="mt-1.5 max-w-xl text-xs leading-relaxed text-stone-500">
+                  <p className="mt-1.5 max-w-xl text-xs leading-relaxed text-stone-600">
                     {current.note}
                   </p>
                 ) : null}
@@ -182,7 +182,7 @@ export async function ElectionsSection() {
 
       {past.length > 0 ? (
         <div className="mt-3 space-y-2">
-          <p className="text-[11px] font-medium uppercase tracking-wider text-stone-400">
+          <p className="text-[11px] font-medium uppercase tracking-wider text-stone-500">
             Past elections
           </p>
           {past.map((e) => (
@@ -198,11 +198,11 @@ export async function ElectionsSection() {
               >
                 <span className="flex min-w-0 items-center gap-2">
                   <span className="font-medium text-stone-900">{e.title}</span>
-                  <span className="text-xs text-stone-500">
+                  <span className="text-xs text-stone-600">
                     {e.seats} seats
                   </span>
                 </span>
-                <span className="truncate text-xs text-stone-500">
+                <span className="truncate text-xs text-stone-600">
                   {e.elected ? `Elected: ${e.elected.join(", ")}` : "Results ↗"}
                 </span>
               </a>

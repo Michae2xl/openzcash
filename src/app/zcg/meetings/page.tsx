@@ -64,26 +64,26 @@ export default async function MeetingsPage() {
       <div className="mb-6 grid gap-4 sm:grid-cols-2">
         <a href={forumCategory} target="_blank" rel="noreferrer">
           <Card interactive className="h-full">
-            <p className="text-[11px] font-medium uppercase tracking-wider text-stone-500">
+            <p className="text-[11px] font-medium uppercase tracking-wider text-stone-600">
               Community forum
             </p>
             <p className="mt-1 text-sm font-medium text-stone-900">
               Community Grants Updates
             </p>
-            <p className="mt-1 text-xs text-stone-500">
+            <p className="mt-1 text-xs text-stone-600">
               Full archive of meeting minutes and announcements.
             </p>
           </Card>
         </a>
         <a href={proposalZcg} target="_blank" rel="noreferrer">
           <Card interactive className="h-full">
-            <p className="text-[11px] font-medium uppercase tracking-wider text-stone-500">
+            <p className="text-[11px] font-medium uppercase tracking-wider text-stone-600">
               GitHub
             </p>
             <p className="mt-1 text-sm font-medium text-stone-900">
               ZcashCommunityGrants / proposals
             </p>
-            <p className="mt-1 text-xs text-stone-500">
+            <p className="mt-1 text-xs text-stone-600">
               Where ZCG grant applications are tracked and discussed.
             </p>
           </Card>
@@ -99,7 +99,7 @@ export default async function MeetingsPage() {
 
       <Card className="space-y-1 p-2">
         {meetings.length === 0 ? (
-          <p className="px-3 py-6 text-center text-xs text-stone-500">
+          <p className="px-3 py-6 text-center text-xs text-stone-600">
             No meeting minutes recorded yet.
           </p>
         ) : null}
@@ -119,11 +119,11 @@ export default async function MeetingsPage() {
               </span>
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-medium text-stone-900">{m.title}</p>
-                <p className="truncate text-xs text-stone-500">
+                <p className="truncate text-xs text-stone-600">
                   Zcash Community Grants committee
                 </p>
               </div>
-              <span className="shrink-0 text-xs text-stone-500 tnum">
+              <span className="shrink-0 text-xs text-stone-600 tnum">
                 {formatDate(m.meetingDate)}
               </span>
             </a>
@@ -135,7 +135,7 @@ export default async function MeetingsPage() {
                 url={m.url}
               />
             ) : (
-              <span className="shrink-0 text-stone-400">›</span>
+              <span className="shrink-0 text-stone-500">›</span>
             )}
           </div>
         ))}
@@ -145,7 +145,7 @@ export default async function MeetingsPage() {
         <section className="mt-8">
           <h2 className="mb-3 text-sm font-semibold text-stone-700">
             Config links
-            <span className="ml-2 text-xs font-normal text-stone-400">
+            <span className="ml-2 text-xs font-normal text-stone-500">
               admin · used across the site
             </span>
           </h2>

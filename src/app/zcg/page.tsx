@@ -47,7 +47,7 @@ export default async function ZcgPage() {
                   ? formatZec(lockbox.zecBalanceZat)
                   : "·"}
               </p>
-              <p className="mt-2 text-xs text-stone-500">
+              <p className="mt-2 text-xs text-stone-600">
                 protocol pool (ZIP 1015/1016) · balance via spreadsheet
               </p>
             </div>
@@ -58,7 +58,7 @@ export default async function ZcgPage() {
         <div className="relative overflow-hidden rounded-2xl border border-stone-200 bg-gradient-to-b from-white to-stone-50 p-5 shadow-sm shadow-stone-300/40 ring-1 ring-inset ring-stone-900/5">
           <div className="flex items-start justify-between gap-3">
             <div>
-              <p className="text-[11px] font-medium uppercase tracking-wider text-stone-500">
+              <p className="text-[11px] font-medium uppercase tracking-wider text-stone-600">
                 ZCG operating
               </p>
               <p className="mt-1.5 text-3xl font-bold leading-none tracking-tight text-stone-900 tnum">
@@ -66,7 +66,7 @@ export default async function ZcgPage() {
                   ? formatZec(zcg.zecBalanceZat)
                   : "·"}
               </p>
-              <p className="mt-2 text-xs text-stone-500 tnum">
+              <p className="mt-2 text-xs text-stone-600 tnum">
                 {zcg?.usdCashBalanceCents != null
                   ? `+ ${formatUsdCents(zcg.usdCashBalanceCents)} in cash`
                   : "transparent address t3ev37Q2…"}
@@ -118,7 +118,7 @@ export default async function ZcgPage() {
                     <span className="truncate text-stone-700">
                       {c.category}
                     </span>
-                    <span className="shrink-0 text-stone-500 tnum">
+                    <span className="shrink-0 text-stone-600 tnum">
                       {formatUsdCents(c.usdCents, { compact: true })}
                     </span>
                   </div>
@@ -144,7 +144,7 @@ export default async function ZcgPage() {
                 </span>
                 <div>
                   <p className="text-sm font-medium text-stone-900">Grants</p>
-                  <p className="text-xs text-stone-500">
+                  <p className="text-xs text-stone-600">
                     Approved projects (1 row = 1 grant)
                   </p>
                 </div>
@@ -159,7 +159,7 @@ export default async function ZcgPage() {
                   <p className="text-sm font-medium text-stone-900">
                     Disbursements
                   </p>
-                  <p className="text-xs text-stone-500">
+                  <p className="text-xs text-stone-600">
                     The ledger by milestone/payment
                   </p>
                 </div>
@@ -174,7 +174,7 @@ export default async function ZcgPage() {
                   <p className="text-sm font-medium text-stone-900">
                     Recipients
                   </p>
-                  <p className="text-xs text-stone-500">
+                  <p className="text-xs text-stone-600">
                     Ranking by amount received
                   </p>
                 </div>
@@ -187,27 +187,27 @@ export default async function ZcgPage() {
                 </span>
                 <div>
                   <p className="text-sm font-medium text-stone-900">Budget</p>
-                  <p className="text-xs text-stone-500">
+                  <p className="text-xs text-stone-600">
                     Discretionary budget (USD × ZEC)
                   </p>
                 </div>
               </Card>
             </Link>
             <Card className="bg-white">
-              <p className="text-[11px] font-medium uppercase tracking-wider text-stone-500">
+              <p className="text-[11px] font-medium uppercase tracking-wider text-stone-600">
                 By source
               </p>
               <ul className="mt-2 space-y-1.5 text-xs">
                 {s.bySheet.map((b) => (
                   <li
                     key={b.sheet}
-                    className="flex items-center justify-between gap-2 text-stone-500"
+                    className="flex items-center justify-between gap-2 text-stone-600"
                   >
                     <span className="flex items-center gap-1.5">
-                      <IconArrowUp className="h-3 w-3 text-stone-400" />
+                      <IconArrowUp className="h-3 w-3 text-stone-500" />
                       {b.sheet.replace(/_/g, " ")}
                     </span>
-                    <span className="tnum text-stone-500">{b.count}</span>
+                    <span className="tnum text-stone-600">{b.count}</span>
                   </li>
                 ))}
               </ul>

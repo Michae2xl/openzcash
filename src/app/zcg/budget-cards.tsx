@@ -26,7 +26,7 @@ export async function BudgetCards() {
     <>
       <div className="grid gap-6 lg:grid-cols-2">
         <Card>
-          <p className="text-[11px] font-medium uppercase tracking-wider text-stone-500">
+          <p className="text-[11px] font-medium uppercase tracking-wider text-stone-600">
             Budget in USD
           </p>
           <p className="mt-2 text-3xl font-bold tracking-tight text-stone-900 tnum">
@@ -39,7 +39,7 @@ export async function BudgetCards() {
             />
           </div>
           <div className="mt-3 flex items-center justify-between text-sm">
-            <span className="text-stone-500">
+            <span className="text-stone-600">
               Spent{" "}
               <span className="font-medium text-stone-800 tnum">
                 {formatUsdCents(spentUsd)}
@@ -61,12 +61,12 @@ export async function BudgetCards() {
         </Card>
 
         <Card>
-          <p className="text-[11px] font-medium uppercase tracking-wider text-stone-500">
+          <p className="text-[11px] font-medium uppercase tracking-wider text-stone-600">
             Budget in ZEC
           </p>
           <p className="mt-2 text-3xl font-bold tracking-tight text-stone-900 tnum">
             {formatZec(annualZec, { symbol: false })}{" "}
-            <span className="text-lg text-stone-500">ZEC</span>
+            <span className="text-lg text-stone-600">ZEC</span>
           </p>
           <div className="mt-4 h-2 overflow-hidden rounded-full bg-stone-100">
             <div
@@ -75,7 +75,7 @@ export async function BudgetCards() {
             />
           </div>
           <div className="mt-3 flex items-center justify-between text-sm">
-            <span className="text-stone-500">
+            <span className="text-stone-600">
               Spent{" "}
               <span className="font-medium text-stone-800 tnum">
                 {formatZec(spentZec, { symbol: false })}

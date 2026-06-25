@@ -109,7 +109,7 @@ export default async function PropostasPage() {
                 <span className="text-stone-700">
                   {STATUS_LABEL[b.status] ?? b.status}
                 </span>
-                <span className="text-stone-500 tnum">{b.count}</span>
+                <span className="text-stone-600 tnum">{b.count}</span>
               </div>
               <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-stone-100">
                 <div

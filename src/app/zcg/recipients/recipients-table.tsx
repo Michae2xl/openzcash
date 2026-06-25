@@ -26,7 +26,7 @@ const columns: Column<RecipientRow>[] = [
     sortable: true,
     sortValue: (r) => r.rank,
     render: (r) => (
-      <span className="text-xs text-stone-400 tnum">{r.rank}</span>
+      <span className="text-xs text-stone-500 tnum">{r.rank}</span>
     ),
   },
   {
@@ -76,7 +76,7 @@ const columns: Column<RecipientRow>[] = [
     align: "right",
     sortable: true,
     sortValue: (r) => r.paymentCount,
-    render: (r) => <span className="text-stone-500">{r.paymentCount}</span>,
+    render: (r) => <span className="text-stone-600">{r.paymentCount}</span>,
   },
   {
     key: "lastPaid",
@@ -87,7 +87,7 @@ const columns: Column<RecipientRow>[] = [
     sortValue: (r) => r.lastPaid,
     filterValue: (r) => r.lastPaid,
     render: (r) => (
-      <span className="whitespace-nowrap text-xs text-stone-500">
+      <span className="whitespace-nowrap text-xs text-stone-600">
         {r.lastPaid || "·"}
       </span>
     ),

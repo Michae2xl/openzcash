@@ -51,7 +51,7 @@ function Modal({
           <button
             type="button"
             onClick={onClose}
-            className="text-xs text-stone-500 hover:text-stone-800"
+            className="text-xs text-stone-600 hover:text-stone-800"
           >
             Close
           </button>
@@ -70,7 +70,7 @@ function Field({
   children: React.ReactNode;
 }) {
   return (
-    <label className="block text-xs text-stone-500">
+    <label className="block text-xs text-stone-600">
       {label}
       <div className="mt-1">{children}</div>
     </label>
@@ -474,7 +474,7 @@ export function LinksAdmin({
     <div className="space-y-2">
       {links.map((l) => (
         <div key={l.key} className="flex items-center gap-2">
-          <span className="w-40 shrink-0 truncate text-xs text-stone-500">
+          <span className="w-40 shrink-0 truncate text-xs text-stone-600">
             {l.label}
           </span>
           <input

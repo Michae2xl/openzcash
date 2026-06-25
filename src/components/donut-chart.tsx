@@ -38,7 +38,7 @@ export function DonutChart({
     .sort((a, b) => b.value - a.value);
   if (filtered.length === 0) {
     return (
-      <p className="py-6 text-center text-sm text-stone-400">
+      <p className="py-6 text-center text-sm text-stone-500">
         Nothing paid out yet.
       </p>
     );
@@ -129,9 +129,9 @@ export function DonutChart({
               />
               <span className="truncate text-stone-700">{it.label}</span>
             </span>
-            <span className="shrink-0 text-stone-500 tnum">
+            <span className="shrink-0 text-stone-600 tnum">
               {it.display ?? (format ? format(it.value) : String(it.value))}
-              <span className="ml-1 text-stone-400">
+              <span className="ml-1 text-stone-500">
                 · {((it.value / total) * 100).toFixed(0)}%
               </span>
             </span>

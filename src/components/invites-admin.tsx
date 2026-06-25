@@ -66,7 +66,7 @@ export function InvitesAdmin({ invites }: { invites: readonly InviteRow[] }) {
       <div className="rounded-2xl border border-stone-200 bg-gradient-to-b from-white to-stone-50 shadow-sm shadow-stone-300/40 ring-1 ring-inset ring-stone-900/5 p-5">
         <div className="flex flex-wrap items-end gap-3">
           <label className="min-w-48 flex-1">
-            <span className="mb-1 block text-xs text-stone-500">
+            <span className="mb-1 block text-xs text-stone-600">
               Recipient (label)
             </span>
             <input
@@ -77,7 +77,7 @@ export function InvitesAdmin({ invites }: { invites: readonly InviteRow[] }) {
             />
           </label>
           <label className="w-28">
-            <span className="mb-1 block text-xs text-stone-500">
+            <span className="mb-1 block text-xs text-stone-600">
               Expiration (days)
             </span>
             <input
@@ -119,7 +119,7 @@ export function InvitesAdmin({ invites }: { invites: readonly InviteRow[] }) {
 
       <div className="rounded-2xl border border-stone-200 bg-gradient-to-b from-white to-stone-50 shadow-sm shadow-stone-300/40 ring-1 ring-inset ring-stone-900/5 p-0">
         <table className="w-full text-left text-sm">
-          <thead className="border-b border-stone-200 text-xs uppercase tracking-wide text-stone-500">
+          <thead className="border-b border-stone-200 text-xs uppercase tracking-wide text-stone-600">
             <tr>
               <th className="px-5 py-3 font-medium">Label</th>
               <th className="px-5 py-3 font-medium">Status</th>
@@ -132,7 +132,7 @@ export function InvitesAdmin({ invites }: { invites: readonly InviteRow[] }) {
               <tr>
                 <td
                   colSpan={4}
-                  className="px-5 py-4 text-center text-xs text-stone-400"
+                  className="px-5 py-4 text-center text-xs text-stone-500"
                 >
                   No invites yet. Generate the first one above.
                 </td>
@@ -158,7 +158,7 @@ export function InvitesAdmin({ invites }: { invites: readonly InviteRow[] }) {
                         Copy link
                       </button>
                     ) : (
-                      <span className="text-xs text-stone-400">·</span>
+                      <span className="text-xs text-stone-500">·</span>
                     )}
                   </td>
                   <td className="px-5 py-3 text-right">
@@ -171,7 +171,7 @@ export function InvitesAdmin({ invites }: { invites: readonly InviteRow[] }) {
                         Revoke
                       </button>
                     ) : (
-                      <span className="text-xs text-stone-400">
+                      <span className="text-xs text-stone-500">
                         {inv.treasuryId ? `→ treasury ${inv.treasuryId}` : "·"}
                       </span>
                     )}

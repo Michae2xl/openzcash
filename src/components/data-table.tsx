@@ -252,7 +252,7 @@ export function DataTable<T>({
             className="w-full max-w-xs rounded-lg bg-white px-3 py-1.5 text-sm text-stone-800 ring-1 ring-stone-200 placeholder:text-stone-400 focus:ring-amber-500/40"
           />
           {isFiltered ? (
-            <span className="shrink-0 text-xs text-stone-500 tnum">
+            <span className="shrink-0 text-xs text-stone-600 tnum">
               {sorted.length} of {rows.length} rows
             </span>
           ) : null}
@@ -261,7 +261,7 @@ export function DataTable<T>({
 
       <div className={cn("overflow-auto scroll-thin", maxHeight)}>
         <table className="w-full text-left text-sm">
-          <thead className="tbl-head text-[11px] uppercase tracking-wider text-stone-500">
+          <thead className="tbl-head text-[11px] uppercase tracking-wider text-stone-600">
             <tr className="border-b border-stone-200">
               {columns.map((col) => {
                 const align = ALIGN_CLASS[col.align ?? "left"];
@@ -311,7 +311,7 @@ export function DataTable<T>({
                             "inline-flex items-center rounded-md p-1 transition-colors",
                             isOpen || hasFilter
                               ? "bg-amber-500/10 text-amber-600 ring-1 ring-inset ring-amber-500/20"
-                              : "text-stone-300 hover:bg-stone-100 hover:text-stone-500",
+                              : "text-stone-300 hover:bg-stone-100 hover:text-stone-600",
                           )}
                         >
                           <FunnelIcon active={isOpen || hasFilter} />
@@ -333,13 +333,13 @@ export function DataTable<T>({
                               onClick={() =>
                                 setPicks((p) => ({ ...p, [col.key]: [] }))
                               }
-                              className="mb-1 block w-full rounded px-2 py-1 text-left text-[11px] text-stone-500 hover:bg-stone-100"
+                              className="mb-1 block w-full rounded px-2 py-1 text-left text-[11px] text-stone-600 hover:bg-stone-100"
                             >
                               Clear ({selected.length})
                             </button>
                           ) : null}
                           {options.length === 0 ? (
-                            <p className="px-2 py-1 text-stone-400">
+                            <p className="px-2 py-1 text-stone-500">
                               No values
                             </p>
                           ) : (
@@ -428,7 +428,7 @@ export function DataTable<T>({
               <tr>
                 <td
                   colSpan={columns.length}
-                  className="px-4 py-8 text-center text-sm text-stone-500"
+                  className="px-4 py-8 text-center text-sm text-stone-600"
                 >
                   No rows match the current filters.
                 </td>

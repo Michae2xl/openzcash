@@ -28,7 +28,7 @@ function PoolCard({
         aria-hidden
       />
       <div className="relative flex items-center justify-between gap-2">
-        <p className="text-[11px] font-medium uppercase tracking-wider text-stone-500">
+        <p className="text-[11px] font-medium uppercase tracking-wider text-stone-600">
           {name}
         </p>
         <span className="rounded-full bg-amber-500/12 px-2 py-0.5 text-[10px] font-medium text-amber-700 ring-1 ring-inset ring-amber-500/20">
@@ -39,11 +39,11 @@ function PoolCard({
         <span className="bg-gradient-to-br from-amber-700 to-amber-500 bg-clip-text text-transparent">
           {zec}
         </span>
-        <span className="ml-1.5 text-base font-medium text-stone-400">ZEC</span>
+        <span className="ml-1.5 text-base font-medium text-stone-500">ZEC</span>
       </p>
-      <p className="relative mt-1 text-sm text-stone-500 tnum">
+      <p className="relative mt-1 text-sm text-stone-600 tnum">
         ≈ {usd}
-        {sub ? <span className="text-stone-400"> · {sub}</span> : null}
+        {sub ? <span className="text-stone-500"> · {sub}</span> : null}
       </p>
     </div>
   );
@@ -65,7 +65,7 @@ export async function TreasuryOverview() {
         <h2 className="text-sm font-semibold text-stone-700">
           Treasury at a glance
         </h2>
-        <p className="text-xs text-stone-400 tnum">
+        <p className="text-xs text-stone-500 tnum">
           {height != null
             ? `block ${Number(height).toLocaleString("en-US")}`
             : null}

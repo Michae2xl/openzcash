@@ -45,7 +45,7 @@ export default async function ZcgReconciliacaoPage() {
           <Card className="flex flex-wrap items-center justify-between gap-3">
             <div className="text-sm text-stone-700">
               Balance check:{" "}
-              <span className="tnum text-stone-500">
+              <span className="tnum text-stone-600">
                 {formatZec(r.onchain.inflowZat, { symbol: false })} −{" "}
                 {formatZec(r.onchain.outflowZat, { symbol: false })} ={" "}
                 {formatZec(r.onchain.balanceZat)}
@@ -62,7 +62,7 @@ export default async function ZcgReconciliacaoPage() {
 
           {r.onchain.outputs.length > 0 ? (
             <Card className="mt-3 p-0">
-              <p className="border-b border-stone-200 px-5 py-3 text-[11px] font-medium uppercase tracking-wider text-stone-500">
+              <p className="border-b border-stone-200 px-5 py-3 text-[11px] font-medium uppercase tracking-wider text-stone-600">
                 Transparent outputs detected
               </p>
               <div className="divide-y divide-stone-200">
@@ -71,7 +71,7 @@ export default async function ZcgReconciliacaoPage() {
                     key={o.txid}
                     className="flex items-center justify-between gap-3 px-5 py-3 text-sm"
                   >
-                    <span className="text-stone-500 tnum">{o.date ?? "·"}</span>
+                    <span className="text-stone-600 tnum">{o.date ?? "·"}</span>
                     <span className="flex items-center gap-2 text-stone-700">
                       <IconShield className="h-3.5 w-3.5 text-amber-700/70" />
                       sent to the shielded pool

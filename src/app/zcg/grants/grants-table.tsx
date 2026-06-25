@@ -64,7 +64,7 @@ export function GrantsTable({ rows }: GrantsTableProps) {
       sortable: true,
       filterable: true,
       filterValue: (r) => r.grantee,
-      render: (r) => <span className="text-stone-500">{r.grantee}</span>,
+      render: (r) => <span className="text-stone-600">{r.grantee}</span>,
     },
     {
       key: "category",
@@ -74,7 +74,7 @@ export function GrantsTable({ rows }: GrantsTableProps) {
       filterType: "select",
       filterValue: (r) => r.category,
       render: (r) => (
-        <span className="text-xs text-stone-500">{r.category || "·"}</span>
+        <span className="text-xs text-stone-600">{r.category || "·"}</span>
       ),
     },
     {
@@ -97,11 +97,11 @@ export function GrantsTable({ rows }: GrantsTableProps) {
       sortValue: (r) => r._zec,
       render: (r) =>
         r._zec !== 0 ? (
-          <span className="text-stone-500">
+          <span className="text-stone-600">
             {formatZec(BigInt(r._zec), { symbol: false })}
           </span>
         ) : (
-          <span className="text-stone-400">·</span>
+          <span className="text-stone-500">·</span>
         ),
     },
     {
@@ -118,7 +118,7 @@ export function GrantsTable({ rows }: GrantsTableProps) {
           className="inline-flex items-center gap-0.5 rounded-md px-2 py-1 text-xs tnum ring-1 ring-inset ring-stone-200 hover:ring-amber-500/40"
         >
           <span className="text-amber-700">{r.paidCount}</span>
-          <span className="text-stone-400">/{r.milestoneCount}</span>
+          <span className="text-stone-500">/{r.milestoneCount}</span>
         </Link>
       ),
     },

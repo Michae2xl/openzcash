@@ -102,7 +102,7 @@ export function OnboardingForm({
               "rounded-lg px-3 py-2 text-sm font-medium ring-1 ring-inset transition",
               source === s
                 ? "bg-amber-500/15 text-amber-700 ring-amber-500/30"
-                : "bg-white text-stone-500 ring-stone-200 hover:text-stone-800",
+                : "bg-white text-stone-600 ring-stone-200 hover:text-stone-800",
             )}
           >
             {s === "taddr" ? "Transparent address" : "Viewing key (shielded)"}
@@ -111,7 +111,7 @@ export function OnboardingForm({
       </div>
 
       <label className="block">
-        <span className="mb-1 block text-xs text-stone-500">Treasury name</span>
+        <span className="mb-1 block text-xs text-stone-600">Treasury name</span>
         <input
           className={inputClass}
           value={name}
@@ -121,7 +121,7 @@ export function OnboardingForm({
       </label>
 
       <label className="block">
-        <span className="mb-1 block text-xs text-stone-500">Type</span>
+        <span className="mb-1 block text-xs text-stone-600">Type</span>
         <select
           className={inputClass}
           value={treasuryType}
@@ -137,7 +137,7 @@ export function OnboardingForm({
 
       {source === "taddr" ? (
         <label className="block">
-          <span className="mb-1 block text-xs text-stone-500">
+          <span className="mb-1 block text-xs text-stone-600">
             Transparent address (t1/t3), public
           </span>
           <input
@@ -149,7 +149,7 @@ export function OnboardingForm({
         </label>
       ) : (
         <label className="block">
-          <span className="mb-1 block text-xs text-stone-500">
+          <span className="mb-1 block text-xs text-stone-600">
             Viewing key (uview1…/zxviews1…)
           </span>
           <textarea
@@ -166,7 +166,7 @@ export function OnboardingForm({
       )}
 
       <label className="block">
-        <span className="mb-1 block text-xs text-stone-500">
+        <span className="mb-1 block text-xs text-stone-600">
           Birthday height (optional, faster scan)
         </span>
         <input

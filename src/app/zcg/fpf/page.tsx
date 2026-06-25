@@ -102,7 +102,7 @@ export default async function FpfCoinholderGrantsPage() {
       />
 
       <Card className="mb-8">
-        <p className="text-sm leading-relaxed text-stone-500">
+        <p className="text-sm leading-relaxed text-stone-600">
           The Financial Privacy Foundation administers a separate, coinholder
           directed grants program. The cycle runs end to end: a proposal is
           opened on GitHub, the FPF handles vetting and compliance (KYC is
@@ -138,7 +138,7 @@ export default async function FpfCoinholderGrantsPage() {
         <Card className="p-4">
           <FpfGrantsTable grantRows={grantRows} />
         </Card>
-        <p className="mt-3 text-xs text-stone-400">
+        <p className="mt-3 text-xs text-stone-500">
           {grants.length} grants · one approved project per row · amounts in USD
           with ZEC equivalents tracked in the ledger.
         </p>
@@ -151,7 +151,7 @@ export default async function FpfCoinholderGrantsPage() {
         <Card className="p-4">
           <FpfProposalsTable proposalRows={proposalRows} />
         </Card>
-        <p className="mt-3 text-xs text-stone-400">
+        <p className="mt-3 text-xs text-stone-500">
           {proposals.length} proposals · the pipeline upstream of the grants
           above · only approved proposals become paid grants.
         </p>

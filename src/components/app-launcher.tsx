@@ -290,7 +290,7 @@ export function AppLauncher({ isAdmin = false }: { isAdmin?: boolean }) {
 
       {mounted && editing && hiddenApps.length > 0 ? (
         <div className="mt-10 border-t border-stone-200 pt-6">
-          <p className="mb-4 text-[11px] font-medium uppercase tracking-wider text-stone-500">
+          <p className="mb-4 text-[11px] font-medium uppercase tracking-wider text-stone-600">
             Hidden · tap to restore
           </p>
           <div className="flex flex-wrap gap-4">
@@ -308,7 +308,7 @@ export function AppLauncher({ isAdmin = false }: { isAdmin?: boolean }) {
                 >
                   <app.Icon className="h-6 w-6 text-white" />
                 </span>
-                <span className="text-xs text-stone-500">{app.label}</span>
+                <span className="text-xs text-stone-600">{app.label}</span>
               </button>
             ))}
           </div>
@@ -317,7 +317,7 @@ export function AppLauncher({ isAdmin = false }: { isAdmin?: boolean }) {
 
       {isAdmin && ADMIN_APPS.length > 0 ? (
         <div className="mt-8 border-t border-stone-200 pt-6">
-          <p className="mb-4 flex items-center gap-2 text-xs font-medium uppercase tracking-wider text-stone-500">
+          <p className="mb-4 flex items-center gap-2 text-xs font-medium uppercase tracking-wider text-stone-600">
             <IconShield className="h-4 w-4 text-amber-600" /> Admin · data
             management
           </p>
@@ -348,7 +348,7 @@ function LauncherTile({ app, editing }: { app: AppDef; editing: boolean }) {
       )}
     >
       <div className="flex aspect-[5/4] items-center justify-center rounded-lg bg-[#efeae0]">
-        <app.Icon className="h-7 w-7 text-stone-400 transition group-hover:text-amber-700" />
+        <app.Icon className="h-7 w-7 text-stone-500 transition group-hover:text-amber-700" />
       </div>
       <p className="truncate whitespace-nowrap px-1 pb-1 pt-1.5 text-center text-sm font-bold text-stone-900 sm:text-base md:text-[17px]">
         {app.label}

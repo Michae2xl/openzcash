@@ -40,7 +40,7 @@ export default async function LauncherPage() {
               <h1 className="text-xl font-semibold tracking-tight text-stone-900">
                 Zcash Back Office
               </h1>
-              <p className="text-xs text-stone-500">
+              <p className="text-xs text-stone-600">
                 ZBO · Dev Fund treasury and public transparency
               </p>
             </div>
@@ -65,7 +65,7 @@ export default async function LauncherPage() {
 
         <TreasuryOverview />
 
-        <p className="mt-10 text-center text-xs text-stone-400">
+        <p className="mt-10 text-center text-xs text-stone-500">
           Public transparency for the Zcash Dev Fund · ZCG and FPF grant
           accounting.
           <span className="mx-1 text-stone-300">·</span>

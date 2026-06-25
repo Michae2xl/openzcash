@@ -89,7 +89,7 @@ export default async function DesembolsosPage({
           </p>
           <Link
             href="/zcg/grants"
-            className="text-xs text-stone-500 hover:text-stone-800"
+            className="text-xs text-stone-600 hover:text-stone-800"
           >
             All grants
           </Link>
@@ -122,10 +122,10 @@ export default async function DesembolsosPage({
         <DisbursementsTable rows={tableRows} isAdmin={isAdmin} />
       </Card>
 
-      <p className="mt-4 text-xs text-stone-400">
+      <p className="mt-4 text-xs text-stone-500">
         {rows.length} disbursements{" "}
         {sheet ? "in this category" : "(most recent)"} ·{" "}
-        <span className="text-stone-500">from spreadsheet</span> = mirrored from
+        <span className="text-stone-600">from spreadsheet</span> = mirrored from
         the ZCG public sheet;{" "}
         <span className="text-amber-700">admin entry</span> /{" "}
         <span className="text-amber-700">admin-edited</span> = added or

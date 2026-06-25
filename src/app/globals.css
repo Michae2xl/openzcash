@@ -16,11 +16,11 @@
   --border: #e9e3d6;
   --border-strong: #d8cfba;
 
-  /* text levels (AA on warm white) */
+  /* text levels (AA on warm white) — darkened for sharper contrast */
   --text-primary: #1c1917;
-  --text-secondary: #44403c;
-  --text-muted: #78716c;
-  --text-faint: #a8a29e;
+  --text-secondary: #3f3a35;
+  --text-muted: #57534e;
+  --text-faint: #78716c;
 
   /* gold accent + semantic colors tuned for light bg */
   --accent: #b7791f;
@@ -50,7 +50,7 @@
   --color-pos: var(--pos);
   --color-neg: var(--neg);
   --color-flow: var(--flow);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-inter);
   --font-mono: var(--font-geist-mono);
   --radius-card: var(--r-card);
   --radius-control: var(--r-control);
@@ -59,7 +59,10 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  font-family: var(--font-inter), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 /* Signature: soft golden vignette over the warm white background. */

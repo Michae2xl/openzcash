@@ -121,16 +121,16 @@ export function LockboxLiveFeed({
       <Card className="mb-6 overflow-hidden">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <p className="text-[11px] font-medium uppercase tracking-wider text-stone-500">
+            <p className="text-[11px] font-medium uppercase tracking-wider text-stone-600">
               Lockbox · deferred Dev Fund
             </p>
             <p className="num-lg mt-2 text-4xl font-semibold tracking-tight text-stone-900 tnum sm:text-5xl">
               {totalZec.toLocaleString("en-US", {
                 maximumFractionDigits: 4,
               })}{" "}
-              <span className="text-2xl text-stone-400">ZEC</span>
+              <span className="text-2xl text-stone-500">ZEC</span>
             </p>
-            <p className="mt-1 text-sm text-stone-500 tnum">
+            <p className="mt-1 text-sm text-stone-600 tnum">
               ≈ {usd(totalZec, zecUsd)} · accruing{" "}
               <span className="font-medium text-amber-700">
                 +{LOCKBOX_ZEC_PER_BLOCK} ZEC
@@ -187,7 +187,7 @@ export function LockboxLiveFeed({
                   <p className="text-sm font-medium text-stone-900 tnum">
                     Block #{b.height.toLocaleString("en-US")}
                   </p>
-                  <p className="text-xs text-stone-500">
+                  <p className="text-xs text-stone-600">
                     coinbase · {BLOCK_SUBSIDY_ZEC} ZEC subsidy
                   </p>
                 </div>
@@ -195,22 +195,22 @@ export function LockboxLiveFeed({
                   <p className="text-sm font-semibold text-amber-700 tnum">
                     +{LOCKBOX_ZEC_PER_BLOCK} ZEC
                   </p>
-                  <p className="text-xs text-stone-500">to Lockbox</p>
+                  <p className="text-xs text-stone-600">to Lockbox</p>
                 </div>
-                <div className="hidden w-20 shrink-0 text-right text-xs text-stone-400 sm:block">
+                <div className="hidden w-20 shrink-0 text-right text-xs text-stone-500 sm:block">
                   {ago(b.seenAt, now)}
                 </div>
               </div>
             ))}
           </div>
         ) : (
-          <p className="px-5 py-12 text-center text-sm text-stone-400">
+          <p className="px-5 py-12 text-center text-sm text-stone-500">
             Waiting for the next block…
           </p>
         )}
       </Card>
 
-      <p className="mt-4 text-xs text-stone-400">
+      <p className="mt-4 text-xs text-stone-500">
         Protocol funding stream (ZIP-1015 / ZIP-1016) read live from the chain
         tip. No viewing keys involved.
       </p>
@@ -236,7 +236,7 @@ function LivePill({ live, height }: { live: boolean; height: number }) {
         {live ? "Live" : "Connecting"}
       </span>
       {height > 0 ? (
-        <span className="tnum text-stone-500">
+        <span className="tnum text-stone-600">
           · block {height.toLocaleString("en-US")}
         </span>
       ) : null}

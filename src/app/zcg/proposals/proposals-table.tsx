@@ -55,7 +55,7 @@ const columns: Column<ProposalTableRow>[] = [
     sortValue: (r) => r.applicant.toLowerCase(),
     filterValue: (r) => r.applicant,
     render: (r) => (
-      <span className="block max-w-[12rem] truncate text-stone-500">
+      <span className="block max-w-[12rem] truncate text-stone-600">
         {r.applicant || "·"}
       </span>
     ),
@@ -69,7 +69,7 @@ const columns: Column<ProposalTableRow>[] = [
     sortValue: (r) => r.submitted,
     filterValue: (r) => r.submitted,
     render: (r) => (
-      <span className="whitespace-nowrap text-xs text-stone-500 tnum">
+      <span className="whitespace-nowrap text-xs text-stone-600 tnum">
         {r.submitted || "·"}
       </span>
     ),

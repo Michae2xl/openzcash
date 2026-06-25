@@ -40,7 +40,7 @@ export default async function GrantDetailPage({
     <>
       <Link
         href="/zcg/grants"
-        className="mb-4 inline-block text-xs text-stone-500 hover:text-stone-800"
+        className="mb-4 inline-block text-xs text-stone-600 hover:text-stone-800"
       >
         ‹ All grants
       </Link>
@@ -84,7 +84,7 @@ export default async function GrantDetailPage({
           </h2>
           <Card className="overflow-hidden p-0">
             <table className="w-full text-left text-sm">
-              <thead className="text-[11px] uppercase tracking-wider text-stone-500">
+              <thead className="text-[11px] uppercase tracking-wider text-stone-600">
                 <tr className="border-b border-stone-200">
                   <th className="px-4 py-3 font-medium">Milestone</th>
                   <th className="px-4 py-3 font-medium">Deliverable</th>
@@ -105,7 +105,7 @@ export default async function GrantDetailPage({
                     <td className="px-4 py-2.5 font-medium text-stone-900">
                       {m.milestoneLabel ?? "·"}
                     </td>
-                    <td className="max-w-[20rem] px-4 py-2.5 text-stone-500">
+                    <td className="max-w-[20rem] px-4 py-2.5 text-stone-600">
                       <span className="block truncate">
                         {m.deliverable ?? m.project ?? "·"}
                       </span>
@@ -113,7 +113,7 @@ export default async function GrantDetailPage({
                     <td className="px-4 py-2.5 text-right font-medium text-amber-700/90 tnum">
                       {formatUsdCents(m.amountUsdCents)}
                     </td>
-                    <td className="whitespace-nowrap px-4 py-2.5 text-right text-xs text-stone-500 tnum">
+                    <td className="whitespace-nowrap px-4 py-2.5 text-right text-xs text-stone-600 tnum">
                       {(m.estimatedPayoutDate ?? m.paidOutRaw) || "TBD"}
                     </td>
                   </tr>
@@ -131,7 +131,7 @@ export default async function GrantDetailPage({
         </h2>
         <Card className="overflow-hidden p-0">
           <table className="w-full text-left text-sm">
-            <thead className="text-[11px] uppercase tracking-wider text-stone-500">
+            <thead className="text-[11px] uppercase tracking-wider text-stone-600">
               <tr className="border-b border-stone-200">
                 <th className="px-4 py-3 font-medium">Milestone</th>
                 <th className="px-4 py-3 text-right font-medium">USD</th>
@@ -145,7 +145,7 @@ export default async function GrantDetailPage({
                 <tr>
                   <td
                     colSpan={5}
-                    className="px-4 py-8 text-center text-sm text-stone-400"
+                    className="px-4 py-8 text-center text-sm text-stone-500"
                   >
                     No milestones paid yet.
                   </td>
@@ -167,12 +167,12 @@ export default async function GrantDetailPage({
                       ? formatZec(m.zecDisbursedZat, { symbol: false })
                       : "·"}
                   </td>
-                  <td className="px-4 py-2.5 text-right text-stone-500 tnum">
+                  <td className="px-4 py-2.5 text-right text-stone-600 tnum">
                     {m.usdDisbursedZecRateCents != null
                       ? formatUsdCents(m.usdDisbursedZecRateCents)
                       : "·"}
                   </td>
-                  <td className="whitespace-nowrap px-4 py-2.5 text-right text-xs text-stone-500 tnum">
+                  <td className="whitespace-nowrap px-4 py-2.5 text-right text-xs text-stone-600 tnum">
                     {m.paidOutDate ?? "·"}
                   </td>
                 </tr>
