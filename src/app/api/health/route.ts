@@ -9,6 +9,7 @@ import {
   getZebraEndpoint,
   type RpcEndpoint,
 } from "@/lib/config/env";
+import { getIsAdmin } from "@/lib/auth/admin";
 import { jsonRpcCall } from "@/lib/zcash/rpc/json-rpc";
 
 export const dynamic = "force-dynamic";
@@ -24,41 +25,54 @@ function pick(res: unknown): unknown {
   return res;
 }
 
+/**
+ * `detailed` is true only for an authenticated admin. Public callers get just
+ * the booleans — the internal node URLs and raw RPC errors stay hidden so the
+ * health endpoint can't be used to map the infrastructure behind the app.
+ */
 async function probe(
   label: string,
   endpoint: RpcEndpoint | null,
   method: string,
+  detailed: boolean,
 ) {
   if (!endpoint) {
-    return { label, configured: false, ok: false, note: "não configurado" };
+    return { label, configured: false, ok: false };
   }
   try {
     const res = await jsonRpcCall(endpoint, method, [], { timeoutMs: 4000 });
-    return {
-      label,
-      configured: true,
-      ok: true,
-      method,
-      url: endpoint.url,
-      sample: pick(res),
-    };
+    return detailed
+      ? {
+          label,
+          configured: true,
+          ok: true,
+          method,
+          url: endpoint.url,
+          sample: pick(res),
+        }
+      : { label, configured: true, ok: true };
   } catch (e) {
-    return {
-      label,
-      configured: true,
-      ok: false,
-      method,
-      url: endpoint.url,
-      error: e instanceof Error ? e.message : String(e),
-    };
+    return detailed
+      ? {
+          label,
+          configured: true,
+          ok: false,
+          method,
+          url: endpoint.url,
+          error: e instanceof Error ? e.message : String(e),
+        }
+      : { label, configured: true, ok: false };
   }
 }
 
 export async function GET() {
+  const isAdmin = await getIsAdmin();
   const env = getEnv();
   const [zebra, zallet] = await Promise.all([
-    probe("zebra", getZebraEndpoint(), "getblockchaininfo"),
-    probe("zallet", getZalletEndpoint(), "getwalletstatus"),
+    probe("zebra", getZebraEndpoint(), "getblockchaininfo", isAdmin),
+    probe("zallet", getZalletEndpoint(), "getwalletstatus", isAdmin),
   ]);
-  return Response.json({ gateway: env.ZCASH_GATEWAY, zebra, zallet });
+  return Response.json(
+    isAdmin ? { gateway: env.ZCASH_GATEWAY, zebra, zallet } : { zebra, zallet },
+  );
 }
