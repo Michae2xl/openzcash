@@ -71,6 +71,11 @@ export interface DataTableProps<T> {
   className?: string;
   /** Altura máxima do container (qualquer valor Tailwind max-h-*). */
   maxHeight?: string;
+  /**
+   * Chave estável por linha (ex.: id). Sem ela, as linhas usam o índice como
+   * key — o que desalinha o estado de células interativas após sort/filtro.
+   */
+  rowKey?: (row: T) => string | number;
 }
 
 const ALIGN_CLASS: Record<NonNullable<Column<unknown>["align"]>, string> = {
@@ -118,6 +123,7 @@ export function DataTable<T>({
   globalSearch = true,
   className,
   maxHeight = "max-h-[70vh]",
+  rowKey,
 }: DataTableProps<T>) {
   const [sort, setSort] = useState<{ key: string; dir: SortDir } | null>(
     initialSort ?? null,
@@ -216,9 +222,12 @@ export function DataTable<T>({
     return [...filtered].sort((a, b) => {
       const va = sortKeyOf(col, a);
       const vb = sortKeyOf(col, b);
-      if (va < vb) return -1 * dir;
-      if (va > vb) return 1 * dir;
-      return 0;
+      // Only subtract when both keys are numbers; otherwise compare as strings
+      // so a mixed number/string column still yields a total order.
+      if (typeof va === "number" && typeof vb === "number") {
+        return (va - vb) * dir;
+      }
+      return String(va).localeCompare(String(vb)) * dir;
     });
   }, [filtered, sort, colByKey]);
 
@@ -396,7 +405,7 @@ export function DataTable<T>({
           <tbody>
             {sorted.map((row, i) => (
               <tr
-                key={i}
+                key={rowKey ? rowKey(row) : i}
                 className="tbl-row border-b border-stone-200 last:border-0"
               >
                 {columns.map((col) => (

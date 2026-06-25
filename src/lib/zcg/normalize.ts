@@ -43,7 +43,12 @@ export function parseUsdCents(raw: string | undefined | null): bigint | null {
   if (s === "") return null;
   // "$ -", " $ -   ", "-" → zero explícito
   if (/^\$?\s*[-–—]\s*$/.test(s)) return 0n;
-  const negative = /^\(.*\)$/.test(s) || /-\s*\$|\$\s*-|^-/.test(s);
+  // Um intervalo numérico ("2020-2021", "$5 - $10", "$1,000-$2,000") não é um
+  // valor único — não dá para interpretar, então devolve null em vez de
+  // concatenar os dígitos dos dois lados do hífen.
+  if (/\d[\s$]*[-–—][\s$]*\d/.test(s.replace(/^\(|\)$/g, ""))) return null;
+  // Negativo só nas formas de string inteira: (1.234,56), -5, $ -5.
+  const negative = /^\(.*\)$/.test(s) || /^-/.test(s) || /^\$\s*-/.test(s);
   const cleaned = s.replace(/[^0-9.]/g, "");
   if (cleaned === "" || cleaned === ".") return null;
   const num = Number(cleaned);

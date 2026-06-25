@@ -190,6 +190,7 @@ export function DisbursementsTable({
     <DataTable
       columns={columns}
       rows={rows}
+      rowKey={(r) => r.id}
       initialSort={{ key: "date", dir: "desc" }}
     />
   );
