@@ -5,22 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1781993973507,
-      "tag": "0000_cute_killraven",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1782282330655,
-      "tag": "0001_free_inertia",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1782352474533,
-      "tag": "0002_stale_argent",
+      "when": 1782398212282,
+      "tag": "0000_clumsy_post",
       "breakpoints": true
     }
   ]
