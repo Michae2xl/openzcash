@@ -138,6 +138,14 @@ const APPS: AppDef[] = [
     grad: GRAD.violet,
   },
   {
+    id: "zf",
+    label: "ZF",
+    sub: "Foundation reports",
+    href: "/zf",
+    Icon: IconNews,
+    grad: GRAD.violet,
+  },
+  {
     id: "fpf",
     label: "FPF",
     sub: "Coinholder grants",
