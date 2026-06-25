@@ -13,9 +13,11 @@
 builder = "NIXPACKS"
 
 [deploy]
-# `next start` honors Railway's $PORT.
-startCommand = "npm run start"
+# Apply DB migrations on boot (idempotent), then start. `next start` honors $PORT.
+# Migrations must run from inside Railway's network — the Postgres host is only
+# reachable on the private network, so they ride the start command here.
+startCommand = "npm run db:migrate && npm run start"
 healthcheckPath = "/"
-healthcheckTimeout = 30
+healthcheckTimeout = 60
 restartPolicyType = "ON_FAILURE"
-restartPolicyMaxRetries = 3
+restartPolicyMaxRetries = 5
