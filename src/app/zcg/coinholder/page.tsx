@@ -1,5 +1,5 @@
 import { Badge, Card, PageHeader, Stat } from "@/components/ui";
-import { latestSnapshot } from "@/lib/zcg/snapshots-repo";
+import { currentLockboxZec } from "@/lib/zcash/lockbox-live";
 import {
   categoryTotals,
   grandTotal,
@@ -18,8 +18,8 @@ export const dynamic = "force-dynamic";
 export const metadata = { title: "Coinholder Grants · ZBO" };
 
 export default async function CoinholderPage() {
-  const [snap, cats, recips, grand] = await Promise.all([
-    latestSnapshot("lockbox_coinholder"),
+  const [lock, cats, recips, grand] = await Promise.all([
+    currentLockboxZec(),
     categoryTotals("coinholder"),
     recipientTotalsFromSheet("coinholder"),
     grandTotal("coinholder"),
@@ -58,9 +58,9 @@ export default async function CoinholderPage() {
     display: formatUsdCents(c._usd, { compact: true }),
   }));
 
-  const zec = snap?.zecBalanceZat ?? 0n;
-  const holdings = snap?.usdTotalHoldingsCents ?? 0n;
-  const receivables = snap?.zecReceivablesZat ?? 0n;
+  const zec = lock?.zat ?? 0n;
+  const holdings = lock?.snap?.usdTotalHoldingsCents ?? 0n;
+  const receivables = lock?.snap?.zecReceivablesZat ?? 0n;
 
   return (
     <>

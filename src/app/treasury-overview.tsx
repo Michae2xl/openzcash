@@ -1,4 +1,5 @@
 import { latestSnapshot } from "@/lib/zcg/snapshots-repo";
+import { currentLockboxZec } from "@/lib/zcash/lockbox-live";
 import { formatUsdCents } from "@/lib/zcg/format";
 import { formatZec } from "@/lib/zcash/units";
 
@@ -52,12 +53,14 @@ function PoolCard({
 export async function TreasuryOverview() {
   const [op, lock] = await Promise.all([
     latestSnapshot("zcg_operating"),
-    latestSnapshot("lockbox_coinholder"),
+    currentLockboxZec(),
   ]);
   if (!op && !lock) return null;
 
-  const height = op?.blockHeight ?? lock?.blockHeight ?? null;
-  const priceCents = op?.zecusdPriceCents ?? lock?.zecusdPriceCents ?? null;
+  const height =
+    lock?.height ?? (op?.blockHeight != null ? Number(op.blockHeight) : null);
+  const priceCents =
+    op?.zecusdPriceCents ?? lock?.snap?.zecusdPriceCents ?? null;
 
   return (
     <section className="mt-12">
@@ -91,9 +94,9 @@ export async function TreasuryOverview() {
         {lock ? (
           <PoolCard
             name="Lockbox · Coinholder"
-            tag="ZIP-1016 pool"
-            zec={formatZec(lock.zecBalanceZat ?? 0n, { symbol: false })}
-            usd={formatUsdCents(lock.usdTotalHoldingsCents ?? 0n, {
+            tag="ZIP-1016 pool · live"
+            zec={formatZec(lock.zat, { symbol: false })}
+            usd={formatUsdCents(lock.snap?.usdTotalHoldingsCents ?? 0n, {
               compact: true,
             })}
           />

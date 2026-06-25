@@ -9,6 +9,7 @@ import {
 } from "@/components/icons";
 import { disbursementsSummary } from "@/lib/zcg/disbursements-repo";
 import { latestSnapshot } from "@/lib/zcg/snapshots-repo";
+import { currentLockboxZec } from "@/lib/zcash/lockbox-live";
 import { formatUsdCents } from "@/lib/zcg/format";
 import { formatZec, formatZecCompact } from "@/lib/zcash/units";
 import { ElectionsSection } from "./elections-section";
@@ -19,7 +20,7 @@ export const metadata = { title: "ZCG · ZBO" };
 export default async function ZcgPage() {
   const [s, lockbox, zcg] = await Promise.all([
     disbursementsSummary(),
-    latestSnapshot("lockbox_coinholder"),
+    currentLockboxZec(),
     latestSnapshot("zcg_operating"),
   ]);
   const maxCat = s.byCategory.reduce(
@@ -43,12 +44,10 @@ export default async function ZcgPage() {
                 Lockbox · Dev Fund vault
               </p>
               <p className="mt-1.5 text-3xl font-bold leading-none tracking-tight text-stone-900 tnum">
-                {lockbox?.zecBalanceZat != null
-                  ? formatZec(lockbox.zecBalanceZat)
-                  : "·"}
+                {lockbox != null ? formatZec(lockbox.zat) : "·"}
               </p>
               <p className="mt-2 text-xs text-stone-600">
-                protocol pool (ZIP 1015/1016) · balance via spreadsheet
+                protocol pool (ZIP 1015/1016) · live · +0.1875 ZEC/block
               </p>
             </div>
             <Badge tone="amber">ZIP-271</Badge>
