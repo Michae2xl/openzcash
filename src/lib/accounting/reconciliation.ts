@@ -99,27 +99,6 @@ export interface ReconciliationResult {
   readonly summary: ReconciliationSummary;
 }
 
-export const CLASS_LABELS: Record<EntryClass, string> = {
-  income: "Recebimento",
-  paycheck: "Contra-cheque",
-  vendor_payment: "Pagamento a fornecedor",
-  orphan_in: "Entrada não classificada",
-  orphan_out: "Saída sem memo do sistema",
-  external_payment: "Pagamento a terceiro",
-  pending_paycheck: "Contra-cheque pendente",
-  passthrough: "Repasse (passagem)",
-  internal_out: "Transferência interna (saída)",
-  internal_in: "Transferência interna (entrada)",
-  internal_out_unconfirmed: "Transferência interna (destino não observado)",
-  mixed_transfer: "Transação mista (interna + externa)",
-  shielded_out: "Enviado ao pool blindado",
-  grant_received: "Grant recebido",
-  bounty_received: "Bounty recebido",
-  grant_paid: "Grant pago",
-  bounty_paid: "Bounty pago",
-  viewkey_payout: "Pagamento a projeto (viewing key)",
-};
-
 /**
  * net = Σ entradas − Σ saídas (− fee só quando a saída é nossa). Change é interno
  * e ignorado. A fee (ZIP-317) é paga por quem CRIA a transação: numa entrada pura,
