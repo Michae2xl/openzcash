@@ -64,9 +64,12 @@ export const projectRecipients = pgTable("project_recipients", {
   projectName: text("project_name").notNull(),
   /** "grant" | "bounty" — categoria padrão dos recebimentos deste projeto. */
   paymentKind: text("payment_kind").notNull().default("grant"),
-  /** Conta watch-only no zkool (de onde derivamos e escaneamos). */
+  /** Conta watch-only no zkool (legado; null para projetos via scanner). */
   zkoolAccountId: integer("zkool_account_id"),
-  /** Fingerprint (sha256 hex) da UFVK — identificador seguro de expor. */
+  /** Handle opaco da UFVK no scanner stateless (node-less). Persistimos isto,
+   * nunca a viewing key em claro. */
+  scanRef: text("scan_ref"),
+  /** Fingerprint (hex) da UFVK — identificador seguro de expor. */
   ufvkFingerprint: text("ufvk_fingerprint"),
   status: text("status").notNull().default("active"),
   createdAt: timestamp("created_at", { withTimezone: true })

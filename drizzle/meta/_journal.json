@@ -15,6 +15,13 @@
       "when": 1782282330655,
       "tag": "0001_free_inertia",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1782352474533,
+      "tag": "0002_stale_argent",
+      "breakpoints": true
     }
   ]
 }

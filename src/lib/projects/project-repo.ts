@@ -1,18 +1,19 @@
 /**
  * Projetos recebedores (grants/bounties): um projeto envia 1 UFVK uma vez; o sistema
- * importa watch-only no zkool e DERIVA N endereços diversificados (1 por mês) via
- * `newAddress` (determinístico pela UFVK). O pagador usa o endereço do mês; como
- * todos derivam da mesma IVK, a auditoria vê todos os recebimentos.
+ * registra a chave no scanner stateless e DERIVA N endereços diversificados (1 por
+ * mês). O pagador usa o endereço do mês; como todos derivam da mesma IVK, a
+ * auditoria vê todos os recebimentos.
  *
- * Decisão de custódia: a derivação usa o zkool (que já guarda a UFVK), então NÃO
- * persistimos a UFVK em claro nem no nosso Postgres — só o fingerprint.
+ * Node-less: a parte criptográfica (validar UFVK + derivar) roda no `ppf-scanner`
+ * via HTTP — nada de Zebra/zallet/zkool na LAN. Custódia: o scanner guarda a UFVK
+ * e devolve um `scanRef` opaco; NÃO persistimos a viewing key, só o scanRef + fingerprint.
  */
 
 import "server-only";
-import { createHash, randomUUID } from "node:crypto";
+import { randomUUID } from "node:crypto";
 import { getDb } from "@/lib/db/client";
 import { derivedAddresses, projectRecipients } from "@/lib/db/schema";
-import { createZkoolGateway } from "@/lib/zcash/real/zkool-gateway";
+import { deriveAddress, registerUfvk } from "@/lib/zcash/scanner-client";
 import { openSealed } from "@/lib/onboarding/seal";
 
 export interface CreateProjectInput {
@@ -54,16 +55,9 @@ export async function createProject(
   if (!/^(uview1|zxviews1|uivk1)/.test(ufvk))
     throw new Error("Invalid viewing key (expected uview1…/zxviews1…).");
 
-  const fingerprint = createHash("sha256").update(ufvk).digest("hex");
   const name = input.name.trim() || "Project";
-  const zkool = createZkoolGateway();
-  const accountId = await zkool.importViewingKey(
-    ufvk,
-    name,
-    input.birthHeight ?? 0,
-  );
-  // Sincroniza em segundo plano (auditoria do recebedor); não bloqueia a derivação.
-  void zkool.synchronize([accountId]).catch(() => {});
+  // Registra a UFVK no scanner: a chave fica só lá, recebemos um scanRef opaco.
+  const reg = await registerUfvk(ufvk);
 
   const projectId = `p-${randomUUID().slice(0, 8)}`;
   await getDb()
@@ -72,26 +66,31 @@ export async function createProject(
       id: projectId,
       projectName: name,
       paymentKind: input.paymentKind === "bounty" ? "bounty" : "grant",
-      zkoolAccountId: accountId,
-      ufvkFingerprint: fingerprint,
+      scanRef: reg.scanRef,
+      ufvkFingerprint: reg.fingerprint,
     });
 
   const count = Math.max(1, Math.min(input.months ?? 12, 36));
   const months = monthsFrom(input.startMonth || currentMonth(), count);
 
   const addresses: DerivedAddressView[] = [];
-  for (const issuedMonth of months) {
-    const { address, diversifierIndex } = await zkool.newAddress(accountId);
+  for (let i = 0; i < months.length; i++) {
+    // Um índice de diversificador por mês → endereço novo, mesma viewing key.
+    const { address, actualIndex } = await deriveAddress(reg.scanRef, i);
     await getDb()
       .insert(derivedAddresses)
       .values({
         id: `da-${randomUUID().slice(0, 8)}`,
         projectId,
         address,
-        diversifierIndex: BigInt(diversifierIndex),
-        issuedMonth,
+        diversifierIndex: BigInt(actualIndex),
+        issuedMonth: months[i],
       });
-    addresses.push({ issuedMonth, address, diversifierIndex });
+    addresses.push({
+      issuedMonth: months[i],
+      address,
+      diversifierIndex: actualIndex,
+    });
   }
 
   return { id: projectId, addresses };
