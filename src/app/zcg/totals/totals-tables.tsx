@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Card } from "@/components/ui";
 import { DataTable, type Column } from "@/components/data-table";
 import { formatUsdCents } from "@/lib/zcg/format";
@@ -122,9 +123,13 @@ const recipientColumns: Column<RecipientRow>[] = [
     sortValue: (r) => r._future,
     render: (r) =>
       r._future > 0 ? (
-        <span className="text-stone-600 tnum">
+        <Link
+          href={`/zcg/recipient?r=${encodeURIComponent(r.recipient)}`}
+          title="See the upcoming milestones and dates"
+          className="font-medium text-amber-700 underline decoration-amber-700/30 underline-offset-2 hover:decoration-amber-700 tnum"
+        >
           {formatUsdCents(r._future, { compact: true })}
-        </span>
+        </Link>
       ) : (
         <span className="text-stone-500">·</span>
       ),

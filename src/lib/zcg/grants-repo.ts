@@ -88,6 +88,22 @@ export async function grantMilestones(grantKey: string): Promise<DisbRow[]> {
     );
 }
 
+/** Every ledger milestone for one recipient (by normalized key), open + paid. */
+export async function recipientMilestones(
+  recipientKey: string,
+): Promise<DisbRow[]> {
+  const db = getDb();
+  return db
+    .select()
+    .from(zcgDisbursements)
+    .where(eq(zcgDisbursements.recipientKey, recipientKey))
+    .orderBy(
+      asc(zcgDisbursements.isPaid),
+      sql`${zcgDisbursements.estimatedPayoutDate} asc nulls last`,
+      asc(zcgDisbursements.paidOutDate),
+    );
+}
+
 export type GrantsSummary = {
   grantCount: number;
   committedCents: bigint;
