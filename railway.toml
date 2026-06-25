@@ -1,0 +1,21 @@
+# Railway deploy config for the Zcash Back Office (ZBO).
+#
+# Pure Next.js app (Nixpacks builds it: npm install -> npm run build -> npm run
+# start). Network access is NODE-LESS: a public lightwalletd (LWD_URL, e.g.
+# zec.rocks:443) covers the chain tip + transparent address scanning, and the
+# ppf-scanner service covers UFVK validation/derivation. No home node required.
+#
+# Cron note: vercel.json crons are ignored here. Add a Railway cron service (or
+# any scheduler) that hits GET /api/cron/refresh with `Authorization: Bearer
+# $CRON_SECRET` every 6h. The in-render stale-on-load refresh is the fallback.
+
+[build]
+builder = "NIXPACKS"
+
+[deploy]
+# `next start` honors Railway's $PORT.
+startCommand = "npm run start"
+healthcheckPath = "/"
+healthcheckTimeout = 30
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 3
