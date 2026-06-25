@@ -39,7 +39,7 @@ export async function createTreasuryFromOnboarding(
   const treasuryType = TYPES.has(input.treasuryType)
     ? input.treasuryType
     : "outro";
-  const name = input.name.trim() || "Tesouro";
+  const name = input.name.trim() || "Treasury";
   const birthHeight = Number.isFinite(input.birthHeight)
     ? Number(input.birthHeight)
     : 0;
@@ -48,7 +48,7 @@ export async function createTreasuryFromOnboarding(
     const address = (input.address ?? "").trim();
     if (!/^t[13][a-zA-Z0-9]{25,}$/.test(address))
       throw new Error(
-        "Endereço transparente inválido (deve começar com t1 ou t3).",
+        "Invalid transparent address (must start with t1 or t3).",
       );
     const id = `t-${randomUUID().slice(0, 8)}`;
     await getDb()
@@ -81,7 +81,7 @@ export async function createTreasuryFromOnboarding(
   // Viewing key (shielded): decifra o sealed-box e importa watch-only no zkool.
   const ufvk = (await openSealed(input.sealedKey ?? "")).trim();
   if (!/^(uview1|zxviews1|uivk1)/.test(ufvk))
-    throw new Error("Viewing key inválida (esperado uview1…/zxviews1…).");
+    throw new Error("Invalid viewing key (expected uview1…/zxviews1…).");
   const zkool = createZkoolGateway();
   const idAccount = await zkool.importViewingKey(ufvk, name, birthHeight);
   await zkool.synchronize([idAccount]);

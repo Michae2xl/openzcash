@@ -27,7 +27,7 @@ export async function openSealed(ciphertextB64: string): Promise<string> {
   await init();
   const pk = process.env.ONBOARDING_PUBLIC_KEY;
   const sk = process.env.ONBOARDING_SECRET_KEY;
-  if (!pk || !sk) throw new Error("Chaves de onboarding não configuradas.");
+  if (!pk || !sk) throw new Error("Onboarding keys are not configured.");
   const variant = sodium.base64_variants.ORIGINAL;
   const opened = sodium.crypto_box_seal_open(
     sodium.from_base64(ciphertextB64, variant),

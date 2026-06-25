@@ -52,10 +52,10 @@ export async function createProject(
 ): Promise<{ id: string; addresses: DerivedAddressView[] }> {
   const ufvk = (await openSealed(input.sealedUfvk)).trim();
   if (!/^(uview1|zxviews1|uivk1)/.test(ufvk))
-    throw new Error("Viewing key inválida (esperado uview1…/zxviews1…).");
+    throw new Error("Invalid viewing key (expected uview1…/zxviews1…).");
 
   const fingerprint = createHash("sha256").update(ufvk).digest("hex");
-  const name = input.name.trim() || "Projeto";
+  const name = input.name.trim() || "Project";
   const zkool = createZkoolGateway();
   const accountId = await zkool.importViewingKey(
     ufvk,

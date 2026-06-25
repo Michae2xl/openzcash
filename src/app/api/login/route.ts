@@ -18,7 +18,7 @@ export async function POST(req: Request) {
     return Response.json(
       {
         ok: false,
-        error: `Muitas tentativas. Tente novamente em ${rl.retryAfterSec}s.`,
+        error: `Too many attempts. Try again in ${rl.retryAfterSec}s.`,
       },
       { status: 429, headers: { "Retry-After": String(rl.retryAfterSec) } },
     );
@@ -28,7 +28,7 @@ export async function POST(req: Request) {
   const secret = process.env.SESSION_SECRET;
   if (!expected || !secret)
     return Response.json(
-      { ok: false, error: "Autenticação não configurada no servidor." },
+      { ok: false, error: "Authentication is not configured on the server." },
       { status: 500 },
     );
 
@@ -37,7 +37,7 @@ export async function POST(req: Request) {
   const match = a.length === b.length && timingSafeEqual(a, b);
   if (!match)
     return Response.json(
-      { ok: false, error: "Senha incorreta." },
+      { ok: false, error: "Incorrect password." },
       { status: 401 },
     );
 

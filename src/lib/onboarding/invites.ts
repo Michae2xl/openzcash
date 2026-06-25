@@ -32,7 +32,7 @@ export async function createInvite(
       : null;
   await getDb()
     .insert(onboardingInvites)
-    .values({ token, label: label.trim() || "Convite", expiresAt });
+    .values({ token, label: label.trim() || "Invite", expiresAt });
   return token;
 }
 
@@ -73,9 +73,9 @@ export async function assertInviteUsable(token: string): Promise<void> {
     .from(onboardingInvites)
     .where(eq(onboardingInvites.token, token));
   const inv = rows[0];
-  if (!inv) throw new Error("Convite não encontrado.");
+  if (!inv) throw new Error("Invite not found.");
   if (inv.status !== "pending")
-    throw new Error("Convite já utilizado ou revogado.");
+    throw new Error("Invite already used or revoked.");
   if (inv.expiresAt && inv.expiresAt.getTime() < Date.now())
-    throw new Error("Convite expirado.");
+    throw new Error("Invite expired.");
 }

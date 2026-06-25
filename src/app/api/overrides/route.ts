@@ -19,7 +19,7 @@ export async function POST(req: Request) {
       return Response.json(
         {
           ok: false,
-          error: "treasuryId, txid e classification são obrigatórios.",
+          error: "treasuryId, txid and classification are required.",
         },
         { status: 400 },
       );
@@ -41,7 +41,7 @@ export async function DELETE(req: Request) {
     };
     if (!treasuryId || !txid)
       return Response.json(
-        { ok: false, error: "treasuryId e txid são obrigatórios." },
+        { ok: false, error: "treasuryId and txid are required." },
         { status: 400 },
       );
     await clearOverride(treasuryId, txid);

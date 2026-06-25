@@ -38,7 +38,7 @@ export async function setOverride(
   reason: string,
 ): Promise<void> {
   if (!OVERRIDE_CLASSES.includes(classification as never))
-    throw new Error("Classificação inválida.");
+    throw new Error("Invalid classification.");
   await getDb()
     .insert(classificationOverrides)
     .values({
