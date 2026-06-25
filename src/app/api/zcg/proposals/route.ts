@@ -3,8 +3,9 @@
  *   POST   — create an authored proposal (origin='admin').
  *   PATCH  — edit a proposal (e.g. change status); locks the row so the next
  *            spreadsheet import does not overwrite it.
- *   DELETE — remove a proposal (admin rows for good; sheet rows reappear on the
- *            next import unless they were edited/locked first).
+ *   DELETE — admin rows only (hard delete). Sheet rows are refused: deleting an
+ *            edited+locked sheet proposal would let the next import resurrect it
+ *            unedited, silently discarding the admin's change.
  */
 import { randomUUID } from "node:crypto";
 import { eq } from "drizzle-orm";
@@ -96,8 +97,21 @@ export async function PATCH(req: Request) {
 export async function DELETE(req: Request) {
   try {
     const { id } = proposalDeleteSchema.parse(await req.json());
-    await getDb().delete(zcgProposals).where(eq(zcgProposals.id, id));
-    return Response.json({ ok: true });
+    const db = getDb();
+    const row = (
+      await db
+        .select({ origin: zcgProposals.origin })
+        .from(zcgProposals)
+        .where(eq(zcgProposals.id, id))
+        .limit(1)
+    ).at(0);
+    if (!row) throw new Error("proposal not found");
+    if (row.origin !== "admin")
+      throw new Error(
+        "sheet proposal — edit it instead of deleting (it would reappear on the next import; hiding sheet rows is not supported yet)",
+      );
+    await db.delete(zcgProposals).where(eq(zcgProposals.id, id));
+    return Response.json({ ok: true, action: "deleted" });
   } catch (e) {
     return fail(e);
   }

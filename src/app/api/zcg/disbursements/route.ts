@@ -120,64 +120,71 @@ export async function PATCH(req: Request) {
   try {
     const p = disbursementPatchSchema.parse(await req.json());
     const db = getDb();
-    const row = (
-      await db
-        .select()
-        .from(zcgDisbursements)
-        .where(eq(zcgDisbursements.id, p.id))
-        .limit(1)
-    ).at(0);
-    if (!row) throw new Error("disbursement not found");
 
-    const set = buildColumnPatch(p as Record<string, unknown>);
-    const touched = Object.keys(set);
-    if (touched.length === 0) throw new Error("no fields to update");
+    // The whole edit (read → materialize → capture pristine override) runs in
+    // ONE transaction with a row lock, so a partial failure can never leave the
+    // row locked+edited but without a revertable original, and two concurrent
+    // edits to the same id serialize instead of racing the unique override.
+    await db.transaction(async (tx) => {
+      const row = (
+        await tx
+          .select()
+          .from(zcgDisbursements)
+          .where(eq(zcgDisbursements.id, p.id))
+          .limit(1)
+          .for("update")
+      ).at(0);
+      if (!row) throw new Error("disbursement not found");
 
-    // pristine values for the touched columns (jsonb-serialized)
-    const freshOriginal: Record<string, unknown> = {};
-    const patchJson: Record<string, unknown> = {};
-    for (const col of touched) {
-      freshOriginal[col] = ser((row as Record<string, unknown>)[col]);
-      patchJson[col] = ser(set[col]);
-    }
+      const set = buildColumnPatch(p as Record<string, unknown>);
+      const touched = Object.keys(set);
+      if (touched.length === 0) throw new Error("no fields to update");
 
-    await db
-      .update(zcgDisbursements)
-      .set({ ...set, locked: true })
-      .where(eq(zcgDisbursements.id, p.id));
+      // pristine values for the touched columns (jsonb-serialized)
+      const freshOriginal: Record<string, unknown> = {};
+      const patchJson: Record<string, unknown> = {};
+      for (const col of touched) {
+        freshOriginal[col] = ser((row as Record<string, unknown>)[col]);
+        patchJson[col] = ser(set[col]);
+      }
 
-    const existing = (
-      await db
-        .select()
-        .from(zcgDisbursementOverrides)
-        .where(eq(zcgDisbursementOverrides.disbursementId, p.id))
-        .limit(1)
-    ).at(0);
+      await tx
+        .update(zcgDisbursements)
+        .set({ ...set, locked: true })
+        .where(eq(zcgDisbursements.id, p.id));
 
-    // Earliest pristine wins, so revert always restores the sheet value.
-    const original = {
-      ...freshOriginal,
-      ...((existing?.original as Record<string, unknown>) ?? {}),
-    };
-    const patch = {
-      ...((existing?.patch as Record<string, unknown>) ?? {}),
-      ...patchJson,
-    };
+      const existing = (
+        await tx
+          .select()
+          .from(zcgDisbursementOverrides)
+          .where(eq(zcgDisbursementOverrides.disbursementId, p.id))
+          .limit(1)
+      ).at(0);
 
-    if (existing) {
-      await db
-        .update(zcgDisbursementOverrides)
-        .set({ patch, original, reason: clean(p.reason) })
-        .where(eq(zcgDisbursementOverrides.id, existing.id));
-    } else {
-      await db.insert(zcgDisbursementOverrides).values({
-        id: randomUUID(),
-        disbursementId: p.id,
-        patch,
-        original,
-        reason: clean(p.reason),
-      });
-    }
+      // Earliest pristine wins, so revert always restores the sheet value.
+      const original = {
+        ...freshOriginal,
+        ...((existing?.original as Record<string, unknown>) ?? {}),
+      };
+      const patch = {
+        ...((existing?.patch as Record<string, unknown>) ?? {}),
+        ...patchJson,
+      };
+
+      await tx
+        .insert(zcgDisbursementOverrides)
+        .values({
+          id: randomUUID(),
+          disbursementId: p.id,
+          patch,
+          original,
+          reason: clean(p.reason),
+        })
+        .onConflictDoUpdate({
+          target: zcgDisbursementOverrides.disbursementId,
+          set: { patch, original, reason: clean(p.reason) },
+        });
+    });
     return Response.json({ ok: true });
   } catch (e) {
     return fail(e);
