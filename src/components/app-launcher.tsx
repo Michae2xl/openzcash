@@ -317,8 +317,8 @@ export function AppLauncher({ isAdmin = false }: { isAdmin?: boolean }) {
 
       {isAdmin && ADMIN_APPS.length > 0 ? (
         <div className="mt-8 border-t border-stone-200 pt-6">
-          <p className="mb-4 flex items-center gap-2 text-[11px] font-medium uppercase tracking-wider text-stone-500">
-            <IconShield className="h-3.5 w-3.5 text-amber-600" /> Admin · data
+          <p className="mb-4 flex items-center gap-2 text-xs font-medium uppercase tracking-wider text-stone-500">
+            <IconShield className="h-4 w-4 text-amber-600" /> Admin · data
             management
           </p>
           <div className="grid grid-cols-3 gap-x-4 gap-y-6 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6">
@@ -350,7 +350,7 @@ function LauncherTile({ app, editing }: { app: AppDef; editing: boolean }) {
       <div className="flex aspect-[5/4] items-center justify-center rounded-lg bg-[#efeae0]">
         <app.Icon className="h-7 w-7 text-stone-400 transition group-hover:text-amber-700" />
       </div>
-      <p className="truncate whitespace-nowrap px-1 pb-1 pt-1.5 text-center text-[13px] font-bold text-stone-900">
+      <p className="truncate whitespace-nowrap px-1 pb-1 pt-1.5 text-center text-sm font-bold text-stone-900 sm:text-base md:text-[17px]">
         {app.label}
       </p>
     </div>
