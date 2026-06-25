@@ -42,12 +42,12 @@ export function LoginForm() {
       <div>
         <div className="flex items-center gap-2.5">
           <img
-            src="/zbo-emblem.png"
-            alt="Zcash Back Office"
+            src="/zcash-mark.svg"
+            alt="OpenZcash"
             className="h-8 w-8 object-contain"
           />
           <span className="text-sm font-semibold text-stone-900">
-            Zcash Back Office
+            OpenZcash
           </span>
         </div>
         <p className="mt-2 text-sm text-stone-600">

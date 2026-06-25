@@ -6,7 +6,7 @@ import { latestImportAt, maybeAutoRefresh } from "@/lib/zcg/freshness";
 import { TreasuryOverview } from "./treasury-overview";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "ZBO · Zcash Back Office" };
+export const metadata = { title: "OpenZcash · Dev Fund transparency" };
 
 function syncedAgo(at: Date | null): string {
   if (!at) return "not imported yet";
@@ -32,16 +32,16 @@ export default async function LauncherPage() {
         <header className="mb-8 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <img
-              src="/zbo-emblem.png"
-              alt="Zcash Back Office"
+              src="/zcash-mark.svg"
+              alt="OpenZcash"
               className="h-11 w-11 object-contain"
             />
             <div>
               <h1 className="text-xl font-semibold tracking-tight text-stone-900">
-                Zcash Back Office
+                OpenZcash
               </h1>
               <p className="text-xs text-stone-600">
-                ZBO · Dev Fund treasury and public transparency
+                Dev Fund treasury and public transparency
               </p>
             </div>
           </div>
@@ -69,7 +69,7 @@ export default async function LauncherPage() {
           Public transparency for the Zcash Dev Fund · ZCG and FPF grant
           accounting.
           <span className="mx-1 text-stone-300">·</span>
-          Spreadsheet {syncedAgo(lastImport)}, auto-refreshes every 6h
+          Spreadsheet {syncedAgo(lastImport)}, auto-refreshes daily
         </p>
       </div>
     </div>

@@ -14,7 +14,7 @@ import {
 } from "./totals-tables";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Totals ZCG · ZBO" };
+export const metadata = { title: "Totals ZCG · OpenZcash" };
 
 export default async function TotaisPage() {
   const [cats, recips, grand] = await Promise.all([

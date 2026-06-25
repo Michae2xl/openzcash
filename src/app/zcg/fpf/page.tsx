@@ -12,7 +12,7 @@ import {
 
 export const dynamic = "force-dynamic";
 export const metadata = {
-  title: "FPF · Coinholder Grants · ZBO",
+  title: "FPF · Coinholder Grants · OpenZcash",
 };
 
 const GRANT_STATUS_LABEL: Record<string, string> = {

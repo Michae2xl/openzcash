@@ -4,7 +4,7 @@ import { formatUsdCents } from "@/lib/zcg/format";
 import { RecipientsTable, type RecipientRow } from "./recipients-table";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Recipients ZCG · ZBO" };
+export const metadata = { title: "Recipients ZCG · OpenZcash" };
 
 export default async function RecebedoresPage() {
   const all = await recipientTotals();

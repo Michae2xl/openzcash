@@ -22,12 +22,12 @@ export function AppShell({
             <BackButton />
             <Link href="/" className="flex items-center gap-2.5">
               <img
-                src="/zbo-emblem.png"
-                alt="Zcash Back Office"
+                src="/zcash-mark.svg"
+                alt="OpenZcash"
                 className="h-8 w-8 object-contain"
               />
               <span className="hidden text-sm font-semibold tracking-tight text-stone-900 sm:block">
-                Zcash Back Office
+                OpenZcash
               </span>
             </Link>
           </div>

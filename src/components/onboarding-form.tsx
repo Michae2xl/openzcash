@@ -88,8 +88,8 @@ export function OnboardingForm({
     <div className="max-w-xl space-y-5 rounded-2xl border border-stone-200 bg-gradient-to-b from-white to-stone-50 shadow-sm shadow-stone-300/40 ring-1 ring-inset ring-stone-900/5 p-6">
       {!token ? (
         <p className="rounded-lg bg-amber-500/10 px-3 py-2 text-sm text-amber-700 ring-1 ring-inset ring-amber-500/20">
-          This registration needs an invite link. Ask the ZBO admin for one —
-          your link will look like <code>/onboarding?token=…</code>.
+          This registration needs an invite link. Ask the OpenZcash admin for
+          one — your link will look like <code>/onboarding?token=…</code>.
         </p>
       ) : null}
       <div className="grid grid-cols-2 gap-2">

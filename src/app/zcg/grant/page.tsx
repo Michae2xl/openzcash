@@ -6,7 +6,7 @@ import { formatUsdCents } from "@/lib/zcg/format";
 import { formatZec } from "@/lib/zcash/units";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Grant detail · ZBO" };
+export const metadata = { title: "Grant detail · OpenZcash" };
 
 const STATUS_LABEL: Record<string, string> = {
   completed: "Completed",

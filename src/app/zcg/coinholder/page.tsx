@@ -15,7 +15,7 @@ import {
 } from "../totals/totals-tables";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Coinholder Grants · ZBO" };
+export const metadata = { title: "Coinholder Grants · OpenZcash" };
 
 export default async function CoinholderPage() {
   const [lock, cats, recips, grand] = await Promise.all([

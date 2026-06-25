@@ -14,7 +14,7 @@ const money = (cents: bigint | null, div: number) =>
   cents == null ? "" : String(Number(cents) / div);
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "ZCG Disbursements · ZBO" };
+export const metadata = { title: "ZCG Disbursements · OpenZcash" };
 
 const SHEETS: { id?: string; label: string }[] = [
   { id: undefined, label: "All" },

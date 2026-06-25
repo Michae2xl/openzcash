@@ -10,7 +10,7 @@ import { formatZec, formatZecCompact } from "@/lib/zcash/units";
 import { formatFiat, zatoshisToFiat } from "@/lib/pricing/price-oracle";
 import { cn } from "@/lib/utils";
 
-export const metadata = { title: "Treasuries · ZBO" };
+export const metadata = { title: "Treasuries · OpenZcash" };
 export const dynamic = "force-dynamic";
 
 export default async function ViewingKeysPage() {

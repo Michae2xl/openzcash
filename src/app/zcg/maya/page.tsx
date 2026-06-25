@@ -4,7 +4,7 @@ import { formatUsdCents } from "@/lib/zcg/format";
 import { formatZec } from "@/lib/zcash/units";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Maya Liquidity · ZBO" };
+export const metadata = { title: "Maya Liquidity · OpenZcash" };
 
 export default async function MayaPage() {
   const transfers = await mayaTransfers();

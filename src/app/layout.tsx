@@ -16,9 +16,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Zcash Back Office (ZBO)",
+  title: "OpenZcash · Dev Fund treasury and public transparency",
   description:
-    "Treasury and transparency for the Zcash Dev Fund · read-only auditing via viewing keys and the public ZCG accounting.",
+    "OpenZcash — public transparency for the Zcash Dev Fund: ZCG and FPF grant accounting, the live Lockbox, and governance, read-only and mirrored from the official sources.",
 };
 
 export default async function RootLayout({

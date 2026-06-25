@@ -15,7 +15,7 @@ import { formatZec, formatZecCompact } from "@/lib/zcash/units";
 import { ElectionsSection } from "./elections-section";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "ZCG · ZBO" };
+export const metadata = { title: "ZCG · OpenZcash" };
 
 export default async function ZcgPage() {
   const [s, lockbox, zcg] = await Promise.all([

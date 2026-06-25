@@ -4,7 +4,7 @@ import { zecUnitPrice } from "@/lib/pricing/price-oracle";
 import { getCurrentHeight } from "@/lib/zcash/real/lwd/lwd-client";
 import { latestSnapshot } from "@/lib/zcg/snapshots-repo";
 
-export const metadata = { title: "Lockbox · live funding · ZBO" };
+export const metadata = { title: "Lockbox · live funding · OpenZcash" };
 export const dynamic = "force-dynamic";
 
 const LWD_URL = process.env.LWD_URL ?? "zec.rocks:443";

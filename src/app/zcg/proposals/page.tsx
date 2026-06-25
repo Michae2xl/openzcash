@@ -10,7 +10,7 @@ import { getLinks } from "@/lib/zcg/governance-repo";
 import { ProposalsTable, type ProposalTableRow } from "./proposals-table";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "ZCG Proposals · ZBO" };
+export const metadata = { title: "ZCG Proposals · OpenZcash" };
 
 const STATUS_LABEL: Record<string, string> = {
   approved: "Approved",

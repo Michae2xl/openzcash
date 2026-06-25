@@ -4,7 +4,7 @@ import { formatUsdCents } from "@/lib/zcg/format";
 import { GrantsTable, type GrantTableRow } from "./grants-table";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Grants ZCG · ZBO" };
+export const metadata = { title: "Grants ZCG · OpenZcash" };
 
 const STATUS_LABELS: Record<string, string> = {
   completed: "Completed",

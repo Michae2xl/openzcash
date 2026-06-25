@@ -1,0 +1,33 @@
+/**
+ * Server-process scheduler. The Railway web service is always-on, so it refreshes
+ * the ZCG mirror itself — once shortly after boot, then every 24h — keeping the
+ * public data current with the official spreadsheet without any external cron.
+ *
+ * Next.js calls register() once at server startup. Guarded to the Node runtime
+ * and production only (no surprise imports in dev / edge). refreshZcg is
+ * idempotent (per-tab delete + reinsert), so an overlapping stale-on-load run is
+ * harmless.
+ */
+export async function register() {
+  if (process.env.NEXT_RUNTIME !== "nodejs") return;
+  if (process.env.NODE_ENV !== "production") return;
+
+  const DAY_MS = 24 * 60 * 60 * 1000;
+
+  const run = async () => {
+    try {
+      const { refreshZcg } = await import("@/lib/zcg/refresh");
+      const r = await refreshZcg();
+      console.log(`[cron] ZCG refresh ok=${r.ok} in ${r.ms}ms`);
+    } catch (e) {
+      console.error(
+        "[cron] ZCG refresh failed:",
+        e instanceof Error ? e.message : e,
+      );
+    }
+  };
+
+  // A short delay so the DB/migrations are settled before the first run.
+  setTimeout(run, 30_000);
+  setInterval(run, DAY_MS);
+}

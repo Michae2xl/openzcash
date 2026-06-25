@@ -9,7 +9,7 @@ import {
 } from "../governance-admin";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Meetings · ZBO" };
+export const metadata = { title: "Meetings · OpenZcash" };
 
 function formatDate(iso: string): string {
   const [y, m, d] = iso.split("-").map(Number);

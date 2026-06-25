@@ -5,7 +5,7 @@ import { formatUsdCents } from "@/lib/zcg/format";
 import { formatZec } from "@/lib/zcash/units";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Reconciliation ZCG · ZBO" };
+export const metadata = { title: "Reconciliation ZCG · OpenZcash" };
 
 export default async function ZcgReconciliacaoPage() {
   const r = await zcgReconciliation();

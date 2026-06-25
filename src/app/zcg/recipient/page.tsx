@@ -7,7 +7,7 @@ import { formatUsdCents } from "@/lib/zcg/format";
 import { formatZec } from "@/lib/zcash/units";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Recipient milestones · ZBO" };
+export const metadata = { title: "Recipient milestones · OpenZcash" };
 
 export default async function RecipientPage({
   searchParams,
