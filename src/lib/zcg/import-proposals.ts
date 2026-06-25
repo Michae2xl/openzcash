@@ -262,6 +262,7 @@ export type ProposalImportResult = {
   gid: string;
   rows: number;
   imported: number;
+  status: string;
 };
 
 /**
@@ -311,12 +312,14 @@ export async function importProposals(): Promise<ProposalImportResult[]> {
         gid: spec.gid,
         rows: rows.length,
         imported: proposals.length,
+        status,
       });
     } catch (err) {
       results.push({
         gid: spec.gid,
         rows: 0,
         imported: 0,
+        status: `error: ${err instanceof Error ? err.message : String(err)}`,
       });
       // Re-lança contexto p/ logging do chamador sem derrubar as outras abas.
       console.error(

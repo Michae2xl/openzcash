@@ -26,20 +26,42 @@ async function markRefreshed(): Promise<void> {
     });
 }
 
+/** Runs an importer in isolation so one throwing does not abort the rest. */
+async function safe<T>(fn: () => Promise<T[]>): Promise<T[]> {
+  try {
+    return await fn();
+  } catch {
+    return [];
+  }
+}
+
 /**
  * Re-imports the whole ZCG public spreadsheet into Postgres (disbursements,
  * snapshots, proposals, totals). Idempotent. Single source of truth for the
  * CLI (`npm run import-zcg`), the cron route and the stale-on-load trigger.
+ *
+ * The freshness marker is stamped ONLY when at least one tab imported cleanly —
+ * otherwise a total fetch failure (e.g. lost public access) would masquerade as
+ * fresh data and suppress the stale-on-load self-heal. `ok` reflects that.
  */
 export async function refreshZcg() {
   const startedAt = Date.now();
-  const disbursements = await importDisbursements();
-  const snapshots = await importSnapshots();
-  const proposals = await importProposals();
-  const totals = await importTotals();
-  await markRefreshed();
+  const disbursements = await safe(importDisbursements);
+  const snapshots = await safe(importSnapshots);
+  const proposals = await safe(importProposals);
+  const totals = await safe(importTotals);
+
+  const ok =
+    disbursements.some((r) => !r.status.startsWith("error")) ||
+    proposals.some((r) => !r.status.startsWith("error")) ||
+    totals.some((r) => !r.status.startsWith("error")) ||
+    snapshots.some((r) => r.ok);
+
+  if (ok) await markRefreshed();
+
   return {
     ms: Date.now() - startedAt,
+    ok,
     disbursements,
     snapshots,
     proposals,

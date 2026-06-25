@@ -176,26 +176,41 @@ const SPECS: { gid: string; pool: Pool }[] = [
  * pivots horizontais (por recebedor e por categoria) + a linha 'Total'.
  * Idempotente: delete por sourceSheetGid + reinsert. Best-effort por aba.
  */
-export async function importTotals(): Promise<
-  { gid: string; imported: number }[]
-> {
+export type TotalsImportResult = {
+  gid: string;
+  imported: number;
+  status: string;
+};
+
+export async function importTotals(): Promise<TotalsImportResult[]> {
   const db = getDb();
-  const results: { gid: string; imported: number }[] = [];
+  const results: TotalsImportResult[] = [];
 
   for (const spec of SPECS) {
-    const csvText = await fetchSheetCsv(spec.gid);
-    const rows = parseCsv(csvText);
-    const capturedAt = new Date();
-    const totals = parseTotals(rows, spec.gid, spec.pool, capturedAt);
+    try {
+      const csvText = await fetchSheetCsv(spec.gid);
+      const rows = parseCsv(csvText);
+      const capturedAt = new Date();
+      const totals = parseTotals(rows, spec.gid, spec.pool, capturedAt);
 
-    await db.transaction(async (tx) => {
-      await tx.delete(zcgTotals).where(eq(zcgTotals.sourceSheetGid, spec.gid));
-      for (const batch of chunk(totals, 400)) {
-        await tx.insert(zcgTotals).values(batch).onConflictDoNothing();
-      }
-    });
+      await db.transaction(async (tx) => {
+        await tx
+          .delete(zcgTotals)
+          .where(eq(zcgTotals.sourceSheetGid, spec.gid));
+        for (const batch of chunk(totals, 400)) {
+          await tx.insert(zcgTotals).values(batch).onConflictDoNothing();
+        }
+      });
 
-    results.push({ gid: spec.gid, imported: totals.length });
+      results.push({ gid: spec.gid, imported: totals.length, status: "ok" });
+    } catch (err) {
+      // Best-effort por aba: uma aba instável não derruba o refresh inteiro.
+      results.push({
+        gid: spec.gid,
+        imported: 0,
+        status: `error: ${err instanceof Error ? err.message : String(err)}`,
+      });
+    }
   }
 
   return results;

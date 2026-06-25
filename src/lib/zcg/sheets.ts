@@ -40,6 +40,9 @@ export async function fetchSheetCsv(gid: string): Promise<string> {
   const res = await fetch(sheetCsvUrl(gid), {
     headers: { "User-Agent": "Mozilla/5.0" },
     redirect: "follow",
+    // Sem timeout, uma aba travada consumiria todo o orçamento do cron (120s)
+    // e mataria as abas seguintes. 15s por aba é folgado para um CSV.
+    signal: AbortSignal.timeout(15_000),
   });
   if (!res.ok) {
     throw new Error(`ZCG sheet ${gid}: HTTP ${res.status}`);
