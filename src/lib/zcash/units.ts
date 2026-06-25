@@ -30,12 +30,22 @@ export function zatoshisToZecString(zat: bigint): string {
 }
 
 /** Formata para exibição: ex. "+8.8521 ZEC" / "-0.0176 ZEC". */
+/** Adds thousands separators to the integer part of a decimal string. */
+function groupThousands(s: string): string {
+  const neg = s.startsWith("-");
+  const body = neg ? s.slice(1) : s;
+  const [int, frac] = body.split(".");
+  const grouped = int.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  const out = frac ? `${grouped}.${frac}` : grouped;
+  return neg ? `-${out}` : out;
+}
+
 export function formatZec(
   zat: bigint,
   opts: { sign?: boolean; symbol?: boolean } = {},
 ): string {
   const { sign = false, symbol = true } = opts;
-  const value = zatoshisToZecString(zat);
+  const value = groupThousands(zatoshisToZecString(zat));
   const prefixed = sign && zat > 0n ? `+${value}` : value;
   return symbol ? `${prefixed} ZEC` : prefixed;
 }
