@@ -1,28 +1,10 @@
 name: Refresh ZCG data
-
-# Keeps the public site a fresh mirror of the official ZCG spreadsheet by hitting
-# the gated refresh endpoint once a day. Railway ignores vercel.json crons, so the
-# recurring schedule lives here. Manual run available via "Run workflow".
 on:
+  workflow_dispatch:
   schedule:
-    - cron: "23 6 * * *" # daily ~06:23 UTC (off the hour to avoid GH congestion)
-  workflow_dispatch: {}
-
-concurrency:
-  group: refresh
-  cancel-in-progress: false
-
+    - cron: "23 6 * * *"
 jobs:
   refresh:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
     steps:
-      - name: Trigger /api/cron/refresh
-        run: |
-          code=$(curl -sS --max-time 180 -o /tmp/out.json -w "%{http_code}" \
-            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
-            "https://openzcash.org/api/cron/refresh")
-          echo "HTTP $code"
-          cat /tmp/out.json || true
-          echo
-          test "$code" = "200"
+      - run: curl -fsS -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" https://openzcash.org/api/cron/refresh
