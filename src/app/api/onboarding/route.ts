@@ -48,25 +48,36 @@ export async function POST(req: Request) {
       throw new Error("An invite token is required to register a treasury.");
     await assertInviteUsable(token);
 
-    const result = await createTreasuryFromOnboarding({
-      source: body.source,
-      name: body.name,
-      treasuryType: body.treasuryType,
-      address: body.address ?? undefined,
-      sealedKey: body.sealedKey ?? undefined,
-      birthHeight: body.birthHeight ?? undefined,
-    });
+    // Internal ops: don't leak DB/schema errors to the public caller.
+    let result;
+    try {
+      result = await createTreasuryFromOnboarding({
+        source: body.source,
+        name: body.name,
+        treasuryType: body.treasuryType,
+        address: body.address ?? undefined,
+        sealedKey: body.sealedKey ?? undefined,
+        birthHeight: body.birthHeight ?? undefined,
+      });
 
-    await getDb()
-      .update(onboardingInvites)
-      .set({ status: "used", usedAt: new Date(), treasuryId: result.id })
-      .where(eq(onboardingInvites.token, token));
+      await getDb()
+        .update(onboardingInvites)
+        .set({ status: "used", usedAt: new Date(), treasuryId: result.id })
+        .where(eq(onboardingInvites.token, token));
+    } catch (inner) {
+      console.error("[onboarding] internal failure:", inner);
+      throw new Error("Could not register the treasury. Please try again.");
+    }
 
     return Response.json({ ok: true, result });
   } catch (e) {
-    return Response.json(
-      { ok: false, error: e instanceof Error ? e.message : String(e) },
-      { status: 400 },
-    );
+    if (!(e instanceof z.ZodError)) console.error("[onboarding] failed:", e);
+    const error =
+      e instanceof z.ZodError
+        ? "Invalid submission."
+        : e instanceof Error
+          ? e.message
+          : "Bad request.";
+    return Response.json({ ok: false, error }, { status: 400 });
   }
 }

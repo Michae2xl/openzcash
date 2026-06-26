@@ -3,6 +3,12 @@
 import { useState, type FormEvent } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
+// Only allow a same-origin relative path as the post-login destination — blocks
+// open-redirect via ?next=https://evil.example or ?next=//evil.example.
+function safeNext(next: string | null): string {
+  return next && /^\/(?!\/)/.test(next) ? next : "/";
+}
+
 export function LoginForm() {
   const router = useRouter();
   const params = useSearchParams();
@@ -22,7 +28,7 @@ export function LoginForm() {
       });
       const j = await r.json();
       if (j.ok) {
-        router.push(params.get("next") || "/");
+        router.push(safeNext(params.get("next")));
         router.refresh();
       } else {
         setError(j.error || "Login failed.");

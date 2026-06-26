@@ -26,7 +26,9 @@ export async function POST(req: Request) {
   const { password } = (await req.json()) as { password?: string };
   const expected = process.env.ADMIN_PASSWORD;
   const secret = process.env.SESSION_SECRET;
-  if (!expected || !secret)
+  // Refuse to issue a session signed with a weak/short HMAC key — a short
+  // SESSION_SECRET is brute-forceable against a captured cookie.
+  if (!expected || !secret || secret.length < 32)
     return Response.json(
       { ok: false, error: "Authentication is not configured on the server." },
       { status: 500 },

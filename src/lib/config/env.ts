@@ -13,6 +13,14 @@ const schema = z
     DATABASE_URL: z.string().min(1, "DATABASE_URL é obrigatório"),
     ZCASH_GATEWAY: z.enum(["mock", "real", "zkool"]).default("mock"),
 
+    // Admin auth (opcionais: o app roda público sem eles; exigidos p/ login).
+    // Quando presentes, exige força mínima — segredo curto é forjável.
+    ADMIN_PASSWORD: z.string().min(12).optional(),
+    SESSION_SECRET: z.string().min(32).optional(),
+    CRON_SECRET: z.string().min(16).optional(),
+    ONBOARDING_PUBLIC_KEY: z.string().optional(),
+    ONBOARDING_SECRET_KEY: z.string().optional(),
+
     // zallet (RPC JSON) — adapter "real"
     ZEBRA_RPC_URL: z.string().url().optional(),
     ZEBRA_RPC_USER: z.string().optional(),
