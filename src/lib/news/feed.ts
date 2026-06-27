@@ -1,7 +1,7 @@
 import "server-only";
 import { desc, eq } from "drizzle-orm";
 import { getDb } from "@/lib/db/client";
-import { zcgDisbursements } from "@/lib/db/schema";
+import { zcgDisbursements, zcgProposals } from "@/lib/db/schema";
 import { formatUsdCents } from "@/lib/zcg/format";
 
 /**
@@ -12,7 +12,7 @@ import { formatUsdCents } from "@/lib/zcg/format";
  * item timestamps vs a localStorage "last seen" marker.
  */
 
-export type NewsSource = "forum" | "github" | "sheet";
+export type NewsSource = "forum" | "github" | "sheet" | "proposal";
 
 export type NewsItem = {
   source: NewsSource;
@@ -138,15 +138,43 @@ async function fetchSheet(): Promise<NewsItem[]> {
   }
 }
 
+async function fetchProposals(): Promise<NewsItem[]> {
+  try {
+    const rows = await getDb()
+      .select({
+        title: zcgProposals.title,
+        program: zcgProposals.program,
+        submitted: zcgProposals.submittedDate,
+        forum: zcgProposals.forumLink,
+        platform: zcgProposals.platformLink,
+      })
+      .from(zcgProposals)
+      .orderBy(desc(zcgProposals.submittedDate))
+      .limit(14);
+    return rows
+      .filter((r) => r.submitted)
+      .map((r) => ({
+        source: "proposal" as const,
+        kind: r.program === "coinholder" ? "FPF proposal" : "ZCG proposal",
+        title: r.title,
+        url: r.forum || r.platform || "/zcg/proposals",
+        ts: iso(`${r.submitted}T00:00:00Z`),
+      }));
+  } catch {
+    return [];
+  }
+}
+
 export async function getNews(): Promise<NewsItem[]> {
   const now = Date.now();
   if (cache && now - cache.at < TTL_MS) return cache.items;
-  const [forum, sheet, ...repos] = await Promise.all([
+  const [forum, sheet, proposals, ...repos] = await Promise.all([
     fetchForum(),
     fetchSheet(),
+    fetchProposals(),
     ...GITHUB_REPOS.map(fetchRepo),
   ]);
-  const items = [...forum, ...sheet, ...repos.flat()]
+  const items = [...forum, ...sheet, ...proposals, ...repos.flat()]
     .filter((i) => i.ts)
     .sort((a, b) => b.ts.localeCompare(a.ts))
     .slice(0, 60);
