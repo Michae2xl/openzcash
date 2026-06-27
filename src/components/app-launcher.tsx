@@ -32,6 +32,8 @@ type AppDef = {
   href: string;
   Icon: IconType;
   grad: string;
+  /** Official brand logo (public path) — shown instead of the generic Icon. */
+  logo?: string;
   /** Admin-only app (data management); shown only to a signed-in admin. */
   admin?: boolean;
 };
@@ -97,6 +99,7 @@ const APPS: AppDef[] = [
     href: "/zcg",
     Icon: IconCoins,
     grad: GRAD.amber,
+    logo: "/zcash-mark.svg",
   },
   {
     id: "grants",
@@ -153,6 +156,7 @@ const APPS: AppDef[] = [
     href: "/zf",
     Icon: IconNews,
     grad: GRAD.violet,
+    logo: "/logos/zf.svg",
   },
   {
     id: "fpf",
@@ -193,6 +197,7 @@ const APPS: AppDef[] = [
     href: "/shielded-labs",
     Icon: IconShield,
     grad: GRAD.sky,
+    logo: "/logos/shielded-labs.png",
   },
 ];
 
@@ -407,7 +412,16 @@ function LauncherTile({ app, editing }: { app: AppDef; editing: boolean }) {
       )}
     >
       <div className="flex aspect-[5/4] items-center justify-center rounded-lg bg-[#efeae0]">
-        <app.Icon className="h-7 w-7 text-stone-500 transition group-hover:text-amber-700" />
+        {app.logo ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={app.logo}
+            alt={app.label}
+            className="h-12 w-12 object-contain transition group-hover:scale-105"
+          />
+        ) : (
+          <app.Icon className="h-9 w-9 text-stone-600 transition group-hover:text-amber-700" />
+        )}
       </div>
       <p className="truncate whitespace-nowrap px-1 pb-1 pt-1.5 text-center text-sm font-bold text-stone-900 sm:text-base md:text-[17px]">
         {app.label}
