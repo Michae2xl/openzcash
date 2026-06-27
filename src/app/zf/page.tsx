@@ -1,5 +1,5 @@
 import { Badge, Card, PageHeader } from "@/components/ui";
-import { IconNews } from "@/components/icons";
+import { IconNews, IconUsers } from "@/components/icons";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Zcash Foundation · OpenZcash" };
@@ -63,6 +63,71 @@ function formatDate(iso: string): string {
   return `${MONTHS[(m ?? 1) - 1]} ${d}, ${y}`;
 }
 
+type Zcon = {
+  name: string;
+  when: string;
+  location: string;
+  url: string;
+  theme?: string;
+  upcoming?: boolean;
+};
+
+// The Zcon conference series, organized by the Zcash Foundation. Newest first.
+const ZCONS: Zcon[] = [
+  {
+    name: "Zcon7",
+    when: "Oct 27–29, 2026",
+    location: "Cancún, Mexico",
+    url: "https://zfnd.org/zcon7/",
+    upcoming: true,
+  },
+  {
+    name: "Zcon VI",
+    when: "Mar 4–7, 2025",
+    location: "Virtual",
+    url: "https://zfnd.org/zconvi/",
+  },
+  {
+    name: "Zcon V",
+    when: "Mar 6–10, 2024",
+    location: "Virtual",
+    theme: "Zcash: Unified",
+    url: "https://zfnd.org/zconv/",
+  },
+  {
+    name: "Zcon IV",
+    when: "Jul 30–Aug 1, 2023",
+    location: "Barcelona, Spain",
+    theme: "The Future Has Not Been Written",
+    url: "https://zfnd.org/zcon4/",
+  },
+  {
+    name: "Zcon3",
+    when: "Aug 7–9, 2022",
+    location: "Las Vegas, USA",
+    theme: "Code Alone Doesn't Cut It",
+    url: "https://zfnd.org/zcon3-3/",
+  },
+  {
+    name: "Zcon2",
+    when: "2021",
+    location: "Virtual",
+    url: "https://zfnd.org/zcon/",
+  },
+  {
+    name: "Zcon1",
+    when: "Jun 2019",
+    location: "Split, Croatia",
+    url: "https://zfnd.org/zcon/",
+  },
+  {
+    name: "Zcon0",
+    when: "Jun 26–28, 2018",
+    location: "Montréal, Canada",
+    url: "https://zfnd.org/zcon0/",
+  },
+];
+
 export default function ZfPage() {
   const reports = [...REPORTS].sort((a, b) => b.date.localeCompare(a.date));
   const latest = reports[0];
@@ -71,7 +136,7 @@ export default function ZfPage() {
     <>
       <PageHeader
         title="Zcash Foundation"
-        subtitle="The Zcash Foundation's quarterly transparency reports and updates — engineering, finances and activities — straight from the community forum."
+        subtitle="The Zcash Foundation's quarterly transparency reports and the Zcon conference series — engineering, finances, activities and community, straight from the source."
         actions={
           <a
             href={FORUM_CATEGORY}
@@ -128,6 +193,44 @@ export default function ZfPage() {
             </div>
             <span className="shrink-0 text-xs text-stone-600 tnum">
               {formatDate(r.date)}
+            </span>
+          </a>
+        ))}
+      </Card>
+
+      <h2 className="mb-3 mt-8 flex items-center gap-2 text-sm font-semibold text-stone-700">
+        Zcon conferences
+        <Badge tone="amber">next · Zcon7 · Cancún</Badge>
+      </h2>
+
+      <Card className="space-y-1 p-2">
+        {ZCONS.map((z) => (
+          <a
+            key={z.name}
+            href={z.url}
+            target="_blank"
+            rel="noreferrer"
+            className={`flex items-center gap-3 rounded-lg px-3 py-3 transition hover:bg-stone-100 ${
+              z.upcoming
+                ? "bg-amber-500/[0.07] ring-1 ring-inset ring-amber-500/25"
+                : ""
+            }`}
+          >
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-amber-500/10 text-amber-700">
+              <IconUsers className="h-4 w-4" />
+            </span>
+            <div className="min-w-0 flex-1">
+              <p className="flex items-center gap-2 text-sm font-medium text-stone-900">
+                {z.name}
+                {z.upcoming ? <Badge tone="amber">Upcoming</Badge> : null}
+              </p>
+              <p className="truncate text-xs text-stone-600">
+                {z.location}
+                {z.theme ? ` · “${z.theme}”` : ""}
+              </p>
+            </div>
+            <span className="shrink-0 text-xs text-stone-600 tnum">
+              {z.when}
             </span>
           </a>
         ))}

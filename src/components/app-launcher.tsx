@@ -140,7 +140,7 @@ const APPS: AppDef[] = [
   {
     id: "zf",
     label: "ZF",
-    sub: "Foundation reports",
+    sub: "Reports & Zcon",
     href: "/zf",
     Icon: IconNews,
     grad: GRAD.violet,
