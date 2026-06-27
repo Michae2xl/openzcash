@@ -18,7 +18,6 @@ import {
   IconReceipt,
   IconShield,
   IconSigma,
-  IconSwap,
   IconUsers,
   IconVote,
 } from "./icons";
@@ -170,14 +169,6 @@ const APPS: AppDef[] = [
     href: "/zcg/coinholder",
     Icon: IconCoins,
     grad: GRAD.amber,
-  },
-  {
-    id: "maya",
-    label: "Maya",
-    sub: "LP liquidity",
-    href: "/zcg/maya",
-    Icon: IconSwap,
-    grad: GRAD.emerald,
   },
   {
     id: "defi",

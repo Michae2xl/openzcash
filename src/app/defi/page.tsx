@@ -1,5 +1,7 @@
 import { Badge, Card, PageHeader, Stat } from "@/components/ui";
 import { getDefiPools } from "@/lib/defi/pools";
+import { mayaTransfers } from "@/lib/zcg/snapshots-repo";
+import { formatUsdCents } from "@/lib/zcg/format";
 import { formatZec } from "@/lib/zcash/units";
 
 export const dynamic = "force-dynamic";
@@ -18,9 +20,14 @@ function zec(n: number): string {
 }
 
 export default async function DefiPage() {
-  const pools = await getDefiPools();
+  const [pools, transfers] = await Promise.all([
+    getDefiPools(),
+    mayaTransfers(),
+  ]);
   const totalZec = pools.reduce((s, p) => s + p.zecDepth, 0);
   const totalTvl = pools.reduce((s, p) => s + p.tvlUsd, 0);
+  const lpZec = transfers.reduce((s, t) => s + (t.zecTransferredZat ?? 0n), 0n);
+  const lpUsd = transfers.reduce((s, t) => s + (t.amountUsdCents ?? 0n), 0n);
 
   return (
     <>
@@ -107,6 +114,73 @@ export default async function DefiPage() {
           ))}
         </div>
       )}
+
+      {transfers.length > 0 ? (
+        <section className="mt-10">
+          <h2 className="mb-1 text-sm font-semibold text-stone-700">
+            ZCG&rsquo;s Maya LP contributions
+          </h2>
+          <p className="mb-4 text-xs text-stone-600">
+            ZEC the Zcash Community Grants treasury contributed to the Maya pool
+            for ecosystem liquidity. CACAO is tracked in its own unit (never
+            added to ZEC).
+          </p>
+          <div className="mb-4 grid grid-cols-2 gap-4 lg:grid-cols-3">
+            <Stat
+              label="ZEC contributed"
+              value={formatZec(lpZec, { symbol: false })}
+              sub="to the Maya LP"
+            />
+            <Stat
+              label="Cost in USD"
+              value={formatUsdCents(lpUsd, { compact: true })}
+              sub="at contribution date"
+            />
+            <Stat
+              label="Contributions"
+              value={String(transfers.length)}
+              sub="transfers"
+            />
+          </div>
+          <Card className="overflow-hidden p-0">
+            <table className="w-full text-left text-sm">
+              <thead className="tbl-head text-[11px] uppercase tracking-wider text-stone-600">
+                <tr className="border-b border-stone-200">
+                  <th className="px-4 py-3 font-medium">Project</th>
+                  <th className="px-4 py-3 text-right font-medium">USD</th>
+                  <th className="px-4 py-3 text-right font-medium">ZEC</th>
+                  <th className="hidden px-4 py-3 text-right font-medium sm:table-cell">
+                    Date
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {transfers.map((t) => (
+                  <tr
+                    key={t.id}
+                    className="tbl-row border-b border-stone-200 last:border-0"
+                  >
+                    <td className="px-4 py-2.5 font-medium text-stone-900">
+                      {t.project ?? "·"}
+                    </td>
+                    <td className="px-4 py-2.5 text-right text-stone-700 tnum">
+                      {formatUsdCents(t.amountUsdCents)}
+                    </td>
+                    <td className="px-4 py-2.5 text-right text-stone-700 tnum">
+                      {t.zecTransferredZat != null
+                        ? formatZec(t.zecTransferredZat, { symbol: false })
+                        : "·"}
+                    </td>
+                    <td className="hidden px-4 py-2.5 text-right text-xs text-stone-600 sm:table-cell tnum">
+                      {t.transferredAt ?? "·"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </Card>
+        </section>
+      ) : null}
 
       <p className="mt-6 text-xs text-stone-500">
         Data: Maya &amp; THORChain (Midgard v2) and NEAR / Rhea Finance
