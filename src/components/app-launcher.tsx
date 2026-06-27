@@ -49,6 +49,14 @@ const GRAD: Record<string, string> = {
 
 const APPS: AppDef[] = [
   {
+    id: "news",
+    label: "News",
+    sub: "What's new",
+    href: "/news",
+    Icon: IconNews,
+    grad: GRAD.rose,
+  },
+  {
     id: "lockbox",
     label: "Lockbox",
     sub: "Live funding",
@@ -230,6 +238,7 @@ export function AppLauncher({ isAdmin = false }: { isAdmin?: boolean }) {
   const [editing, setEditing] = useState(false);
   const [dragId, setDragId] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
+  const [newsUnread, setNewsUnread] = useState(0);
 
   useEffect(() => {
     // Loads the saved layout from localStorage on mount (client-only — reading
@@ -238,6 +247,26 @@ export function AppLauncher({ isAdmin = false }: { isAdmin?: boolean }) {
     setState(loadState());
     setMounted(true);
     /* eslint-enable react-hooks/set-state-in-effect */
+  }, []);
+
+  useEffect(() => {
+    // Red unread badge on the News tile: count items newer than the visitor's
+    // last-seen marker (set when they open /news).
+    let seen: string | null = null;
+    try {
+      seen = window.localStorage.getItem("openzcash-news-seen");
+    } catch {
+      /* ignore */
+    }
+    const qs = seen ? `?since=${encodeURIComponent(seen)}` : "";
+    fetch(`/api/news/summary${qs}`)
+      .then((r) => r.json())
+      .then((d: { unread?: number }) =>
+        setNewsUnread(typeof d.unread === "number" ? d.unread : 0),
+      )
+      .catch(() => {
+        /* offline / endpoint cold — no badge */
+      });
   }, []);
 
   function persist(next: State) {
@@ -316,6 +345,11 @@ export function AppLauncher({ isAdmin = false }: { isAdmin?: boolean }) {
               >
                 <IconClose className="h-3 w-3" />
               </button>
+            ) : null}
+            {app.id === "news" && mounted && newsUnread > 0 ? (
+              <span className="absolute -right-1.5 -top-1.5 z-20 flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-rose-500 px-1 text-[10px] font-bold text-white shadow-sm ring-2 ring-white">
+                {newsUnread > 9 ? "9+" : newsUnread}
+              </span>
             ) : null}
             <LauncherTile app={app} editing={editing} />
           </div>
