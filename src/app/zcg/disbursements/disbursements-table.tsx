@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Badge } from "@/components/ui";
 import { DataTable, type Column } from "@/components/data-table";
 import { disbStatusLabel, formatUsdCents } from "@/lib/zcg/format";
@@ -13,6 +14,8 @@ export type DisbTableRow = {
   recipient: string;
   type: string;
   detail: string;
+  /** Grant/project name — links the row to the full grant detail when set. */
+  grant: string;
   milestoneSeq: number | null;
   category: string;
   status: string | null;
@@ -34,6 +37,11 @@ function statusTone(status: string | null) {
     return "rose" as const;
   if (status === "funds_returned") return "amber" as const;
   return "zinc" as const;
+}
+
+/** Link to the full grant detail for this row, when it belongs to a grant. */
+function grantHref(r: DisbTableRow): string | null {
+  return r.grant ? `/zcg/grant?g=${encodeURIComponent(r.grant)}` : null;
 }
 
 /** Public provenance marker: where this row's data came from. */
@@ -90,14 +98,29 @@ export function DisbursementsTable({
       filterable: true,
       filterValue: (r) =>
         `${r.detail}${r.milestoneSeq ? ` m${r.milestoneSeq}` : ""}`,
-      render: (r) => (
-        <span className="block max-w-[22rem] truncate text-stone-600">
-          {r.detail || "·"}
-          {r.milestoneSeq ? (
-            <span className="text-stone-500"> · m{r.milestoneSeq}</span>
-          ) : null}
-        </span>
-      ),
+      render: (r) => {
+        const href = grantHref(r);
+        const inner = (
+          <>
+            {r.detail || "·"}
+            {r.milestoneSeq ? (
+              <span className="text-stone-500"> · m{r.milestoneSeq}</span>
+            ) : null}
+          </>
+        );
+        return href ? (
+          <Link
+            href={href}
+            className="block max-w-[22rem] truncate text-stone-600 hover:text-amber-700 hover:underline"
+          >
+            {inner}
+          </Link>
+        ) : (
+          <span className="block max-w-[22rem] truncate text-stone-600">
+            {inner}
+          </span>
+        );
+      },
     },
     {
       key: "category",
@@ -164,9 +187,23 @@ export function DisbursementsTable({
       filterType: "select",
       filterValue: (r) => disbStatusLabel(r.status),
       sortValue: (r) => disbStatusLabel(r.status),
-      render: (r) => (
-        <Badge tone={statusTone(r.status)}>{disbStatusLabel(r.status)}</Badge>
-      ),
+      render: (r) => {
+        const href = grantHref(r);
+        const badge = (
+          <Badge tone={statusTone(r.status)}>{disbStatusLabel(r.status)}</Badge>
+        );
+        return href ? (
+          <Link
+            href={href}
+            title="Open grant details"
+            className="inline-block transition hover:opacity-75"
+          >
+            {badge}
+          </Link>
+        ) : (
+          badge
+        );
+      },
     },
   ];
 

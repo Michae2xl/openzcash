@@ -45,6 +45,7 @@ export default async function DesembolsosPage({
       recipient: d.recipientNameRaw,
       type: disbTypeLabel(d.disbursementType),
       detail: d.project ?? d.deliverable ?? "",
+      grant: d.project ?? "",
       milestoneSeq: d.milestoneSeq,
       category: d.category ?? "",
       status: d.grantStatus,
