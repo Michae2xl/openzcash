@@ -165,6 +165,7 @@ const APPS: AppDef[] = [
     href: "/zcg/fpf",
     Icon: IconBalance,
     grad: GRAD.violet,
+    logo: "/logos/fpf.png",
   },
   {
     id: "coinholder",
