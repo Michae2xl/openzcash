@@ -74,7 +74,13 @@ export default async function DefiPage() {
                       {p.asset} pool
                     </p>
                   </div>
-                  <Badge tone="emerald">{p.apyPct.toFixed(2)}% APY</Badge>
+                  <Badge tone="emerald">
+                    {p.apyPct != null
+                      ? `${p.apyPct.toFixed(2)}% APY`
+                      : p.volume24hUsd != null
+                        ? `${usd0(p.volume24hUsd)} · 24h`
+                        : p.asset}
+                  </Badge>
                 </div>
                 <div className="mt-4 grid grid-cols-3 gap-3">
                   <div>
@@ -103,8 +109,10 @@ export default async function DefiPage() {
       )}
 
       <p className="mt-6 text-xs text-stone-500">
-        Data: Maya &amp; THORChain Midgard v2. More venues (NEAR Intents and
-        others) coming.
+        Data: Maya &amp; THORChain (Midgard v2) and NEAR / Rhea Finance
+        (GeckoTerminal). NEAR Intents holds further large cross-chain ZEC
+        liquidity across many bridged pairs, not summed here to avoid
+        double-counting their shared vault.
       </p>
     </>
   );
