@@ -1,5 +1,7 @@
 import { Badge, Card, PageHeader } from "@/components/ui";
 import { IconNews, IconUsers } from "@/components/icons";
+import { ZcapTable } from "@/components/zcap-table";
+import { getZcapMembers, ZCAP_SHEET_URL } from "@/lib/zcap/members";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Zcash Foundation · OpenZcash" };
@@ -128,9 +130,10 @@ const ZCONS: Zcon[] = [
   },
 ];
 
-export default function ZfPage() {
+export default async function ZfPage() {
   const reports = [...REPORTS].sort((a, b) => b.date.localeCompare(a.date));
   const latest = reports[0];
+  const zcap = await getZcapMembers();
 
   return (
     <>
@@ -235,6 +238,36 @@ export default function ZfPage() {
           </a>
         ))}
       </Card>
+
+      <h2 className="mb-3 mt-8 flex items-center gap-2 text-sm font-semibold text-stone-700">
+        Community Advisory Panel (ZCAP)
+        {zcap.length > 0 ? (
+          <Badge tone="amber">{zcap.length} members</Badge>
+        ) : null}
+      </h2>
+      <p className="mb-3 text-xs text-stone-600">
+        The volunteer panel that advises the Foundation and votes in ZCG
+        elections.{" "}
+        <a
+          href={ZCAP_SHEET_URL}
+          target="_blank"
+          rel="noreferrer"
+          className="text-amber-700 underline decoration-amber-500/40 underline-offset-2 hover:text-amber-800"
+        >
+          Public roster ↗
+        </a>
+      </p>
+
+      {zcap.length > 0 ? (
+        <ZcapTable members={zcap} />
+      ) : (
+        <Card>
+          <p className="text-sm text-stone-600">
+            Roster temporarily unavailable — the public sheet may be
+            unreachable. It refreshes automatically.
+          </p>
+        </Card>
+      )}
     </>
   );
 }
