@@ -99,7 +99,7 @@ const APPS: AppDef[] = [
     href: "/zcg",
     Icon: IconCoins,
     grad: GRAD.amber,
-    logo: "/zcash-mark.svg",
+    logo: "/logos/zcg.png",
   },
   {
     id: "grants",
