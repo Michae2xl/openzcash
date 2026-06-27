@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { AppLauncher } from "@/components/app-launcher";
 import { LogoutButton } from "@/components/logout-button";
 import { getIsAdmin } from "@/lib/auth/admin";
@@ -46,18 +45,12 @@ export default async function LauncherPage() {
             </div>
           </div>
           <div className="shrink-0">
+            {/* Admin sign-in hidden for now — /login is still reachable by URL. */}
             {isAdmin ? (
               <div className="w-20">
                 <LogoutButton />
               </div>
-            ) : (
-              <Link
-                href="/login"
-                className="rounded-lg bg-stone-900 px-4 py-2 text-xs font-medium text-white transition hover:bg-stone-700"
-              >
-                Admin sign in
-              </Link>
-            )}
+            ) : null}
           </div>
         </header>
 

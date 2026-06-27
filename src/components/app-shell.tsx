@@ -32,18 +32,12 @@ export function AppShell({
             </Link>
           </div>
           <div className="flex items-center gap-2">
+            {/* Admin sign-in hidden for now — /login is still reachable by URL. */}
             {isAdmin ? (
               <div className="w-20">
                 <LogoutButton />
               </div>
-            ) : (
-              <Link
-                href="/login"
-                className="rounded-lg bg-stone-900 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-stone-700"
-              >
-                Admin
-              </Link>
-            )}
+            ) : null}
           </div>
         </div>
       </header>
