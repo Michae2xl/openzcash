@@ -5,10 +5,12 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import {
   IconBalance,
+  IconChart,
   IconCheck,
   IconClose,
   IconCoins,
   IconGrant,
+  IconGrid,
   IconKey,
   IconMail,
   IconNews,
@@ -168,6 +170,30 @@ const APPS: AppDef[] = [
     href: "/zcg/maya",
     Icon: IconSwap,
     grad: GRAD.emerald,
+  },
+  {
+    id: "defi",
+    label: "DeFi",
+    sub: "ZEC liquidity",
+    href: "/defi",
+    Icon: IconChart,
+    grad: GRAD.emerald,
+  },
+  {
+    id: "z3",
+    label: "Z3",
+    sub: "zcashd successor",
+    href: "/z3",
+    Icon: IconGrid,
+    grad: GRAD.violet,
+  },
+  {
+    id: "shielded-labs",
+    label: "Shielded Labs",
+    sub: "Crosslink · NSM",
+    href: "/shielded-labs",
+    Icon: IconShield,
+    grad: GRAD.sky,
   },
 ];
 
