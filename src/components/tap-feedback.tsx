@@ -1,17 +1,25 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 const INTERACTIVE = "a, button, [role='button'], label, summary, select";
 
 /**
- * App-wide tactile feedback: a tiny haptic buzz when a tappable element (app
- * tile, button, link) is pressed on a touch device. Uses the Vibration API
- * (Android/Chromium PWAs); iOS Safari ignores it silently, where the CSS
- * active-press animation carries the feedback instead.
+ * App-wide tactile feedback on tap.
+ *  - Android / Chromium PWAs: the Vibration API (`navigator.vibrate`).
+ *  - iOS 17.4+ Safari: toggling a hidden `<input switch>` inside the user
+ *    gesture plays the system haptic (the Vibration API is unsupported there).
+ * The CSS active-press animation carries the feedback everywhere else.
  */
 export function TapFeedback() {
+  const labelRef = useRef<HTMLLabelElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
   useEffect(() => {
+    // `switch` is a non-standard iOS attribute — set it here to avoid React
+    // prop warnings; it's what turns the checkbox toggle into a haptic.
+    inputRef.current?.setAttribute("switch", "");
+
     const onPointerDown = (e: PointerEvent) => {
       if (e.pointerType !== "touch" || !e.isPrimary) return;
       const target = e.target as Element | null;
@@ -19,11 +27,35 @@ export function TapFeedback() {
       try {
         navigator.vibrate?.(10);
       } catch {
-        /* unsupported — visual feedback handles it */
+        /* unsupported */
+      }
+      // iOS haptic: toggle the hidden switch within this user gesture.
+      try {
+        labelRef.current?.click();
+      } catch {
+        /* unsupported */
       }
     };
     window.addEventListener("pointerdown", onPointerDown, { passive: true });
     return () => window.removeEventListener("pointerdown", onPointerDown);
   }, []);
-  return null;
+
+  return (
+    <label
+      ref={labelRef}
+      aria-hidden="true"
+      style={{
+        position: "absolute",
+        width: 1,
+        height: 1,
+        margin: -1,
+        padding: 0,
+        overflow: "hidden",
+        opacity: 0,
+        pointerEvents: "none",
+      }}
+    >
+      <input ref={inputRef} type="checkbox" tabIndex={-1} />
+    </label>
+  );
 }
