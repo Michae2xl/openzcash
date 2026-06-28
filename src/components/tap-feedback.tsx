@@ -44,16 +44,7 @@ export function TapFeedback() {
     <label
       ref={labelRef}
       aria-hidden="true"
-      style={{
-        position: "absolute",
-        width: 1,
-        height: 1,
-        margin: -1,
-        padding: 0,
-        overflow: "hidden",
-        opacity: 0,
-        pointerEvents: "none",
-      }}
+      style={{ position: "absolute", left: "-9999px", top: 0 }}
     >
       <input ref={inputRef} type="checkbox" tabIndex={-1} />
     </label>
