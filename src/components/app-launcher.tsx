@@ -406,7 +406,7 @@ function LauncherTile({ app, editing }: { app: AppDef; editing: boolean }) {
   const card = (
     <div
       className={cn(
-        "w-full rounded-xl border border-stone-200 bg-white p-1.5 shadow-md shadow-stone-300/40 transition",
+        "w-full rounded-xl border border-stone-200 bg-white p-1.5 shadow-md shadow-stone-300/40 transition duration-150 active:scale-[0.95] active:shadow-sm active:duration-75",
         editing
           ? "animate-pulse"
           : "group-hover:-translate-y-0.5 group-hover:shadow-lg group-hover:shadow-stone-400/30",

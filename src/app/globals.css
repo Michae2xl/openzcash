@@ -95,6 +95,13 @@ body {
   letter-spacing: -0.01em;
 }
 
+/* Tactile press feedback: buttons and button-like controls dip on tap
+   (pairs with the haptic buzz from TapFeedback on touch devices). */
+button:not(:disabled):active,
+[role="button"]:active {
+  transform: scale(0.96);
+}
+
 .t-primary {
   color: var(--text-primary);
 }
