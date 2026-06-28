@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { headers } from "next/headers";
 import { Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
@@ -19,6 +19,21 @@ export const metadata: Metadata = {
   title: "OpenZcash · Dev Fund treasury and public transparency",
   description:
     "OpenZcash — public transparency for the Zcash Dev Fund: ZCG and FPF grant accounting, the live Lockbox, and governance, read-only and mirrored from the official sources.",
+  applicationName: "OpenZcash",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "OpenZcash",
+  },
+  icons: {
+    apple: "/icons/apple-touch-icon.png",
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#faf8f4",
+  width: "device-width",
+  initialScale: 1,
 };
 
 export default async function RootLayout({
