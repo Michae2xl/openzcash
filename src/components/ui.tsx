@@ -99,7 +99,7 @@ export function Stat({
       </p>
       <p
         className={cn(
-          "num-lg relative mt-1.5 pl-3 pr-2 text-2xl font-semibold leading-none tracking-tight tnum",
+          "num-lg relative mt-1.5 pl-3 pr-2 text-xl font-semibold leading-none tracking-tight tnum sm:text-2xl",
           a.value,
         )}
       >

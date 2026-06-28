@@ -59,8 +59,8 @@ export default async function RecipientPage({
             Upcoming milestones
             <Badge tone="amber">{open.length}</Badge>
           </h2>
-          <Card className="overflow-hidden p-0">
-            <table className="w-full text-left text-sm">
+          <Card className="overflow-x-auto p-0">
+            <table className="w-full min-w-[34rem] text-left text-sm">
               <thead className="text-[11px] uppercase tracking-wider text-stone-600">
                 <tr className="border-b border-stone-200">
                   <th className="px-4 py-3 font-medium">Grant</th>
@@ -115,8 +115,8 @@ export default async function RecipientPage({
           Paid milestones
           <Badge tone="emerald">{paid.length}</Badge>
         </h2>
-        <Card className="overflow-hidden p-0">
-          <table className="w-full text-left text-sm">
+        <Card className="overflow-x-auto p-0">
+          <table className="w-full min-w-[34rem] text-left text-sm">
             <thead className="text-[11px] uppercase tracking-wider text-stone-600">
               <tr className="border-b border-stone-200">
                 <th className="px-4 py-3 font-medium">Grant</th>

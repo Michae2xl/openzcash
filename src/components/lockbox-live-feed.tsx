@@ -124,11 +124,11 @@ export function LockboxLiveFeed({
             <p className="text-[11px] font-medium uppercase tracking-wider text-stone-600">
               Lockbox · deferred Dev Fund
             </p>
-            <p className="num-lg mt-2 text-4xl font-semibold tracking-tight text-stone-900 tnum sm:text-5xl">
+            <p className="num-lg mt-2 break-words text-3xl font-semibold tracking-tight text-stone-900 tnum sm:text-4xl md:text-5xl">
               {totalZec.toLocaleString("en-US", {
                 maximumFractionDigits: 4,
               })}{" "}
-              <span className="text-2xl text-stone-500">ZEC</span>
+              <span className="text-xl text-stone-500 sm:text-2xl">ZEC</span>
             </p>
             <p className="mt-1 text-sm text-stone-600 tnum">
               ≈ {usd(totalZec, zecUsd)} · accruing{" "}

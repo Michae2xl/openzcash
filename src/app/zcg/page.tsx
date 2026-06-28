@@ -43,7 +43,7 @@ export default async function ZcgPage() {
               <p className="text-[11px] font-medium uppercase tracking-wider text-amber-700/70">
                 Lockbox · Dev Fund vault
               </p>
-              <p className="mt-1.5 text-3xl font-bold leading-none tracking-tight text-stone-900 tnum">
+              <p className="mt-1.5 break-words text-2xl font-bold leading-none tracking-tight text-stone-900 tnum sm:text-3xl">
                 {lockbox != null ? formatZec(lockbox.zat) : "·"}
               </p>
               <p className="mt-2 text-xs text-stone-600">
@@ -60,7 +60,7 @@ export default async function ZcgPage() {
               <p className="text-[11px] font-medium uppercase tracking-wider text-stone-600">
                 ZCG operating
               </p>
-              <p className="mt-1.5 text-3xl font-bold leading-none tracking-tight text-stone-900 tnum">
+              <p className="mt-1.5 break-words text-2xl font-bold leading-none tracking-tight text-stone-900 tnum sm:text-3xl">
                 {zcg?.zecBalanceZat != null
                   ? formatZec(zcg.zecBalanceZat)
                   : "·"}

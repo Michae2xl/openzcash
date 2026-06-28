@@ -38,7 +38,7 @@ export async function BudgetCards() {
               style={{ width: `${pct(spentUsd, annualUsd)}%` }}
             />
           </div>
-          <div className="mt-3 flex items-center justify-between text-sm">
+          <div className="mt-3 flex flex-col gap-1 text-sm sm:flex-row sm:items-center sm:justify-between">
             <span className="text-stone-600">
               Spent{" "}
               <span className="font-medium text-stone-800 tnum">
@@ -74,7 +74,7 @@ export async function BudgetCards() {
               style={{ width: `${pct(spentZec, annualZec)}%` }}
             />
           </div>
-          <div className="mt-3 flex items-center justify-between text-sm">
+          <div className="mt-3 flex flex-col gap-1 text-sm sm:flex-row sm:items-center sm:justify-between">
             <span className="text-stone-600">
               Spent{" "}
               <span className="font-medium text-stone-800 tnum">

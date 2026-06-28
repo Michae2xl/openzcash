@@ -198,8 +198,8 @@ export default async function ViewingKeysPage() {
         <h2 className="mb-3 flex items-center gap-2 text-sm font-semibold text-stone-700">
           <IconShield className="h-4 w-4 text-stone-600" /> Access log
         </h2>
-        <Card className="p-0">
-          <table className="w-full text-left text-sm">
+        <Card className="overflow-x-auto p-0">
+          <table className="w-full min-w-[34rem] text-left text-sm">
             <thead className="border-b border-stone-200 text-xs uppercase tracking-wide text-stone-600">
               <tr>
                 <th className="px-5 py-3 font-medium">Principal</th>

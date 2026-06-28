@@ -37,7 +37,7 @@ function PoolCard({
           {tag}
         </span>
       </div>
-      <p className="relative mt-2 text-3xl font-bold tracking-tight tnum">
+      <p className="relative mt-2 break-words text-2xl font-bold tracking-tight tnum sm:text-3xl">
         <span className="bg-gradient-to-br from-amber-700 to-amber-500 bg-clip-text text-transparent">
           {zec}
         </span>
@@ -78,7 +78,7 @@ export async function TreasuryOverview() {
 
   return (
     <section className="mt-12">
-      <div className="mb-3 flex items-baseline justify-between gap-3">
+      <div className="mb-3 flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
         <h2 className="text-sm font-semibold text-stone-700">
           Treasury at a glance
         </h2>
