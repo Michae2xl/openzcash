@@ -14,6 +14,7 @@ const COLUMNS: Column<ZcapMember>[] = [
   {
     key: "handle",
     header: "Forum / Twitter",
+    mobileHidden: true,
     sortable: true,
     filterable: true,
     filterValue: (m) => m.handle,

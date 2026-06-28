@@ -50,6 +50,7 @@ const columns: Column<ProposalTableRow>[] = [
   {
     key: "applicant",
     header: "Applicant",
+    mobileHidden: true,
     sortable: true,
     filterable: true,
     sortValue: (r) => r.applicant.toLowerCase(),
@@ -63,6 +64,7 @@ const columns: Column<ProposalTableRow>[] = [
   {
     key: "submitted",
     header: "Submitted",
+    mobileHidden: true,
     align: "right",
     sortable: true,
     filterable: true,

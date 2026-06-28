@@ -48,6 +48,7 @@ function PctCell({ pct }: { pct: number }) {
 
 const pctColumn = {
   key: "pct",
+  mobileHidden: true,
   header: "% of total",
   align: "right" as const,
   sortable: true,

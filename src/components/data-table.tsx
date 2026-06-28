@@ -44,6 +44,8 @@ export interface Column<T> {
   key: string;
   header: string;
   align?: "left" | "right" | "center";
+  /** Hide this column below the sm breakpoint (mobile) to reduce table width. */
+  mobileHidden?: boolean;
   sortable?: boolean;
   filterable?: boolean;
   render?: (row: T) => ReactNode;
@@ -274,7 +276,11 @@ export function DataTable<T>({
                 return (
                   <th
                     key={col.key}
-                    className={cn("px-4 py-3 font-medium align-bottom", align)}
+                    className={cn(
+                      "px-4 py-3 font-medium align-bottom",
+                      align,
+                      col.mobileHidden && "hidden sm:table-cell",
+                    )}
                   >
                     <div
                       className={cn(
@@ -415,6 +421,7 @@ export function DataTable<T>({
                       "px-4 py-2.5 text-stone-700",
                       ALIGN_CLASS[col.align ?? "left"],
                       col.align === "right" && "tnum",
+                      col.mobileHidden && "hidden sm:table-cell",
                     )}
                   >
                     {col.render

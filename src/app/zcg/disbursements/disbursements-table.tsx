@@ -125,6 +125,7 @@ export function DisbursementsTable({
     {
       key: "category",
       header: "Category",
+      mobileHidden: true,
       sortable: true,
       filterable: true,
       filterType: "select",
@@ -150,6 +151,7 @@ export function DisbursementsTable({
     {
       key: "zec",
       header: "ZEC",
+      mobileHidden: true,
       align: "right",
       sortable: true,
       sortValue: (r) => r._zec,
@@ -169,6 +171,7 @@ export function DisbursementsTable({
     {
       key: "date",
       header: "Date",
+      mobileHidden: true,
       align: "right",
       sortable: true,
       filterable: true,

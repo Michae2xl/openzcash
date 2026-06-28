@@ -54,6 +54,7 @@ const columns: Column<RecipientRow>[] = [
   {
     key: "zec",
     header: "ZEC",
+    mobileHidden: true,
     align: "right",
     sortable: true,
     sortValue: (r) => r._zec,
@@ -63,6 +64,7 @@ const columns: Column<RecipientRow>[] = [
   {
     key: "grantCount",
     header: "Grants",
+    mobileHidden: true,
     align: "right",
     sortable: true,
     sortValue: (r) => r.grantCount,
@@ -73,6 +75,7 @@ const columns: Column<RecipientRow>[] = [
   {
     key: "paymentCount",
     header: "Payments",
+    mobileHidden: true,
     align: "right",
     sortable: true,
     sortValue: (r) => r.paymentCount,
@@ -81,6 +84,7 @@ const columns: Column<RecipientRow>[] = [
   {
     key: "lastPaid",
     header: "Last paid",
+    mobileHidden: true,
     align: "right",
     sortable: true,
     filterable: true,
