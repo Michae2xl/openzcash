@@ -77,7 +77,7 @@ export async function TreasuryOverview() {
       : (lock?.snap?.usdTotalHoldingsCents ?? 0n);
 
   return (
-    <section className="mt-12">
+    <section className="mt-8">
       <div className="mb-3 flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
         <h2 className="text-sm font-semibold text-stone-700">
           Treasury at a glance

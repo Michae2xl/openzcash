@@ -27,8 +27,8 @@ export default async function LauncherPage() {
 
   return (
     <div className="app-vignette min-h-screen">
-      <div className="relative z-10 mx-auto max-w-5xl px-6 py-10 md:py-16">
-        <header className="mb-8 flex items-center justify-between gap-4">
+      <div className="relative z-10 mx-auto max-w-5xl px-6 py-5 md:py-7">
+        <header className="mb-5 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <img
               src="/zcash-mark.svg"
@@ -58,7 +58,7 @@ export default async function LauncherPage() {
 
         <TreasuryOverview />
 
-        <p className="mt-10 text-center text-xs text-stone-500">
+        <p className="mt-6 text-center text-xs text-stone-500">
           Public transparency for the Zcash Dev Fund · ZCG and FPF grant
           accounting.
           <span className="mx-1 text-stone-300">·</span>

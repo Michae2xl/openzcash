@@ -305,7 +305,7 @@ export function AppLauncher({ isAdmin = false }: { isAdmin?: boolean }) {
 
   return (
     <div>
-      <div className="mb-4 flex items-center justify-end">
+      <div className="mb-2 flex items-center justify-end">
         <button
           onClick={() => setEditing((e) => !e)}
           className={cn(
@@ -320,7 +320,7 @@ export function AppLauncher({ isAdmin = false }: { isAdmin?: boolean }) {
         </button>
       </div>
 
-      <div className="grid grid-cols-3 gap-x-4 gap-y-6 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6">
+      <div className="grid grid-cols-3 gap-x-4 gap-y-5 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6">
         {visible.map((app) => (
           <div
             key={app.id}
@@ -386,7 +386,7 @@ export function AppLauncher({ isAdmin = false }: { isAdmin?: boolean }) {
             <IconShield className="h-4 w-4 text-amber-600" /> Admin · data
             management
           </p>
-          <div className="grid grid-cols-3 gap-x-4 gap-y-6 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6">
+          <div className="grid grid-cols-3 gap-x-4 gap-y-5 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6">
             {ADMIN_APPS.map((app) => (
               <div
                 key={app.id}
