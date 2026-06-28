@@ -16,7 +16,7 @@ function usd0(n: number): string {
 }
 
 function zec(n: number): string {
-  return formatZec(BigInt(Math.round(n * 1e8)), { symbol: false });
+  return n.toLocaleString("en-US", { maximumFractionDigits: 2 });
 }
 
 export default async function DefiPage() {
@@ -90,21 +90,21 @@ export default async function DefiPage() {
                   </Badge>
                 </div>
                 <div className="mt-4 grid grid-cols-3 gap-3">
-                  <div>
+                  <div className="min-w-0">
                     <p className="text-[11px] text-stone-500">ZEC depth</p>
-                    <p className="text-sm font-semibold text-stone-900 tnum">
+                    <p className="truncate text-sm font-semibold text-stone-900 tnum">
                       {zec(p.zecDepth)}
                     </p>
                   </div>
-                  <div>
+                  <div className="min-w-0">
                     <p className="text-[11px] text-stone-500">TVL</p>
-                    <p className="text-sm font-semibold text-stone-900 tnum">
+                    <p className="truncate text-sm font-semibold text-stone-900 tnum">
                       {usd0(p.tvlUsd)}
                     </p>
                   </div>
-                  <div>
+                  <div className="min-w-0">
                     <p className="text-[11px] text-stone-500">ZEC price</p>
-                    <p className="text-sm font-semibold text-stone-900 tnum">
+                    <p className="truncate text-sm font-semibold text-stone-900 tnum">
                       {usd0(p.priceUsd)}
                     </p>
                   </div>
