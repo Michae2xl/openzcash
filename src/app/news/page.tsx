@@ -42,6 +42,11 @@ const SOURCE: Record<
     chip: "bg-violet-500/15 text-violet-700",
     Icon: IconVote,
   },
+  dao: {
+    label: "ZecHub DAO",
+    chip: "bg-teal-500/15 text-teal-700",
+    Icon: IconVote,
+  },
 };
 
 function rel(ts: string, now: number): string {

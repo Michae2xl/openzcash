@@ -3,6 +3,7 @@ import { desc, eq } from "drizzle-orm";
 import { getDb } from "@/lib/db/client";
 import { zcgDisbursements, zcgProposals } from "@/lib/db/schema";
 import { formatUsdCents } from "@/lib/zcg/format";
+import { getZechubProposals } from "@/lib/dao/zechub";
 
 /**
  * Cross-source "what's new" feed: the Zcash forum (Discourse), GitHub releases
@@ -12,7 +13,7 @@ import { formatUsdCents } from "@/lib/zcg/format";
  * item timestamps vs a localStorage "last seen" marker.
  */
 
-export type NewsSource = "forum" | "github" | "sheet" | "proposal";
+export type NewsSource = "forum" | "github" | "sheet" | "proposal" | "dao";
 
 export type NewsItem = {
   source: NewsSource;
@@ -165,16 +166,35 @@ async function fetchProposals(): Promise<NewsItem[]> {
   }
 }
 
+/** Newest ZecHub DAO proposals (DAO DAO on Juno), surfaced as news items. */
+async function fetchDao(): Promise<NewsItem[]> {
+  try {
+    const proposals = await getZechubProposals(12);
+    return proposals
+      .filter((p) => p.createdAt)
+      .map((p) => ({
+        source: "dao" as const,
+        kind: "ZecHub DAO",
+        title: `${p.ref} · ${p.title}`,
+        url: p.url,
+        ts: iso(p.createdAt),
+      }));
+  } catch {
+    return [];
+  }
+}
+
 export async function getNews(): Promise<NewsItem[]> {
   const now = Date.now();
   if (cache && now - cache.at < TTL_MS) return cache.items;
-  const [forum, sheet, proposals, ...repos] = await Promise.all([
+  const [forum, sheet, proposals, dao, ...repos] = await Promise.all([
     fetchForum(),
     fetchSheet(),
     fetchProposals(),
+    fetchDao(),
     ...GITHUB_REPOS.map(fetchRepo),
   ]);
-  const items = [...forum, ...sheet, ...proposals, ...repos.flat()]
+  const items = [...forum, ...sheet, ...proposals, ...dao, ...repos.flat()]
     .filter((i) => i.ts)
     .sort((a, b) => b.ts.localeCompare(a.ts))
     .slice(0, 60);

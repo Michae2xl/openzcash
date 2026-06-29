@@ -200,6 +200,15 @@ const APPS: AppDef[] = [
     grad: GRAD.sky,
     logo: "/logos/shielded-labs.png",
   },
+  {
+    id: "zechub-dao",
+    label: "ZecHub DAO",
+    sub: "Latest proposals",
+    href: "/zechub",
+    Icon: IconVote,
+    grad: GRAD.emerald,
+    logo: "/logos/zechub.png",
+  },
 ];
 
 const STORAGE_KEY = "zbo-launcher-v1";
