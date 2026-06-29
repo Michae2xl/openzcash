@@ -180,39 +180,117 @@ export async function ElectionsSection() {
         </div>
       ) : null}
 
-      {past.length > 0 ? (
-        <div className="mt-3 space-y-2">
+      <div className="mt-4 space-y-3">
+        <div className="flex items-baseline justify-between gap-3 px-0.5">
           <p className="text-[11px] font-medium uppercase tracking-wider text-stone-500">
             Past elections
           </p>
-          {past.map((e) => (
-            <div
-              key={e.id}
-              className="flex items-center justify-between gap-3 rounded-lg border border-stone-200 bg-white px-4 py-3 text-sm transition hover:border-stone-300 hover:bg-stone-50"
-            >
-              <a
-                href={e.url}
-                target="_blank"
-                rel="noreferrer"
-                className="flex min-w-0 flex-1 items-center justify-between gap-3"
-              >
-                <span className="flex min-w-0 items-center gap-2">
-                  <span className="font-medium text-stone-900">{e.title}</span>
-                  <span className="text-xs text-stone-600">
-                    {e.seats} seats
-                  </span>
-                </span>
-                <span className="truncate text-xs text-stone-600">
-                  {e.elected ? `Elected: ${e.elected.join(", ")}` : "Results ↗"}
-                </span>
-              </a>
-              {isAdmin ? (
-                <ElectionControls id={e.id} initial={toForm(e)} />
-              ) : null}
-            </div>
-          ))}
+          {past.length > 0 ? (
+            <span className="tnum text-xs text-stone-400">
+              {past.length} closed
+            </span>
+          ) : null}
         </div>
-      ) : null}
+
+        {past.length === 0 ? (
+          <Card className="border-dashed border-stone-200 px-4 py-10 text-center">
+            <p className="text-sm text-stone-400">No past elections yet.</p>
+          </Card>
+        ) : (
+          <ul className="space-y-3">
+            {past.map((e) => (
+              <li key={e.id}>
+                <Card className="group relative overflow-hidden border-stone-200/80 px-4 py-4 transition-colors hover:border-amber-300/70 sm:px-5">
+                  {/* Title + seats chip + results link */}
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                    <div className="min-w-0 max-w-full space-y-1.5">
+                      <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1.5">
+                        <h3 className="truncate text-[15px] font-semibold leading-tight tracking-tight text-stone-900">
+                          {e.title}
+                        </h3>
+                        <span className="inline-flex shrink-0 items-center gap-1 rounded-full border border-amber-300/60 bg-amber-50 px-2 py-0.5 text-[11px] font-medium text-amber-700">
+                          <span className="tnum">{e.seats}</span>
+                          <span className="text-amber-600/80">
+                            {e.seats === 1 ? "seat" : "seats"}
+                          </span>
+                        </span>
+                      </div>
+                      <p className="tnum flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px] text-stone-400">
+                        {e.resultsBy ? (
+                          <span>Results {fmt(e.resultsBy)}</span>
+                        ) : e.votingCloses ? (
+                          <span>Closed {fmt(e.votingCloses)}</span>
+                        ) : (
+                          <span>Closed</span>
+                        )}
+                      </p>
+                    </div>
+
+                    <a
+                      href={e.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      aria-label={`Official results for ${e.title}`}
+                      className="inline-flex shrink-0 items-center gap-1 self-start rounded-lg px-2 py-1 text-xs font-medium text-amber-700 transition-colors hover:bg-amber-50"
+                    >
+                      <span>Official results</span>
+                      <svg
+                        viewBox="0 0 16 16"
+                        aria-hidden="true"
+                        className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-0.5"
+                      >
+                        <path
+                          d="M3.5 8h8m0 0L8 4.5M11.5 8L8 11.5"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="1.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    </a>
+                  </div>
+
+                  {/* Elected roster */}
+                  <div className="mt-3.5 border-t border-stone-100 pt-3.5">
+                    {e.elected && e.elected.length > 0 ? (
+                      <div className="space-y-2">
+                        <p className="text-[10px] font-medium uppercase tracking-wider text-emerald-700/70">
+                          Elected
+                        </p>
+                        <ul className="flex flex-wrap gap-1.5">
+                          {e.elected.map((name, i) => (
+                            <li
+                              key={`${e.id}-${i}`}
+                              className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/25 bg-emerald-500/10 py-1 pl-2 pr-2.5 text-[13px] font-medium text-emerald-800"
+                            >
+                              <span
+                                aria-hidden="true"
+                                className="h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-500"
+                              />
+                              <span className="leading-none">{name}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ) : (
+                      <p className="text-[11px] italic text-stone-400">
+                        Results pending.
+                      </p>
+                    )}
+                  </div>
+
+                  {isAdmin ? (
+                    <div className="mt-3 border-t border-stone-100 pt-3">
+                      <ElectionControls id={e.id} initial={toForm(e)} />
+                    </div>
+                  ) : null}
+                </Card>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     </section>
   );
 }
