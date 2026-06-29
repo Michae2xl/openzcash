@@ -11,6 +11,7 @@ import {
   ElectionControls,
   NewElectionButton,
 } from "./governance-admin";
+import { CurrentCommittee } from "./current-committee";
 
 function fmt(iso?: string | null): string {
   if (!iso) return "·";
@@ -91,6 +92,8 @@ export async function ElectionsSection() {
         </h2>
         {isAdmin ? <NewElectionButton /> : null}
       </div>
+
+      <CurrentCommittee />
 
       {current ? (
         <div className="relative">
