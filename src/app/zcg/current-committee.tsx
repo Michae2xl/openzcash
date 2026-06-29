@@ -71,10 +71,8 @@ const MEMBERS: Member[] = [
   },
 ];
 
-const RING: Record<Member["cohort"], string> = {
-  "june-2026": "from-amber-300 to-amber-500",
-  "dec-2025": "from-emerald-300 to-emerald-500",
-};
+// All five hold active seats — every member gets the emerald "seated" ring.
+const RING = "from-emerald-300 to-emerald-500";
 
 const PLATFORM_LABEL: Record<Platform, string> = {
   forum: "Zcash forum",
@@ -123,7 +121,7 @@ function MemberCard({ m }: { m: Member }) {
         <span
           className={cn(
             "block rounded-full bg-gradient-to-br p-[2.5px] shadow-sm transition-transform duration-200 group-hover:scale-105",
-            RING[m.cohort],
+            RING,
           )}
         >
           <img
@@ -144,7 +142,7 @@ function MemberCard({ m }: { m: Member }) {
           <span className="truncate text-sm font-semibold text-stone-900 group-hover:text-amber-700">
             {m.name}
           </span>
-          <span className="tnum shrink-0 text-[10px] text-stone-400">
+          <span className="tnum shrink-0 text-[11px] font-medium text-stone-500">
             {m.term}
           </span>
         </div>
@@ -153,7 +151,7 @@ function MemberCard({ m }: { m: Member }) {
             {m.tags.map((t) => (
               <span
                 key={t}
-                className="rounded-md bg-stone-100 px-1.5 py-0.5 text-[10px] font-medium text-stone-600 ring-1 ring-inset ring-stone-200/80"
+                className="rounded-md bg-stone-100 px-2 py-0.5 text-[11px] font-medium text-stone-700 ring-1 ring-inset ring-stone-200"
               >
                 {t}
               </span>
@@ -161,7 +159,7 @@ function MemberCard({ m }: { m: Member }) {
           </div>
         ) : (
           <div className="mt-1.5">
-            <span className="rounded-md bg-amber-500/10 px-1.5 py-0.5 text-[10px] font-medium text-amber-700 ring-1 ring-inset ring-amber-500/20">
+            <span className="rounded-md bg-amber-500/10 px-2 py-0.5 text-[11px] font-medium text-amber-700 ring-1 ring-inset ring-amber-500/25">
               New member · no meeting record yet
             </span>
           </div>
@@ -178,7 +176,9 @@ export function CurrentCommittee() {
         <h3 className="text-sm font-semibold text-stone-700">
           Current committee
         </h3>
-        <span className="text-xs text-stone-400">5 seats · from July 2026</span>
+        <span className="text-xs font-medium text-stone-500">
+          5 seats · from July 2026
+        </span>
       </div>
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
@@ -187,18 +187,10 @@ export function CurrentCommittee() {
         ))}
       </div>
 
-      <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-[10px] text-stone-400">
-        <span className="inline-flex items-center gap-1.5">
-          <span className="h-2 w-2 rounded-full bg-gradient-to-br from-amber-300 to-amber-500" />
-          June 2026 cohort
-        </span>
-        <span className="inline-flex items-center gap-1.5">
-          <span className="h-2 w-2 rounded-full bg-gradient-to-br from-emerald-300 to-emerald-500" />
-          December 2025 cohort
-        </span>
-        <span className="text-stone-300">·</span>
-        <span>tags from public committee meeting minutes</span>
-      </div>
+      <p className="mt-3 text-[11px] text-stone-500">
+        All five hold active seats · tags distilled from public ZCG meeting
+        minutes.
+      </p>
     </div>
   );
 }
