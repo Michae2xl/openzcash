@@ -185,11 +185,11 @@ export async function ElectionsSection() {
 
       <div className="mt-4 space-y-3">
         <div className="flex items-baseline justify-between gap-3 px-0.5">
-          <p className="text-[11px] font-medium uppercase tracking-wider text-stone-500">
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-stone-600">
             Past elections
           </p>
           {past.length > 0 ? (
-            <span className="tnum text-xs text-stone-400">
+            <span className="tnum text-xs font-medium text-stone-500">
               {past.length} closed
             </span>
           ) : null}
@@ -258,7 +258,7 @@ export async function ElectionsSection() {
                     </p>
                   )}
 
-                  <p className="tnum mt-auto pt-0.5 text-[10px] text-stone-400">
+                  <p className="tnum mt-auto pt-0.5 text-[11px] text-stone-500">
                     {e.resultsBy
                       ? fmt(e.resultsBy)
                       : e.votingCloses

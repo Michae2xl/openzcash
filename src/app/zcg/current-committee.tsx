@@ -187,7 +187,7 @@ export function CurrentCommittee() {
         ))}
       </div>
 
-      <p className="mt-3 text-[11px] text-stone-500">
+      <p className="mt-3 text-xs text-stone-600">
         All five hold active seats · tags distilled from public ZCG meeting
         minutes.
       </p>
