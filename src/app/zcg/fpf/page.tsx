@@ -9,6 +9,7 @@ import {
   type GrantTableRow,
   type ProposalTableRow,
 } from "./fpf-tables";
+import { cached, LEDGER_TTL_MS } from "@/lib/cache/memo";
 
 export const dynamic = "force-dynamic";
 export const metadata = {
@@ -41,10 +42,14 @@ function grantStatusLabel(status: string | null): string {
 
 export default async function FpfCoinholderGrantsPage() {
   const [grants, proposals, funnel, links] = await Promise.all([
-    listGrants({ program: "coinholder" }),
-    listProposals({ program: "coinholder" }),
-    proposalsFunnel(),
-    getLinks(),
+    cached("listGrants:coinholder", LEDGER_TTL_MS, () =>
+      listGrants({ program: "coinholder" }),
+    ),
+    cached("listProposals:coinholder", LEDGER_TTL_MS, () =>
+      listProposals({ program: "coinholder" }),
+    ),
+    cached("proposalsFunnel", LEDGER_TTL_MS, () => proposalsFunnel()),
+    cached("links", LEDGER_TTL_MS, () => getLinks()),
   ]);
   const proposalFpf = links.proposal_fpf ?? "#";
   const cryptpadMilestone = links.cryptpad_milestone ?? "#";

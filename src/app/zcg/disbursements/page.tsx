@@ -9,6 +9,7 @@ import { getIsAdmin } from "@/lib/auth/admin";
 import { cn } from "@/lib/utils";
 import { DisbursementsTable, type DisbTableRow } from "./disbursements-table";
 import { NewDisbursementForm } from "./disbursement-admin";
+import { cached, LEDGER_TTL_MS } from "@/lib/cache/memo";
 
 const money = (cents: bigint | null, div: number) =>
   cents == null ? "" : String(Number(cents) / div);
@@ -33,8 +34,10 @@ export default async function DesembolsosPage({
   const { sheet, grant } = await searchParams;
   const [isAdmin, rows, overridden] = await Promise.all([
     getIsAdmin(),
-    listDisbursements({ sheet, grant, limit: 400 }),
-    overriddenDisbursementIds(),
+    cached(`disb:${sheet ?? ""}:${grant ?? ""}`, LEDGER_TTL_MS, () =>
+      listDisbursements({ sheet, grant, limit: 400 }),
+    ),
+    cached("disb:overridden", LEDGER_TTL_MS, () => overriddenDisbursementIds()),
   ]);
 
   const tableRows: DisbTableRow[] = rows.map((d) => {

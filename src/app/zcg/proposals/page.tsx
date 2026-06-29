@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { getIsAdmin } from "@/lib/auth/admin";
 import { getLinks } from "@/lib/zcg/governance-repo";
 import { ProposalsTable, type ProposalTableRow } from "./proposals-table";
+import { cached, LEDGER_TTL_MS } from "@/lib/cache/memo";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "ZCG Proposals · OpenZcash" };
@@ -46,9 +47,9 @@ function toTableRow(p: ProposalRow): ProposalTableRow {
 export default async function PropostasPage() {
   const [isAdmin, funnel, all, links] = await Promise.all([
     getIsAdmin(),
-    proposalsFunnel(),
-    listProposals({}),
-    getLinks(),
+    cached("proposalsFunnel", LEDGER_TTL_MS, () => proposalsFunnel()),
+    cached("listProposals:all", LEDGER_TTL_MS, () => listProposals({})),
+    cached("links", LEDGER_TTL_MS, () => getLinks()),
   ]);
   const submitUrl = links.proposal_zcg ?? "#";
   const proposals = all.slice(0, 400);

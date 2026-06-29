@@ -2,6 +2,7 @@ import { Card, PageHeader, Stat } from "@/components/ui";
 import { grantsSummary, listGrants } from "@/lib/zcg/grants-repo";
 import { formatUsdCents } from "@/lib/zcg/format";
 import { GrantsTable, type GrantTableRow } from "./grants-table";
+import { cached, LEDGER_TTL_MS } from "@/lib/cache/memo";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Grants ZCG · OpenZcash" };
@@ -20,7 +21,10 @@ function statusLabel(status: string | null): string {
 }
 
 export default async function GrantsPage() {
-  const [grants, summary] = await Promise.all([listGrants(), grantsSummary()]);
+  const [grants, summary] = await Promise.all([
+    cached("grants:list", LEDGER_TTL_MS, () => listGrants()),
+    cached("grants:summary", LEDGER_TTL_MS, () => grantsSummary()),
+  ]);
 
   const rows: GrantTableRow[] = grants.map((g) => ({
     grantKey: g.grantKey,

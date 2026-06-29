@@ -12,15 +12,22 @@ import {
   type CategoryRow,
   type RecipientRow,
 } from "./totals-tables";
+import { cached, LEDGER_TTL_MS } from "@/lib/cache/memo";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Totals ZCG · OpenZcash" };
 
 export default async function TotaisPage() {
   const [cats, recips, grand] = await Promise.all([
-    categoryTotals("zcg_grants"),
-    recipientTotalsFromSheet("zcg_grants"),
-    grandTotal("zcg_grants"),
+    cached("totals:cats:zcg_grants", LEDGER_TTL_MS, () =>
+      categoryTotals("zcg_grants"),
+    ),
+    cached("totals:recips:zcg_grants", LEDGER_TTL_MS, () =>
+      recipientTotalsFromSheet("zcg_grants"),
+    ),
+    cached("totals:grand:zcg_grants", LEDGER_TTL_MS, () =>
+      grandTotal("zcg_grants"),
+    ),
   ]);
 
   const total = grand[0]?.usdPaidToDateCents ?? 0n;

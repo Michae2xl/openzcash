@@ -2,12 +2,15 @@ import { Card, PageHeader, Stat } from "@/components/ui";
 import { recipientTotals } from "@/lib/zcg/disbursements-repo";
 import { formatUsdCents } from "@/lib/zcg/format";
 import { RecipientsTable, type RecipientRow } from "./recipients-table";
+import { cached, LEDGER_TTL_MS } from "@/lib/cache/memo";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Recipients ZCG · OpenZcash" };
 
 export default async function RecebedoresPage() {
-  const all = await recipientTotals();
+  const all = await cached("recipientTotals", LEDGER_TTL_MS, () =>
+    recipientTotals(),
+  );
   const external = all.filter((r) => !r.isInternal);
   const grandTotal = external.reduce((s, r) => s + r.usdCents, 0n);
   const maxUsd = external.reduce(
