@@ -197,47 +197,26 @@ export async function ElectionsSection() {
             <p className="text-sm text-stone-400">No past elections yet.</p>
           </Card>
         ) : (
-          <ul className="space-y-3">
+          <ul className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
             {past.map((e) => (
               <li key={e.id}>
-                <Card className="group relative overflow-hidden border-stone-200/80 px-4 py-4 transition-colors hover:border-amber-300/70 sm:px-5">
-                  {/* Title + seats chip + results link */}
-                  <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                    <div className="min-w-0 max-w-full space-y-1.5">
-                      <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1.5">
-                        <h3 className="truncate text-[15px] font-semibold leading-tight tracking-tight text-stone-900">
-                          {e.title}
-                        </h3>
-                        <span className="inline-flex shrink-0 items-center gap-1 rounded-full border border-amber-300/60 bg-amber-50 px-2 py-0.5 text-[11px] font-medium text-amber-700">
-                          <span className="tnum">{e.seats}</span>
-                          <span className="text-amber-600/80">
-                            {e.seats === 1 ? "seat" : "seats"}
-                          </span>
-                        </span>
-                      </div>
-                      <p className="tnum flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px] text-stone-400">
-                        {e.resultsBy ? (
-                          <span>Results {fmt(e.resultsBy)}</span>
-                        ) : e.votingCloses ? (
-                          <span>Closed {fmt(e.votingCloses)}</span>
-                        ) : (
-                          <span>Closed</span>
-                        )}
-                      </p>
-                    </div>
-
+                <Card className="flex h-full flex-col gap-2 border-stone-200/80 p-3.5 transition-colors hover:border-amber-300/70">
+                  {/* Year + seats */}
+                  <div className="flex items-center justify-between gap-2">
                     <a
                       href={e.url}
                       target="_blank"
                       rel="noreferrer"
                       aria-label={`Official results for ${e.title}`}
-                      className="inline-flex shrink-0 items-center gap-1 self-start rounded-lg px-2 py-1 text-xs font-medium text-amber-700 transition-colors hover:bg-amber-50"
+                      className="group inline-flex min-w-0 items-center gap-1 text-[13px] font-semibold tracking-tight text-stone-900 hover:text-amber-700"
                     >
-                      <span>Official results</span>
+                      <span className="truncate">
+                        {e.title.replace(/ Election$/, "")}
+                      </span>
                       <svg
                         viewBox="0 0 16 16"
                         aria-hidden="true"
-                        className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-0.5"
+                        className="h-3 w-3 shrink-0 text-amber-600/70 transition-transform group-hover:translate-x-0.5"
                       >
                         <path
                           d="M3.5 8h8m0 0L8 4.5M11.5 8L8 11.5"
@@ -249,39 +228,43 @@ export async function ElectionsSection() {
                         />
                       </svg>
                     </a>
+                    <span className="tnum shrink-0 rounded-full border border-amber-300/50 bg-amber-50 px-1.5 py-0.5 text-[10px] font-medium text-amber-700">
+                      {e.seats} {e.seats === 1 ? "seat" : "seats"}
+                    </span>
                   </div>
 
-                  {/* Elected roster */}
-                  <div className="mt-3.5 border-t border-stone-100 pt-3.5">
-                    {e.elected && e.elected.length > 0 ? (
-                      <div className="space-y-2">
-                        <p className="text-[10px] font-medium uppercase tracking-wider text-emerald-700/70">
-                          Elected
-                        </p>
-                        <ul className="flex flex-wrap gap-1.5">
-                          {e.elected.map((name, i) => (
-                            <li
-                              key={`${e.id}-${i}`}
-                              className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/25 bg-emerald-500/10 py-1 pl-2 pr-2.5 text-[13px] font-medium text-emerald-800"
-                            >
-                              <span
-                                aria-hidden="true"
-                                className="h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-500"
-                              />
-                              <span className="leading-none">{name}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    ) : (
-                      <p className="text-[11px] italic text-stone-400">
-                        Results pending.
-                      </p>
-                    )}
-                  </div>
+                  {/* Elected pills */}
+                  {e.elected && e.elected.length > 0 ? (
+                    <ul className="flex flex-wrap gap-1">
+                      {e.elected.map((name, i) => (
+                        <li
+                          key={`${e.id}-${i}`}
+                          className="inline-flex items-center gap-1 rounded-full border border-emerald-500/20 bg-emerald-500/10 py-0.5 pl-1.5 pr-2 text-[11px] font-medium text-emerald-800"
+                        >
+                          <span
+                            aria-hidden="true"
+                            className="h-1 w-1 shrink-0 rounded-full bg-emerald-500"
+                          />
+                          <span className="leading-none">{name}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="text-[11px] italic text-stone-400">
+                      Results pending.
+                    </p>
+                  )}
+
+                  <p className="tnum mt-auto pt-0.5 text-[10px] text-stone-400">
+                    {e.resultsBy
+                      ? fmt(e.resultsBy)
+                      : e.votingCloses
+                        ? fmt(e.votingCloses)
+                        : "Closed"}
+                  </p>
 
                   {isAdmin ? (
-                    <div className="mt-3 border-t border-stone-100 pt-3">
+                    <div className="border-t border-stone-100 pt-2">
                       <ElectionControls id={e.id} initial={toForm(e)} />
                     </div>
                   ) : null}
