@@ -86,14 +86,14 @@ export async function ElectionsSection() {
 
   return (
     <section className="mb-8">
-      <div className="mb-3 flex items-center justify-between">
+      <CurrentCommittee />
+
+      <div className="mb-3 flex items-center justify-between border-t border-stone-200/70 pt-6">
         <h2 className="text-sm font-semibold text-stone-700">
           Committee elections
         </h2>
         {isAdmin ? <NewElectionButton /> : null}
       </div>
-
-      <CurrentCommittee />
 
       {current ? (
         <div className="relative">
