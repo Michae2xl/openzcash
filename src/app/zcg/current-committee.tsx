@@ -3,9 +3,13 @@ import { cn } from "@/lib/utils";
 
 /**
  * The ZCG committee seated from July 2026: the June 2026 cohort (terms to
- * June 2027) plus the December 2025 cohort (terms to December 2025+1yr).
- * Each member links to their own social / forum, with a real forum avatar
- * (mirrored locally under /committee) ringed by their cohort colour.
+ * June 2027) plus the December 2025 cohort (terms to December 2026). Each
+ * member links to their own social / forum, shown with their real forum
+ * avatar (mirrored locally under /committee) ringed by their cohort colour.
+ *
+ * The three tags per member are distilled from ~18 months of public ZCG
+ * committee meeting minutes (Jan 2025 – Jun 2026) — observed behaviour, not
+ * self-description. Paul Brigner joined in July 2026, so he has no record yet.
  */
 
 type Platform = "forum" | "x" | "linkedin" | "youtube";
@@ -17,6 +21,7 @@ interface Member {
   platform: Platform;
   cohort: "june-2026" | "dec-2025";
   term: string;
+  tags?: [string, string, string];
 }
 
 const MEMBERS: Member[] = [
@@ -27,6 +32,7 @@ const MEMBERS: Member[] = [
     platform: "forum",
     cohort: "june-2026",
     term: "to Jun 2027",
+    tags: ["Process Governance", "Fiscal Gatekeeper", "Ecosystem Steward"],
   },
   {
     name: "Paul Brigner",
@@ -43,6 +49,7 @@ const MEMBERS: Member[] = [
     platform: "forum",
     cohort: "dec-2025",
     term: "to Dec 2026",
+    tags: ["Protocol Authority", "Quality Screener", "Core-Team Liaison"],
   },
   {
     name: "Zerodartz",
@@ -51,6 +58,7 @@ const MEMBERS: Member[] = [
     platform: "x",
     cohort: "dec-2025",
     term: "to Dec 2026",
+    tags: ["Community Growth", "Adoption Diligence", "Budget Right-Sizing"],
   },
   {
     name: "Artkor",
@@ -59,6 +67,7 @@ const MEMBERS: Member[] = [
     platform: "youtube",
     cohort: "dec-2025",
     term: "to Dec 2026",
+    tags: ["Data-Driven Diligence", "Hands-On QA", "ZecHub Connector"],
   },
 ];
 
@@ -101,6 +110,67 @@ function PlatformGlyph({ platform }: { platform: Platform }) {
   );
 }
 
+function MemberCard({ m }: { m: Member }) {
+  return (
+    <a
+      href={m.url}
+      target="_blank"
+      rel="noreferrer"
+      aria-label={`${m.name} on ${PLATFORM_LABEL[m.platform]}`}
+      className="group flex items-start gap-3 rounded-xl border border-stone-200/80 bg-white p-3 transition-colors hover:border-amber-300/70"
+    >
+      <span className="relative shrink-0">
+        <span
+          className={cn(
+            "block rounded-full bg-gradient-to-br p-[2.5px] shadow-sm transition-transform duration-200 group-hover:scale-105",
+            RING[m.cohort],
+          )}
+        >
+          <img
+            src={m.img}
+            alt={m.name}
+            width={48}
+            height={48}
+            className="h-12 w-12 rounded-full border-2 border-white object-cover"
+          />
+        </span>
+        <span className="absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full border border-stone-200 bg-white text-stone-500 shadow-sm transition-colors group-hover:text-amber-700">
+          <PlatformGlyph platform={m.platform} />
+        </span>
+      </span>
+
+      <div className="min-w-0 flex-1">
+        <div className="flex items-baseline justify-between gap-2">
+          <span className="truncate text-sm font-semibold text-stone-900 group-hover:text-amber-700">
+            {m.name}
+          </span>
+          <span className="tnum shrink-0 text-[10px] text-stone-400">
+            {m.term}
+          </span>
+        </div>
+        {m.tags ? (
+          <div className="mt-1.5 flex flex-wrap gap-1">
+            {m.tags.map((t) => (
+              <span
+                key={t}
+                className="rounded-md bg-stone-100 px-1.5 py-0.5 text-[10px] font-medium text-stone-600 ring-1 ring-inset ring-stone-200/80"
+              >
+                {t}
+              </span>
+            ))}
+          </div>
+        ) : (
+          <div className="mt-1.5">
+            <span className="rounded-md bg-amber-500/10 px-1.5 py-0.5 text-[10px] font-medium text-amber-700 ring-1 ring-inset ring-amber-500/20">
+              New member · no meeting record yet
+            </span>
+          </div>
+        )}
+      </div>
+    </a>
+  );
+}
+
 export function CurrentCommittee() {
   return (
     <div className="mb-6">
@@ -111,46 +181,13 @@ export function CurrentCommittee() {
         <span className="text-xs text-stone-400">5 seats · from July 2026</span>
       </div>
 
-      <div className="flex flex-wrap gap-x-5 gap-y-4 sm:gap-x-7">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
         {MEMBERS.map((m) => (
-          <a
-            key={m.name}
-            href={m.url}
-            target="_blank"
-            rel="noreferrer"
-            aria-label={`${m.name} on ${PLATFORM_LABEL[m.platform]}`}
-            className="group flex w-[4.75rem] flex-col items-center gap-1.5 text-center"
-          >
-            <span className="relative">
-              <span
-                className={cn(
-                  "block rounded-full bg-gradient-to-br p-[2.5px] shadow-sm transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:scale-105",
-                  RING[m.cohort],
-                )}
-              >
-                <img
-                  src={m.img}
-                  alt={m.name}
-                  width={56}
-                  height={56}
-                  className="h-14 w-14 rounded-full border-2 border-white object-cover"
-                />
-              </span>
-              <span className="absolute -bottom-0.5 -right-0.5 flex h-5 w-5 items-center justify-center rounded-full border border-stone-200 bg-white text-stone-500 shadow-sm transition-colors group-hover:text-amber-700">
-                <PlatformGlyph platform={m.platform} />
-              </span>
-            </span>
-            <span className="text-xs font-medium leading-tight text-stone-800 group-hover:text-amber-700">
-              {m.name}
-            </span>
-            <span className="tnum text-[10px] leading-none text-stone-400">
-              {m.term}
-            </span>
-          </a>
+          <MemberCard key={m.name} m={m} />
         ))}
       </div>
 
-      <div className="mt-3.5 flex flex-wrap items-center gap-x-4 gap-y-1 text-[10px] text-stone-400">
+      <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-[10px] text-stone-400">
         <span className="inline-flex items-center gap-1.5">
           <span className="h-2 w-2 rounded-full bg-gradient-to-br from-amber-300 to-amber-500" />
           June 2026 cohort
@@ -159,6 +196,8 @@ export function CurrentCommittee() {
           <span className="h-2 w-2 rounded-full bg-gradient-to-br from-emerald-300 to-emerald-500" />
           December 2025 cohort
         </span>
+        <span className="text-stone-300">·</span>
+        <span>tags from public committee meeting minutes</span>
       </div>
     </div>
   );
