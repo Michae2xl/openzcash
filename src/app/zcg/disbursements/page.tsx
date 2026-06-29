@@ -58,19 +58,21 @@ export default async function DesembolsosPage({
       settlementAsset: d.settlementAsset,
       origin: d.origin,
       edited: overridden.has(d.id),
-      edit: {
-        recipientNameRaw: d.recipientNameRaw,
-        sourceSheet: d.sourceSheet,
-        project: d.project ?? "",
-        category: d.category ?? "",
-        milestoneLabel: d.milestoneLabel ?? "",
-        grantStatus: d.grantStatus ?? "",
-        amountUsd: money(d.amountUsdCents, 100),
-        usdDisbursed: money(d.usdDisbursedCents, 100),
-        zecDisbursed: money(d.zecDisbursedZat, 1e8),
-        paidOutDate: d.paidOutDate ?? "",
-        isPaid: d.isPaid,
-      },
+      edit: isAdmin
+        ? {
+            recipientNameRaw: d.recipientNameRaw,
+            sourceSheet: d.sourceSheet,
+            project: d.project ?? "",
+            category: d.category ?? "",
+            milestoneLabel: d.milestoneLabel ?? "",
+            grantStatus: d.grantStatus ?? "",
+            amountUsd: money(d.amountUsdCents, 100),
+            usdDisbursed: money(d.usdDisbursedCents, 100),
+            zecDisbursed: money(d.zecDisbursedZat, 1e8),
+            paidOutDate: d.paidOutDate ?? "",
+            isPaid: d.isPaid,
+          }
+        : undefined,
     };
   });
 

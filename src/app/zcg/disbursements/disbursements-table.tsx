@@ -28,7 +28,8 @@ export type DisbTableRow = {
   settlementAsset: string;
   origin: string;
   edited: boolean;
-  edit: DisbEdit;
+  /** Admin-only edit payload — omitted for public viewers to cut page weight. */
+  edit?: DisbEdit;
 };
 
 function statusTone(status: string | null) {
@@ -215,14 +216,15 @@ export function DisbursementsTable({
       key: "manage",
       header: "Manage",
       align: "right",
-      render: (r) => (
-        <DisbursementAdminControls
-          id={r.id}
-          origin={r.origin}
-          edited={r.edited}
-          initial={r.edit}
-        />
-      ),
+      render: (r) =>
+        r.edit ? (
+          <DisbursementAdminControls
+            id={r.id}
+            origin={r.origin}
+            edited={r.edited}
+            initial={r.edit}
+          />
+        ) : null,
     });
   }
 
