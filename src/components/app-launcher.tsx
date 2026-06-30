@@ -67,14 +67,6 @@ const APPS: AppDef[] = [
     grad: GRAD.amber,
   },
   {
-    id: "wallets",
-    label: "Zcash Wallets",
-    sub: "Self-custody · shielded",
-    href: "/wallets",
-    Icon: IconWallet,
-    grad: GRAD.emerald,
-  },
-  {
     id: "tesouros",
     label: "Treasuries",
     sub: "Viewing keys",
@@ -218,11 +210,19 @@ const APPS: AppDef[] = [
     grad: GRAD.emerald,
     logo: "/logos/zechub.png",
   },
+  {
+    id: "wallets",
+    label: "Zcash Wallets",
+    sub: "Self-custody · shielded",
+    href: "/wallets",
+    Icon: IconWallet,
+    grad: GRAD.emerald,
+  },
 ];
 
-// Bumped to v2 so the new "Zcash Wallets" tile lands near the front of the
-// default order for everyone (saved v1 layouts are superseded).
-const STORAGE_KEY = "zbo-launcher-v2";
+// Bumped (v3) so the default order takes effect for everyone: News first,
+// Zcash Wallets last (saved layouts are superseded).
+const STORAGE_KEY = "zbo-launcher-v3";
 const APP_BY_ID = new Map(APPS.map((a) => [a.id, a]));
 const PUBLIC_APPS = APPS.filter((a) => !a.admin);
 const ADMIN_APPS = APPS.filter((a) => a.admin);
