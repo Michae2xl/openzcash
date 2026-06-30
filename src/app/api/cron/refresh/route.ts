@@ -40,6 +40,7 @@ export async function GET(req: Request) {
         snapshots: r.snapshots,
         proposals: r.proposals,
         totals: r.totals,
+        meetings: r.meetings,
       },
       { status: r.ok ? 200 : 502 },
     );
