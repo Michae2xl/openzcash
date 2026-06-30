@@ -1,5 +1,6 @@
-import { Badge, Card, PageHeader } from "@/components/ui";
+import { Card, PageHeader } from "@/components/ui";
 import { IconShield } from "@/components/icons";
+import { cn } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Zcash Wallets · OpenZcash" };
@@ -28,7 +29,7 @@ const SOFTWARE: Wallet[] = [
     platforms: ["iOS", "Android"],
     shielded: "full",
     flagship: true,
-    note: "Formerly Zashi — shielded by default with auto-shielding and encrypted memos, from the core team that kept building it after leaving ECC.",
+    note: "Formerly Zashi — shielded by default with auto-shielding, from the core team that kept building it after leaving ECC.",
   },
   {
     name: "Zingo!",
@@ -47,6 +48,14 @@ const SOFTWARE: Wallet[] = [
     note: "Fast warp sync and power-user controls; full shielded send/receive and an encrypted messenger.",
   },
   {
+    name: "zkool",
+    maker: "hanh",
+    url: "https://github.com/hhanh00/zkool2",
+    platforms: ["iOS", "Android", "Desktop"],
+    shielded: "full",
+    note: "hanh's successor to Ywallet — full shielded send/receive (Orchard/Sapling) with watch-only UFVK import.",
+  },
+  {
     name: "Brave Wallet",
     maker: "Brave Software",
     url: "https://brave.com/wallet/",
@@ -63,12 +72,20 @@ const SOFTWARE: Wallet[] = [
     note: "First browser-extension wallet to bring shielded ZEC together with native DeFi.",
   },
   {
+    name: "MetaMask Snap",
+    maker: "ChainSafe",
+    url: "https://snaps.metamask.io/snap/npm/chainsafe/webzjs-zcash-snap/",
+    platforms: ["Browser extension"],
+    shielded: "full",
+    note: "Full shielded ZEC inside MetaMask — ChainSafe's WebZjs Snap, ZCG-funded and Hacken-audited.",
+  },
+  {
     name: "Vizor",
     maker: "Chainapsis (Keplr)",
     url: "https://vizor.cash/",
-    platforms: ["Desktop"],
+    platforms: ["iOS", "Android", "Desktop"],
     shielded: "full",
-    note: "Open-source desktop wallet, shielded by default, with Keystone hardware support — from the team behind Keplr.",
+    note: "Open-source wallet, shielded by default, with Keystone hardware support — from the team behind Keplr.",
   },
   {
     name: "Cake Wallet",
@@ -141,62 +158,112 @@ const HARDWARE: Wallet[] = [
   },
 ];
 
-function ShieldedBadge({ level }: { level: Shielded }) {
-  if (level === "full") return <Badge tone="emerald">Full shielded</Badge>;
-  if (level === "partial") return <Badge tone="amber">Partial shielded</Badge>;
-  return <Badge tone="zinc">Transparent only</Badge>;
-}
+const SHIELDED: Record<
+  Shielded,
+  { ring: string; label: string; text: string }
+> = {
+  full: {
+    ring: "bg-emerald-50 text-emerald-700 ring-emerald-400/60",
+    label: "Full shielded",
+    text: "text-emerald-700",
+  },
+  partial: {
+    ring: "bg-amber-50 text-amber-700 ring-amber-400/60",
+    label: "Partial",
+    text: "text-amber-700",
+  },
+  transparent: {
+    ring: "bg-stone-100 text-stone-500 ring-stone-300",
+    label: "Transparent",
+    text: "text-stone-500",
+  },
+};
 
 function WalletCard({ w }: { w: Wallet }) {
+  const s = SHIELDED[w.shielded];
   return (
-    <a href={w.url} target="_blank" rel="noreferrer" className="block">
-      <Card
-        interactive
-        className={
+    <a
+      href={w.url}
+      target="_blank"
+      rel="noreferrer"
+      className="group block h-full"
+    >
+      <div
+        className={cn(
+          "flex h-full flex-col rounded-xl border bg-white p-3 shadow-sm shadow-stone-200/50 transition duration-150 group-hover:-translate-y-0.5 group-hover:shadow-md group-hover:shadow-stone-300/50",
           w.flagship
-            ? "h-full border-amber-500/30 bg-amber-500/[0.04]"
-            : "h-full"
-        }
+            ? "border-amber-400/50 bg-gradient-to-br from-amber-50/60 to-white"
+            : "border-stone-200/80 group-hover:border-stone-300",
+        )}
       >
-        <div className="flex items-start justify-between gap-2">
-          <div className="min-w-0">
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="text-sm font-semibold text-stone-900">
+        <div className="flex items-center gap-2.5">
+          <span
+            className={cn(
+              "flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[13px] font-semibold ring-2 ring-inset",
+              s.ring,
+            )}
+            aria-hidden="true"
+          >
+            {w.name.charAt(0).toUpperCase()}
+          </span>
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-1.5">
+              <span className="truncate text-[13px] font-semibold text-stone-900">
                 {w.name}
               </span>
               {w.flagship ? (
-                <span className="rounded-full bg-amber-500/15 px-2 py-0.5 text-[10px] font-medium text-amber-700 ring-1 ring-inset ring-amber-500/25">
-                  Flagship
-                </span>
+                <span className="shrink-0 text-[11px] text-amber-500">★</span>
               ) : null}
               {w.tag ? (
-                <span className="rounded-full bg-stone-200/70 px-2 py-0.5 text-[10px] font-medium text-stone-600 ring-1 ring-inset ring-stone-300">
+                <span className="shrink-0 rounded-full bg-stone-200/70 px-1.5 py-px text-[9px] font-medium uppercase tracking-wide text-stone-600">
                   {w.tag}
                 </span>
               ) : null}
             </div>
-            <p className="mt-0.5 text-[11px] text-stone-500">{w.maker}</p>
+            <p className="truncate text-[11px] text-stone-500">{w.maker}</p>
           </div>
-          <ShieldedBadge level={w.shielded} />
+          <svg
+            viewBox="0 0 16 16"
+            aria-hidden="true"
+            className="h-3.5 w-3.5 shrink-0 text-amber-600/70 opacity-0 transition group-hover:translate-x-0.5 group-hover:opacity-100"
+          >
+            <path
+              d="M3.5 8h8m0 0L8 4.5M11.5 8L8 11.5"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
         </div>
 
-        <div className="mt-2.5 flex flex-wrap gap-1">
-          {w.platforms.map((p) => (
-            <span
-              key={p}
-              className="rounded-md bg-stone-100 px-1.5 py-0.5 text-[10px] font-medium text-stone-600 ring-1 ring-inset ring-stone-200"
-            >
-              {p}
-            </span>
-          ))}
-        </div>
-
-        <p className="mt-2.5 text-xs leading-relaxed text-stone-600">
+        <p className="mt-2 line-clamp-2 text-[11px] leading-snug text-stone-600">
           {w.note}
         </p>
 
-        <p className="mt-3 text-xs font-medium text-amber-700">Visit ↗</p>
-      </Card>
+        <div className="mt-auto flex items-center justify-between gap-2 pt-2.5">
+          <div className="flex min-w-0 flex-wrap gap-1">
+            {w.platforms.map((p) => (
+              <span
+                key={p}
+                className="rounded bg-stone-100 px-1.5 py-px text-[9.5px] font-medium text-stone-500"
+              >
+                {p}
+              </span>
+            ))}
+          </div>
+          <span
+            className={cn(
+              "flex shrink-0 items-center gap-1 text-[10px] font-medium",
+              s.text,
+            )}
+          >
+            <span className="h-1.5 w-1.5 rounded-full bg-current" />
+            {s.label}
+          </span>
+        </div>
+      </div>
     </a>
   );
 }
@@ -209,7 +276,7 @@ export default function WalletsPage() {
         subtitle="Self-custody wallets for ZEC. Shielded (z-address) support is what makes Zcash private — prefer a 'Full shielded' wallet to send and receive privately."
       />
 
-      <Card className="mb-8 flex items-start gap-3 border-emerald-500/20 bg-emerald-500/[0.05]">
+      <Card className="mb-7 flex items-start gap-3 border-emerald-500/20 bg-emerald-500/[0.05]">
         <IconShield className="mt-0.5 h-5 w-5 shrink-0 text-emerald-700/70" />
         <p className="text-sm leading-relaxed text-emerald-900/80">
           <span className="font-medium text-emerald-900">
@@ -221,11 +288,11 @@ export default function WalletsPage() {
         </p>
       </Card>
 
-      <section className="mb-8">
+      <section className="mb-7">
         <h2 className="mb-3 text-sm font-semibold text-stone-700">
           Software wallets
         </h2>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {SOFTWARE.map((w) => (
             <WalletCard key={w.name} w={w} />
           ))}
@@ -236,7 +303,7 @@ export default function WalletsPage() {
         <h2 className="mb-3 text-sm font-semibold text-stone-700">
           Hardware wallets
         </h2>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {HARDWARE.map((w) => (
             <WalletCard key={w.name} w={w} />
           ))}
