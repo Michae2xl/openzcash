@@ -126,6 +126,7 @@ const SOFTWARE: Wallet[] = [
     name: "Zipher",
     maker: "Atmosphere Labs",
     url: "https://zipher.to/",
+    logo: "/wallet-logos/zipher.png",
     platforms: ["iOS", "Android", "Desktop", "Web"],
     shielded: "full",
     tag: "Beta",
