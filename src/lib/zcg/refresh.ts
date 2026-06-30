@@ -1,6 +1,7 @@
 import { getDb } from "@/lib/db/client";
 import { zcgSheetImports } from "@/lib/db/schema";
 import { importDisbursements } from "./import-disbursements";
+import { importMeetings } from "./import-meetings";
 import { importProposals } from "./import-proposals";
 import { importSnapshots } from "./import-snapshots";
 import { importTotals } from "./import-totals";
@@ -50,11 +51,13 @@ export async function refreshZcg() {
   const snapshots = await safe(importSnapshots);
   const proposals = await safe(importProposals);
   const totals = await safe(importTotals);
+  const meetings = await safe(importMeetings);
 
   const ok =
     disbursements.some((r) => !r.status.startsWith("error")) ||
     proposals.some((r) => !r.status.startsWith("error")) ||
     totals.some((r) => !r.status.startsWith("error")) ||
+    meetings.some((r) => !r.status.startsWith("error")) ||
     snapshots.some((r) => r.ok);
 
   if (ok) await markRefreshed();
@@ -66,5 +69,6 @@ export async function refreshZcg() {
     snapshots,
     proposals,
     totals,
+    meetings,
   };
 }
