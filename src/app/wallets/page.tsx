@@ -14,20 +14,21 @@ interface Wallet {
   shielded: Shielded;
   note: string;
   flagship?: boolean;
+  tag?: "Beta" | "Coming soon";
 }
 
-// Curated from a multi-agent research pass (official sites, ZecHub, stores),
-// 2026. Shielded support is the headline: "full" = can send AND receive
-// shielded (Orchard/Sapling); "partial" = limited; "transparent" = t-addr only.
+// Curated from official sources + a multi-agent research pass (2026), seeded by
+// the community wallet list. Shielded support is the headline: "full" = send AND
+// receive shielded (Orchard/Sapling); "partial" = limited; "transparent" = t-addr only.
 const SOFTWARE: Wallet[] = [
   {
-    name: "Zashi",
-    maker: "Electric Coin Co",
-    url: "https://electriccoin.co/zashi/",
+    name: "Zodl",
+    maker: "Zcash Open Development Lab",
+    url: "https://zodl.com",
     platforms: ["iOS", "Android"],
     shielded: "full",
     flagship: true,
-    note: "Shielded by default with encrypted memos and Unified Addresses, from the team that built Zcash.",
+    note: "Formerly Zashi — shielded by default with auto-shielding and encrypted memos, from the core team that kept building it after leaving ECC.",
   },
   {
     name: "Zingo!",
@@ -44,6 +45,30 @@ const SOFTWARE: Wallet[] = [
     platforms: ["iOS", "Android", "Desktop"],
     shielded: "full",
     note: "Fast warp sync and power-user controls; full shielded send/receive and an encrypted messenger.",
+  },
+  {
+    name: "Brave Wallet",
+    maker: "Brave Software",
+    url: "https://brave.com/wallet/",
+    platforms: ["Desktop", "iOS", "Android"],
+    shielded: "full",
+    note: "Built into the Brave browser; supports Transparent, Unified and Shielded ZEC accounts via zk-proofs.",
+  },
+  {
+    name: "Noir Wallet",
+    maker: "RHEA Finance",
+    url: "https://www.zknoir.com/",
+    platforms: ["Browser extension"],
+    shielded: "full",
+    note: "First browser-extension wallet to bring shielded ZEC together with native DeFi.",
+  },
+  {
+    name: "Vizor",
+    maker: "Chainapsis (Keplr)",
+    url: "https://vizor.cash/",
+    platforms: ["Desktop"],
+    shielded: "full",
+    note: "Open-source desktop wallet, shielded by default, with Keystone hardware support — from the team behind Keplr.",
   },
   {
     name: "Cake Wallet",
@@ -68,6 +93,24 @@ const SOFTWARE: Wallet[] = [
     platforms: ["iOS", "Android"],
     shielded: "full",
     note: "Non-custodial multi-coin wallet with full shielded ZEC and one-tap auto-shielding.",
+  },
+  {
+    name: "Zipher",
+    maker: "Atmosphere Labs",
+    url: "https://zipher.to/",
+    platforms: ["iOS", "Android", "Desktop", "Web"],
+    shielded: "full",
+    tag: "Beta",
+    note: "Shielded-by-default Orchard wallet with a CLI for AI agents; open beta, not yet externally audited.",
+  },
+  {
+    name: "zSTASH",
+    maker: "Independent",
+    url: "https://zstash.app/",
+    platforms: ["Desktop"],
+    shielded: "full",
+    tag: "Coming soon",
+    note: "Native Rust/Tauri desktop wallet with hardware support and DEX swaps; launching after a security audit.",
   },
 ];
 
@@ -124,6 +167,11 @@ function WalletCard({ w }: { w: Wallet }) {
               {w.flagship ? (
                 <span className="rounded-full bg-amber-500/15 px-2 py-0.5 text-[10px] font-medium text-amber-700 ring-1 ring-inset ring-amber-500/25">
                   Flagship
+                </span>
+              ) : null}
+              {w.tag ? (
+                <span className="rounded-full bg-stone-200/70 px-2 py-0.5 text-[10px] font-medium text-stone-600 ring-1 ring-inset ring-stone-300">
+                  {w.tag}
                 </span>
               ) : null}
             </div>
@@ -197,9 +245,9 @@ export default function WalletsPage() {
 
       <p className="mt-6 text-xs text-stone-500">
         {SOFTWARE.length + HARDWARE.length} wallets · curated from official
-        sources, 2026 · shielded support verified per wallet. Deprecated
-        (Nighthawk) and non-Zcash (Coinbase Wallet) options are intentionally
-        omitted.
+        sources and the community wallet list, 2026 · shielded support verified
+        per wallet. Deprecated (Nighthawk) and non-Zcash (Coinbase Wallet)
+        options are intentionally omitted.
       </p>
     </>
   );
