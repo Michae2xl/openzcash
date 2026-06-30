@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import { Card, PageHeader } from "@/components/ui";
 import { IconShield } from "@/components/icons";
 import { cn } from "@/lib/utils";
@@ -14,6 +15,7 @@ interface Wallet {
   platforms: string[];
   shielded: Shielded;
   note: string;
+  logo?: string;
   flagship?: boolean;
   tag?: "Beta" | "Coming soon";
 }
@@ -26,6 +28,7 @@ const SOFTWARE: Wallet[] = [
     name: "Zodl",
     maker: "Zcash Open Development Lab",
     url: "https://zodl.com",
+    logo: "/wallet-logos/zodl.png",
     platforms: ["iOS", "Android"],
     shielded: "full",
     flagship: true,
@@ -35,6 +38,7 @@ const SOFTWARE: Wallet[] = [
     name: "Zingo!",
     maker: "Zingo Labs",
     url: "https://zingolabs.org/zingo/",
+    logo: "/wallet-logos/zingo.png",
     platforms: ["iOS", "Android", "Desktop"],
     shielded: "full",
     note: "Open-source, shielded by default, with view-only UFVK import — handy for accounting and watch-only.",
@@ -59,6 +63,7 @@ const SOFTWARE: Wallet[] = [
     name: "Brave Wallet",
     maker: "Brave Software",
     url: "https://brave.com/wallet/",
+    logo: "/wallet-logos/brave.png",
     platforms: ["Desktop", "iOS", "Android"],
     shielded: "full",
     note: "Built into the Brave browser; supports Transparent, Unified and Shielded ZEC accounts via zk-proofs.",
@@ -67,6 +72,7 @@ const SOFTWARE: Wallet[] = [
     name: "Noir Wallet",
     maker: "RHEA Finance",
     url: "https://www.zknoir.com/",
+    logo: "/wallet-logos/noir.png",
     platforms: ["Browser extension"],
     shielded: "full",
     note: "First browser-extension wallet to bring shielded ZEC together with native DeFi.",
@@ -75,6 +81,7 @@ const SOFTWARE: Wallet[] = [
     name: "MetaMask Snap",
     maker: "ChainSafe",
     url: "https://snaps.metamask.io/snap/npm/chainsafe/webzjs-zcash-snap/",
+    logo: "/wallet-logos/metamask.png",
     platforms: ["Browser extension"],
     shielded: "full",
     note: "Full shielded ZEC inside MetaMask — ChainSafe's WebZjs Snap, ZCG-funded and Hacken-audited.",
@@ -83,6 +90,7 @@ const SOFTWARE: Wallet[] = [
     name: "Vizor",
     maker: "Chainapsis (Keplr)",
     url: "https://vizor.cash/",
+    logo: "/wallet-logos/vizor.png",
     platforms: ["iOS", "Android", "Desktop"],
     shielded: "full",
     note: "Open-source wallet, shielded by default, with Keystone hardware support — from the team behind Keplr.",
@@ -91,6 +99,7 @@ const SOFTWARE: Wallet[] = [
     name: "Cake Wallet",
     maker: "Cake Labs",
     url: "https://cakewallet.com",
+    logo: "/wallet-logos/cake.png",
     platforms: ["iOS", "Android", "Desktop"],
     shielded: "full",
     note: "Multi-coin privacy wallet that auto-shields incoming funds and always sends from a shielded source.",
@@ -99,6 +108,7 @@ const SOFTWARE: Wallet[] = [
     name: "Edge",
     maker: "Edge",
     url: "https://edge.app",
+    logo: "/wallet-logos/edge.png",
     platforms: ["iOS", "Android"],
     shielded: "full",
     note: "Mainstream multi-asset wallet that defaults to shielded z-addresses, with private Maya swaps.",
@@ -107,6 +117,7 @@ const SOFTWARE: Wallet[] = [
     name: "Unstoppable Wallet",
     maker: "Horizontal Systems",
     url: "https://unstoppable.money/",
+    logo: "/wallet-logos/unstoppable.png",
     platforms: ["iOS", "Android"],
     shielded: "full",
     note: "Non-custodial multi-coin wallet with full shielded ZEC and one-tap auto-shielding.",
@@ -124,6 +135,7 @@ const SOFTWARE: Wallet[] = [
     name: "zSTASH",
     maker: "Independent",
     url: "https://zstash.app/",
+    logo: "/wallet-logos/zstash.png",
     platforms: ["Desktop"],
     shielded: "full",
     tag: "Coming soon",
@@ -136,6 +148,7 @@ const HARDWARE: Wallet[] = [
     name: "Keystone",
     maker: "Keystone",
     url: "https://keyst.one",
+    logo: "/wallet-logos/keystone.png",
     platforms: ["Hardware"],
     shielded: "full",
     note: "First hardware wallet with native shielded (Orchard) ZEC — send and receive shielded, fully air-gapped.",
@@ -144,6 +157,7 @@ const HARDWARE: Wallet[] = [
     name: "Ledger",
     maker: "Ledger · Zondax",
     url: "https://www.ledger.com/coin/wallet/zcash",
+    logo: "/wallet-logos/ledger.png",
     platforms: ["Hardware"],
     shielded: "partial",
     note: "Transparent by default; a separate Zondax app adds Sapling shielded on some models (not Orchard).",
@@ -152,28 +166,47 @@ const HARDWARE: Wallet[] = [
     name: "Trezor",
     maker: "SatoshiLabs",
     url: "https://trezor.io/coins/wallet/zcash",
+    logo: "/wallet-logos/trezor.png",
     platforms: ["Hardware"],
     shielded: "transparent",
     note: "Transparent (t-address) only — no shielded support, so it can't use Zcash's privacy features.",
   },
 ];
 
+// Wallets the user asked to mark with a star (plus the flagship, which always has one).
+const STARRED = new Set([
+  "Zingo!",
+  "zkool",
+  "Vizor",
+  "Edge",
+  "Cake Wallet",
+  "Noir Wallet",
+  "Brave Wallet",
+  "Unstoppable Wallet",
+  "Keystone",
+  "Ledger",
+  "Trezor",
+]);
+
 const SHIELDED: Record<
   Shielded,
-  { ring: string; label: string; text: string }
+  { ringColor: string; monoBg: string; label: string; text: string }
 > = {
   full: {
-    ring: "bg-emerald-50 text-emerald-700 ring-emerald-400/60",
+    ringColor: "ring-emerald-400/60",
+    monoBg: "bg-emerald-50 text-emerald-700",
     label: "Full shielded",
     text: "text-emerald-700",
   },
   partial: {
-    ring: "bg-amber-50 text-amber-700 ring-amber-400/60",
+    ringColor: "ring-amber-400/60",
+    monoBg: "bg-amber-50 text-amber-700",
     label: "Partial",
     text: "text-amber-700",
   },
   transparent: {
-    ring: "bg-stone-100 text-stone-500 ring-stone-300",
+    ringColor: "ring-stone-300",
+    monoBg: "bg-stone-100 text-stone-500",
     label: "Transparent",
     text: "text-stone-500",
   },
@@ -181,6 +214,7 @@ const SHIELDED: Record<
 
 function WalletCard({ w }: { w: Wallet }) {
   const s = SHIELDED[w.shielded];
+  const star = w.flagship || STARRED.has(w.name);
   return (
     <a
       href={w.url}
@@ -197,21 +231,35 @@ function WalletCard({ w }: { w: Wallet }) {
         )}
       >
         <div className="flex items-center gap-2.5">
-          <span
-            className={cn(
-              "flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[13px] font-semibold ring-2 ring-inset",
-              s.ring,
-            )}
-            aria-hidden="true"
-          >
-            {w.name.charAt(0).toUpperCase()}
-          </span>
+          {w.logo ? (
+            <img
+              src={w.logo}
+              alt=""
+              width={36}
+              height={36}
+              className={cn(
+                "h-9 w-9 shrink-0 rounded-full bg-white object-contain p-1 ring-2 ring-inset",
+                s.ringColor,
+              )}
+            />
+          ) : (
+            <span
+              className={cn(
+                "flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[13px] font-semibold ring-2 ring-inset",
+                s.ringColor,
+                s.monoBg,
+              )}
+              aria-hidden="true"
+            >
+              {w.name.charAt(0).toUpperCase()}
+            </span>
+          )}
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-1.5">
-              <span className="truncate text-[13px] font-semibold text-stone-900">
-                {w.name}
+              <span className="truncate text-[13px] font-semibold tracking-wide text-stone-900">
+                {w.name.toUpperCase()}
               </span>
-              {w.flagship ? (
+              {star ? (
                 <span className="shrink-0 text-[11px] text-amber-500">★</span>
               ) : null}
               {w.tag ? (
