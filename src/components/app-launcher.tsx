@@ -20,6 +20,7 @@ import {
   IconSigma,
   IconUsers,
   IconVote,
+  IconWallet,
 } from "./icons";
 import { cn } from "@/lib/utils";
 
@@ -64,6 +65,14 @@ const APPS: AppDef[] = [
     href: "/lockbox",
     Icon: IconShield,
     grad: GRAD.amber,
+  },
+  {
+    id: "wallets",
+    label: "Zcash Wallets",
+    sub: "Self-custody · shielded",
+    href: "/wallets",
+    Icon: IconWallet,
+    grad: GRAD.emerald,
   },
   {
     id: "tesouros",
@@ -211,7 +220,9 @@ const APPS: AppDef[] = [
   },
 ];
 
-const STORAGE_KEY = "zbo-launcher-v1";
+// Bumped to v2 so the new "Zcash Wallets" tile lands near the front of the
+// default order for everyone (saved v1 layouts are superseded).
+const STORAGE_KEY = "zbo-launcher-v2";
 const APP_BY_ID = new Map(APPS.map((a) => [a.id, a]));
 const PUBLIC_APPS = APPS.filter((a) => !a.admin);
 const ADMIN_APPS = APPS.filter((a) => a.admin);

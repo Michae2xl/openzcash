@@ -78,6 +78,14 @@ export const IconCoins = svg(
   </>,
 );
 
+export const IconWallet = svg(
+  <>
+    <rect x="3" y="6" width="18" height="13" rx="2.5" />
+    <path d="M3 10.5h18" />
+    <circle cx="16.5" cy="14.5" r="1.15" />
+  </>,
+);
+
 export const IconGrant = svg(
   <>
     <rect x="4" y="3" width="16" height="18" rx="2" />
