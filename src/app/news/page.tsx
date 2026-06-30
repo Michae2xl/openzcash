@@ -47,6 +47,11 @@ const SOURCE: Record<
     chip: "bg-teal-500/15 text-teal-700",
     Icon: IconVote,
   },
+  application: {
+    label: "Application",
+    chip: "bg-indigo-500/15 text-indigo-700",
+    Icon: IconReceipt,
+  },
 };
 
 function rel(ts: string, now: number): string {

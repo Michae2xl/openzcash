@@ -4,6 +4,7 @@ import { getDb } from "@/lib/db/client";
 import { zcgDisbursements, zcgProposals } from "@/lib/db/schema";
 import { formatUsdCents } from "@/lib/zcg/format";
 import { getZechubProposals } from "@/lib/dao/zechub";
+import { getGrantApplications } from "@/lib/zcg/github-applications";
 
 /**
  * Cross-source "what's new" feed: the Zcash forum (Discourse), GitHub releases
@@ -13,7 +14,8 @@ import { getZechubProposals } from "@/lib/dao/zechub";
  * item timestamps vs a localStorage "last seen" marker.
  */
 
-export type NewsSource = "forum" | "github" | "sheet" | "proposal" | "dao";
+export type NewsSource =
+  "forum" | "github" | "sheet" | "proposal" | "dao" | "application";
 
 export type NewsItem = {
   source: NewsSource;
@@ -184,17 +186,44 @@ async function fetchDao(): Promise<NewsItem[]> {
   }
 }
 
+/** Newest ZCG grant applications (GitHub issues), surfaced first-hand. */
+async function fetchApplications(): Promise<NewsItem[]> {
+  try {
+    const apps = await getGrantApplications(15);
+    return apps.map((a) => ({
+      source: "application" as const,
+      kind:
+        a.status === "review"
+          ? "Grant application · ready for review"
+          : "Grant application",
+      title: a.title,
+      url: a.url,
+      ts: iso(a.createdAt),
+    }));
+  } catch {
+    return [];
+  }
+}
+
 export async function getNews(): Promise<NewsItem[]> {
   const now = Date.now();
   if (cache && now - cache.at < TTL_MS) return cache.items;
-  const [forum, sheet, proposals, dao, ...repos] = await Promise.all([
+  const [forum, sheet, proposals, dao, apps, ...repos] = await Promise.all([
     fetchForum(),
     fetchSheet(),
     fetchProposals(),
     fetchDao(),
+    fetchApplications(),
     ...GITHUB_REPOS.map(fetchRepo),
   ]);
-  const items = [...forum, ...sheet, ...proposals, ...dao, ...repos.flat()]
+  const items = [
+    ...forum,
+    ...sheet,
+    ...proposals,
+    ...dao,
+    ...apps,
+    ...repos.flat(),
+  ]
     .filter((i) => i.ts)
     .sort((a, b) => b.ts.localeCompare(a.ts))
     .slice(0, 60);
