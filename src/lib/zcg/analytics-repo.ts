@@ -32,28 +32,21 @@ export async function monthlySpend(): Promise<MonthSpend[]> {
   return rows.map((r) => ({ month: r.month, usdCents: BigInt(r.usdCents) }));
 }
 
-export type LedgerPoolSum = {
-  pool: "zcg_grants" | "coinholder";
-  usdCents: bigint;
-};
-
 /**
- * Sum of the paid ledger, split into the same two pools the published totals
- * use (coinholder vs. everything-else = ZCG). Compared against the imported
- * grand_total on the totals page, this turns the "matches the sum of
- * categories" claim into a computed self-audit.
+ * Paid USD in the external-grant ledger for the ZCG pool — grant milestones plus
+ * contractor payments only. This is the like-for-like counterpart of the
+ * published "grants to the ecosystem" total. The internal buckets (discretionary
+ * budget, monthly stipends) are deliberately excluded: the published pivot
+ * counts them at a broader cumulative scope than their source tabs, so folding
+ * them in makes the cross-check diverge for a non-issue rather than catching a
+ * real one — those two are reconciled on their own pages.
  */
-export async function ledgerSumByPool(): Promise<LedgerPoolSum[]> {
-  const rows = await getDb()
+export async function ledgerGrantsPaidCents(): Promise<bigint> {
+  const [r] = await getDb()
     .select({
-      isCoinholder: sql<boolean>`${zcgDisbursements.sourceSheet} = 'coinholder_grants'`,
-      usdCents: sql<string>`coalesce(sum(${zcgDisbursements.amountUsdCents}) filter (where ${zcgDisbursements.isPaid}),0)`,
+      usdCents: sql<string>`coalesce(sum(${zcgDisbursements.amountUsdCents}) filter (where ${zcgDisbursements.isPaid} and ${zcgDisbursements.sourceSheet} in ('grants_disbursed','ic_payments')),0)`,
     })
-    .from(zcgDisbursements)
-    .groupBy(sql`${zcgDisbursements.sourceSheet} = 'coinholder_grants'`);
+    .from(zcgDisbursements);
 
-  return rows.map((r) => ({
-    pool: r.isCoinholder ? "coinholder" : "zcg_grants",
-    usdCents: BigInt(r.usdCents),
-  }));
+  return BigInt(r?.usdCents ?? "0");
 }

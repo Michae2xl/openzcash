@@ -7,7 +7,7 @@ import {
 } from "@/lib/zcg/totals-repo";
 import { formatUsdCents } from "@/lib/zcg/format";
 import { classifyLabel, type ClassKind } from "@/lib/zcg/classification-tags";
-import { ledgerSumByPool } from "@/lib/zcg/analytics-repo";
+import { ledgerGrantsPaidCents } from "@/lib/zcg/analytics-repo";
 import { Synced } from "@/components/synced";
 import {
   TotalsTables,
@@ -20,7 +20,7 @@ export const dynamic = "force-dynamic";
 export const metadata = { title: "Totals ZCG · OpenZcash" };
 
 export default async function TotaisPage() {
-  const [cats, recips, grand, ledgerPools] = await Promise.all([
+  const [cats, recips, grand, ledgerGrantsPaid] = await Promise.all([
     cached("totals:cats:zcg_grants", LEDGER_TTL_MS, () =>
       categoryTotals("zcg_grants"),
     ),
@@ -30,7 +30,7 @@ export default async function TotaisPage() {
     cached("totals:grand:zcg_grants", LEDGER_TTL_MS, () =>
       grandTotal("zcg_grants"),
     ),
-    cached("totals:ledgerSum", LEDGER_TTL_MS, () => ledgerSumByPool()),
+    cached("totals:ledgerGrants", LEDGER_TTL_MS, () => ledgerGrantsPaidCents()),
   ]);
 
   const total = grand[0]?.usdPaidToDateCents ?? 0n;
@@ -43,16 +43,6 @@ export default async function TotaisPage() {
   const totalNum = Number(total);
   const share = (cents: bigint) =>
     totalNum > 0 ? (Number(cents) / totalNum) * 100 : 0;
-
-  // #4 Live cross-check: does the paid disbursement ledger sum to the published
-  // grand total? Computed, not asserted — a small delta is expected (timing /
-  // rounding), a large one is a real signal.
-  const ledgerZcg = Number(
-    ledgerPools.find((p) => p.pool === "zcg_grants")?.usdCents ?? 0n,
-  );
-  const auditDelta = ledgerZcg - totalNum;
-  const auditPct = totalNum > 0 ? (auditDelta / totalNum) * 100 : 0;
-  const reconciled = Math.abs(auditPct) < 2;
 
   // Split the pool by the *nature* of each classification so a reader can see
   // how much left ZCG as grants vs. how much ZCG spent on itself (stipends =
@@ -67,6 +57,16 @@ export default async function TotaisPage() {
   const securityUsd = sumKind("security");
   const grantsUsd = Math.max(totalNum - opsUsd - stipendsUsd, 0);
   const pct = (v: number) => (totalNum > 0 ? (v / totalNum) * 100 : 0);
+
+  // #4 Live cross-check, like-for-like: the published grants total (pivot minus
+  // the internal buckets) vs. the paid grant+contractor ledger. The internal
+  // buckets are excluded because the pivot counts them at a broader scope than
+  // their tabs — folding them in would show a divergence that isn't a real
+  // integrity problem. This way the number is meaningful and should sit at ~0.
+  const ledgerGrants = Number(ledgerGrantsPaid);
+  const auditDelta = ledgerGrants - grantsUsd;
+  const auditPct = grantsUsd > 0 ? (auditDelta / grantsUsd) * 100 : 0;
+  const reconciled = Math.abs(auditPct) < 1;
   const spendSplit = [
     {
       label: "Grants to the ecosystem",
@@ -242,7 +242,7 @@ export default async function TotaisPage() {
       >
         <div className="flex items-center justify-between gap-3">
           <h3 className="text-sm font-semibold text-stone-800">
-            Ledger cross-check
+            Grants ledger cross-check
           </h3>
           <Badge tone={reconciled ? "emerald" : "amber"}>
             {reconciled ? "✓ reconciled" : "⚠ review"}
@@ -250,15 +250,15 @@ export default async function TotaisPage() {
         </div>
         <div className="mt-3 grid gap-3 sm:grid-cols-3">
           <div>
-            <p className="text-xs text-stone-500">Published grand total</p>
+            <p className="text-xs text-stone-500">Published grants total</p>
             <p className="text-sm font-semibold text-stone-900 tnum">
-              {formatUsdCents(total)}
+              {formatUsdCents(grantsUsd)}
             </p>
           </div>
           <div>
-            <p className="text-xs text-stone-500">Sum of the paid ledger</p>
+            <p className="text-xs text-stone-500">Paid grants ledger</p>
             <p className="text-sm font-semibold text-stone-900 tnum">
-              {formatUsdCents(ledgerZcg)}
+              {formatUsdCents(ledgerGrants)}
             </p>
           </div>
           <div>
@@ -278,9 +278,11 @@ export default async function TotaisPage() {
           </div>
         </div>
         <p className="mt-3 text-xs leading-relaxed text-stone-500">
-          The published pivot and the line-by-line ledger are imported from
-          different tabs; this compares them live instead of assuming they
-          match. See{" "}
+          The published grants total (the pivot minus ZCG&apos;s own operations
+          &amp; stipends) vs. the paid grant + contractor ledger, compared live.
+          The two internal buckets are excluded here because the pivot counts
+          them at a broader scope than their tabs — they&apos;re reconciled on
+          their own pages. See{" "}
           <Link
             href="/zcg/methodology"
             className="text-amber-700 hover:underline"
