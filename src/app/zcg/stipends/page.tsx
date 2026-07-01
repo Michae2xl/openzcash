@@ -130,11 +130,23 @@ export default async function StipendsPage() {
         </Card>
       )}
 
-      <div className="mt-4 flex items-center gap-2">
+      <div className="mt-4 flex items-start gap-2">
         <Badge tone="violet">Committee salaries</Badge>
-        <p className="text-xs text-stone-500">
-          These are internal ZCG payments and are excluded from the external
-          recipient tables.
+        <p className="text-xs leading-relaxed text-stone-500">
+          These are internal ZCG payments, excluded from the external recipient
+          tables. This page sums the monthly-payments tab; the cumulative{" "}
+          <Link href="/zcg/totals" className="text-amber-700 hover:underline">
+            &ldquo;Committee stipends&rdquo;
+          </Link>{" "}
+          classification on the totals page is a broader, all-time figure — two
+          scopes of the same programme (see{" "}
+          <Link
+            href="/zcg/methodology"
+            className="text-amber-700 hover:underline"
+          >
+            methodology
+          </Link>
+          ).
         </p>
       </div>
 

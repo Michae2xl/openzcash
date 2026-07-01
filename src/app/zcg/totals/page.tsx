@@ -90,7 +90,7 @@ export default async function TotaisPage() {
       usd: stipendsUsd,
       bar: "bg-violet-500/70",
       tone: "violet" as const,
-      href: "/zcg/disbursements?sheet=monthly",
+      href: "/zcg/stipends",
     },
   ];
 
