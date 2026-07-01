@@ -1,8 +1,14 @@
 "use client";
 
-import { Suspense, useRef } from "react";
+import { Suspense, useMemo, useRef } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { Grid, Html, OrbitControls, useTexture } from "@react-three/drei";
+import {
+  Grid,
+  Html,
+  OrbitControls,
+  useGLTF,
+  useTexture,
+} from "@react-three/drei";
 import * as THREE from "three";
 
 export type OfficeMember = { name: string; img: string; tags: string[] };
@@ -13,354 +19,404 @@ export type OfficeProposal = {
 };
 
 const GOLD = "#f4b728";
-const ROOM_W = 34; // x: -17..17
-const ROOM_D = 30; // z: -16..14
-const ROOM_H = 10;
+const M = "/office-assets/models/furniture";
+const WALK_COLORS = [
+  "#38bdf8",
+  "#a78bfa",
+  "#f472b6",
+  "#34d399",
+  "#fbbf24",
+  "#22d3ee",
+  "#f87171",
+  "#818cf8",
+  "#4ade80",
+  "#e879f9",
+];
 
-/* --------------------------------- room ----------------------------------- */
-function NeonEdge({
-  from,
-  to,
-  color,
+/* --------------------------- GLB model instance --------------------------- */
+function Model({
+  url,
+  position,
+  rotationY = 0,
+  scale = 1,
 }: {
-  from: [number, number, number];
-  to: [number, number, number];
-  color: string;
+  url: string;
+  position: [number, number, number];
+  rotationY?: number;
+  scale?: number | [number, number, number];
 }) {
-  const mid: [number, number, number] = [
-    (from[0] + to[0]) / 2,
-    (from[1] + to[1]) / 2,
-    (from[2] + to[2]) / 2,
-  ];
-  const len = Math.hypot(to[0] - from[0], to[1] - from[1], to[2] - from[2]);
-  const dir = new THREE.Vector3(
-    to[0] - from[0],
-    to[1] - from[1],
-    to[2] - from[2],
-  ).normalize();
-  const q = new THREE.Quaternion().setFromUnitVectors(
-    new THREE.Vector3(0, 1, 0),
-    dir,
-  );
-  const e = new THREE.Euler().setFromQuaternion(q);
+  const { scene } = useGLTF(url);
+  const obj = useMemo(() => {
+    const c = scene.clone(true);
+    c.traverse((o) => {
+      const mesh = o as THREE.Mesh;
+      if (mesh.isMesh) {
+        mesh.castShadow = true;
+        mesh.receiveShadow = true;
+      }
+    });
+    return c;
+  }, [scene]);
+  const s = typeof scale === "number" ? [scale, scale, scale] : scale;
   return (
-    <mesh position={mid} rotation={[e.x, e.y, e.z]}>
-      <cylinderGeometry args={[0.04, 0.04, len, 6]} />
-      <meshBasicMaterial color={color} toneMapped={false} />
-    </mesh>
+    <primitive
+      object={obj}
+      position={position}
+      rotation={[0, rotationY, 0]}
+      scale={s}
+    />
   );
 }
 
-function Room() {
+/* ------------------------------ floor + room ------------------------------ */
+function Floor() {
   const tex = useTexture("/zcash-emblem.png");
   tex.colorSpace = THREE.SRGBColorSpace;
-  const hx = ROOM_W / 2;
-  const backZ = -ROOM_D / 2;
-  const wall = (
-    <meshStandardMaterial color="#0a0b14" roughness={0.95} metalness={0.05} />
-  );
   return (
     <group>
-      {/* floor */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-        <planeGeometry args={[ROOM_W, ROOM_D]} />
-        <meshStandardMaterial color="#07070e" roughness={0.8} metalness={0.2} />
+        <planeGeometry args={[44, 44]} />
+        <meshStandardMaterial
+          color="#0b0c15"
+          roughness={0.85}
+          metalness={0.15}
+        />
       </mesh>
       <Grid
-        args={[ROOM_W, ROOM_D]}
+        args={[44, 44]}
         cellSize={1.4}
         cellThickness={0.5}
-        cellColor="#15315c"
+        cellColor="#1b3b66"
         sectionSize={5.6}
         sectionThickness={1}
         sectionColor="#6d28d9"
-        fadeDistance={38}
+        fadeDistance={34}
         fadeStrength={1.4}
         position={[0, 0.01, 0]}
       />
-      {/* Zcash emblem on the floor */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, 2]}>
-        <planeGeometry args={[9, 9]} />
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, 1.5]}>
+        <planeGeometry args={[8, 8]} />
         <meshBasicMaterial
           map={tex}
           transparent
-          opacity={0.9}
+          opacity={0.85}
           toneMapped={false}
         />
       </mesh>
-      {/* back wall */}
-      <mesh position={[0, ROOM_H / 2, backZ]} receiveShadow>
-        <planeGeometry args={[ROOM_W, ROOM_H]} />
-        {wall}
-      </mesh>
-      {/* side walls */}
-      <mesh position={[-hx, ROOM_H / 2, 0]} rotation={[0, Math.PI / 2, 0]}>
-        <planeGeometry args={[ROOM_D, ROOM_H]} />
-        {wall}
-      </mesh>
-      <mesh position={[hx, ROOM_H / 2, 0]} rotation={[0, -Math.PI / 2, 0]}>
-        <planeGeometry args={[ROOM_D, ROOM_H]} />
-        {wall}
-      </mesh>
-      {/* ceiling */}
-      <mesh position={[0, ROOM_H, 0]} rotation={[Math.PI / 2, 0, 0]}>
-        <planeGeometry args={[ROOM_W, ROOM_D]} />
-        <meshStandardMaterial color="#06060c" roughness={1} />
-      </mesh>
-      {/* ceiling light strips */}
-      {[-6, 0, 6].map((x) => (
-        <mesh key={x} position={[x, ROOM_H - 0.05, 0]}>
-          <boxGeometry args={[0.3, 0.05, ROOM_D - 4]} />
-          <meshBasicMaterial color="#6ea8ff" toneMapped={false} />
-        </mesh>
-      ))}
-      {/* neon trim on the back-wall edges */}
-      <NeonEdge
-        from={[-hx, 0.05, backZ]}
-        to={[hx, 0.05, backZ]}
-        color="#22d3ee"
-      />
-      <NeonEdge
-        from={[-hx, ROOM_H, backZ]}
-        to={[hx, ROOM_H, backZ]}
-        color="#8b5cf6"
-      />
-      <NeonEdge
-        from={[-hx, 0, backZ]}
-        to={[-hx, ROOM_H, backZ]}
-        color="#8b5cf6"
-      />
-      <NeonEdge
-        from={[hx, 0, backZ]}
-        to={[hx, ROOM_H, backZ]}
-        color="#8b5cf6"
-      />
     </group>
   );
 }
 
-/* -------------------------- proposals review board ------------------------ */
-function ReviewBoard({ proposals }: { proposals: OfficeProposal[] }) {
-  const backZ = -ROOM_D / 2 + 0.15;
-  const cols = 4;
-  const cardW = 3.5;
-  const cardH = 2.3;
-  const gapX = 0.5;
-  const gapY = 0.5;
-  const rows = Math.ceil(proposals.length / cols);
-  const gridW = cols * cardW + (cols - 1) * gapX;
-  const startX = -gridW / 2 + cardW / 2;
-  const topY = 7.4;
+function Walls() {
+  const H = 5.5;
+  const wall = (
+    <meshStandardMaterial color="#0c0d18" roughness={0.95} metalness={0.05} />
+  );
   return (
     <group>
-      {/* board title */}
-      <Html position={[0, 8.6, backZ]} center distanceFactor={16}>
-        <div
-          style={{
-            fontFamily: "Inter, system-ui, sans-serif",
-            color: "#e7eefc",
-            fontWeight: 800,
-            fontSize: 22,
-            letterSpacing: 3,
-            textShadow: "0 0 18px rgba(56,189,248,0.7)",
-            whiteSpace: "nowrap",
-          }}
-        >
-          ▲ PROPOSALS UNDER REVIEW
-        </div>
-      </Html>
-      {proposals.map((p, i) => {
-        const c = i % cols;
-        const r = Math.floor(i / cols);
-        const x = startX + c * (cardW + gapX);
-        const y = topY - r * (cardH + gapY);
-        const amount =
-          p.amount != null ? `$${p.amount.toLocaleString("en-US")}` : "—";
-        return (
-          <group key={p.title + i} position={[x, y, backZ]}>
-            {/* card backing panel (in-world, on the wall) */}
-            <mesh>
-              <planeGeometry args={[cardW, cardH]} />
-              <meshBasicMaterial
-                color="#071427"
-                transparent
-                opacity={0.9}
-                toneMapped={false}
-              />
-            </mesh>
-            <Html
-              position={[0, 0, 0.05]}
-              center
-              transform
-              distanceFactor={7}
-              pointerEvents="none"
-            >
-              <div
-                style={{
-                  width: 176,
-                  pointerEvents: "none",
-                  fontFamily: "Inter, system-ui, sans-serif",
-                  border: "1px solid rgba(14,165,233,0.65)",
-                  borderRadius: 10,
-                  padding: "9px 11px",
-                  boxShadow: "0 0 18px rgba(14,165,233,0.45)",
-                  background: "rgba(4,12,26,0.7)",
-                }}
-              >
-                <div
-                  style={{
-                    fontSize: 8,
-                    letterSpacing: 1,
-                    color: "#38bdf8",
-                    fontWeight: 700,
-                  }}
-                >
-                  UNDER REVIEW
-                </div>
-                <div
-                  style={{
-                    marginTop: 3,
-                    color: "#eaf1ff",
-                    fontWeight: 600,
-                    fontSize: 12,
-                    lineHeight: 1.2,
-                    display: "-webkit-box",
-                    WebkitLineClamp: 2,
-                    WebkitBoxOrient: "vertical",
-                    overflow: "hidden",
-                    minHeight: 29,
-                  }}
-                >
-                  {p.title}
-                </div>
-                <div
-                  style={{
-                    marginTop: 6,
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "baseline",
-                  }}
-                >
-                  <span style={{ fontSize: 9, color: "#7891b5" }}>
-                    {p.applicant ? `@${p.applicant}` : ""}
-                  </span>
-                  <span style={{ fontSize: 13, fontWeight: 700, color: GOLD }}>
-                    {amount}
-                  </span>
-                </div>
-              </div>
-            </Html>
-          </group>
-        );
-      })}
-      {/* faint frame around the board */}
+      <mesh position={[0, H / 2, -11]} receiveShadow>
+        <planeGeometry args={[24, H]} />
+        {wall}
+      </mesh>
       <mesh
-        position={[0, topY - ((rows - 1) * (cardH + gapY)) / 2, backZ - 0.05]}
+        position={[-12, H / 2, 0]}
+        rotation={[0, Math.PI / 2, 0]}
+        receiveShadow
       >
-        <planeGeometry args={[gridW + 1, rows * (cardH + gapY) + 0.6]} />
-        <meshBasicMaterial color="#0a1830" transparent opacity={0.5} />
+        <planeGeometry args={[24, H]} />
+        {wall}
+      </mesh>
+      <mesh
+        position={[12, H / 2, 0]}
+        rotation={[0, -Math.PI / 2, 0]}
+        receiveShadow
+      >
+        <planeGeometry args={[24, H]} />
+        {wall}
+      </mesh>
+      {/* neon baseboard on the back wall */}
+      <mesh position={[0, 0.06, -10.98]}>
+        <boxGeometry args={[24, 0.08, 0.08]} />
+        <meshBasicMaterial color="#22d3ee" toneMapped={false} />
       </mesh>
     </group>
   );
 }
 
-/* ----------------------------- committee table ---------------------------- */
-function CommitteeTable({ members }: { members: OfficeMember[] }) {
-  const tz = 4.5; // table sits toward the front, members face the board
+/* ------------------------------- furniture -------------------------------- */
+function OfficeFurniture() {
   return (
-    <group position={[0, 0, tz]}>
-      {/* round table */}
-      <mesh position={[0, 1, 0]} castShadow receiveShadow>
-        <cylinderGeometry args={[3.4, 3.5, 0.2, 64]} />
-        <meshStandardMaterial
-          color="#12121e"
-          metalness={0.8}
-          roughness={0.2}
-          emissive={GOLD}
-          emissiveIntensity={0.1}
-        />
-      </mesh>
-      <mesh position={[0, 0.5, 0]}>
-        <cylinderGeometry args={[0.4, 0.6, 1, 24]} />
-        <meshStandardMaterial color="#0b0b13" metalness={0.6} roughness={0.4} />
-      </mesh>
-      {members.map((m, i) => {
-        // seats on a rear arc so avatars face the camera and the board
-        const spread = Math.PI * 0.9;
-        const a =
-          -Math.PI / 2 -
-          spread / 2 +
-          (members.length === 1
-            ? spread / 2
-            : (i / (members.length - 1)) * spread);
-        const sr = 4.3;
-        const x = Math.cos(a) * sr;
-        const z = Math.sin(a) * sr;
+    <group>
+      {/* meeting table + chairs */}
+      <Model url={`${M}/tableRound.glb`} position={[0, 0, 0]} scale={3.2} />
+      {[0, 1, 2, 3].map((i) => {
+        const a = (i / 4) * Math.PI * 2 + Math.PI / 4;
         return (
-          <group key={m.name} position={[x, 0, z]}>
-            {/* chair back */}
-            <mesh position={[0, 0.9, 0.25]} castShadow>
-              <boxGeometry args={[0.9, 1.2, 0.12]} />
-              <meshStandardMaterial
-                color="#14141f"
-                metalness={0.4}
-                roughness={0.5}
-              />
-            </mesh>
-            {/* seat */}
-            <mesh position={[0, 0.5, -0.05]}>
-              <boxGeometry args={[0.9, 0.12, 0.8]} />
-              <meshStandardMaterial color="#191925" />
-            </mesh>
-            {/* holographic name/avatar (billboard: always readable) */}
-            <Html position={[0, 2.15, 0]} center distanceFactor={9}>
-              <div
-                style={{
-                  width: 150,
-                  pointerEvents: "none",
-                  textAlign: "center",
-                  fontFamily: "Inter, system-ui, sans-serif",
-                  background: "rgba(10,12,22,0.82)",
-                  border: "1px solid rgba(16,185,129,0.5)",
-                  borderRadius: 14,
-                  padding: "9px 10px",
-                  boxShadow: "0 0 20px rgba(16,185,129,0.28)",
-                }}
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={m.img}
-                  alt={m.name}
-                  width={44}
-                  height={44}
-                  style={{
-                    width: 44,
-                    height: 44,
-                    borderRadius: "50%",
-                    objectFit: "cover",
-                    margin: "0 auto 5px",
-                    display: "block",
-                    border: "2px solid rgba(16,185,129,0.85)",
-                  }}
-                />
-                <div style={{ color: "#fff", fontWeight: 700, fontSize: 13 }}>
-                  {m.name}
-                </div>
-                <div
-                  style={{
-                    marginTop: 4,
-                    fontSize: 8,
-                    color: "#a7f3d0",
-                    lineHeight: 1.3,
-                  }}
-                >
-                  {m.tags[0]}
-                </div>
-              </div>
-            </Html>
-          </group>
+          <Model
+            key={i}
+            url={`${M}/chairModernCushion.glb`}
+            position={[Math.cos(a) * 2.3, 0, Math.sin(a) * 2.3]}
+            rotationY={-a + Math.PI / 2}
+            scale={1.2}
+          />
         );
       })}
+      {/* lounge corner */}
+      <Model
+        url={`${M}/loungeSofa.glb`}
+        position={[-8.5, 0, 5.5]}
+        rotationY={1.3}
+        scale={1.8}
+      />
+      <Model
+        url={`${M}/lampRoundFloor.glb`}
+        position={[-10, 0, 3.4]}
+        scale={1.2}
+      />
+      <Model
+        url={`${M}/tableCoffee.glb`}
+        position={[-7, 0, 6.6]}
+        rotationY={0.2}
+        scale={1.1}
+      />
+      {/* library / kitchen */}
+      <Model
+        url={`${M}/bookcaseClosed.glb`}
+        position={[9.2, 0, -8]}
+        rotationY={-1.15}
+        scale={[1.5, 2, 1.5]}
+      />
+      <Model
+        url={`${M}/kitchenFridgeSmall.glb`}
+        position={[10, 0, 6]}
+        rotationY={-1.4}
+        scale={[1, 1.4, 1]}
+      />
+      <Model
+        url={`${M}/kitchenCoffeeMachine.glb`}
+        position={[8.4, 0, 7.2]}
+        rotationY={-1.2}
+        scale={0.8}
+      />
+      {/* plants */}
+      <Model
+        url={`${M}/pottedPlant.glb`}
+        position={[-10.4, 0, -9.4]}
+        scale={[1.3, 1.9, 1.3]}
+      />
+      <Model
+        url={`${M}/pottedPlant.glb`}
+        position={[10.4, 0, -9.4]}
+        scale={[1.3, 1.9, 1.3]}
+      />
+      <Model
+        url={`${M}/plantSmall1.glb`}
+        position={[8.6, 0, 8.6]}
+        scale={1.2}
+      />
+    </group>
+  );
+}
+
+/* --------------------------- members at desks ----------------------------- */
+function MemberDesk({ m, x }: { m: OfficeMember; x: number }) {
+  return (
+    <group position={[x, 0, -8.5]}>
+      <Model url={`${M}/desk.glb`} position={[0, 0, 0]} scale={1.5} />
+      <Model
+        url={`${M}/chairDesk.glb`}
+        position={[0, 0, -1.2]}
+        rotationY={Math.PI}
+        scale={1.2}
+      />
+      <Model
+        url={`${M}/computerScreen.glb`}
+        position={[0, 1.12, 0.15]}
+        scale={1.1}
+      />
+      <Html position={[0, 2.9, 0]} center distanceFactor={9}>
+        <div
+          style={{
+            width: 150,
+            pointerEvents: "none",
+            textAlign: "center",
+            fontFamily: "Inter, system-ui, sans-serif",
+            background: "rgba(10,12,22,0.85)",
+            border: "1px solid rgba(16,185,129,0.5)",
+            borderRadius: 14,
+            padding: "9px 10px",
+            boxShadow: "0 0 20px rgba(16,185,129,0.3)",
+          }}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={m.img}
+            alt={m.name}
+            width={42}
+            height={42}
+            style={{
+              width: 42,
+              height: 42,
+              borderRadius: "50%",
+              objectFit: "cover",
+              margin: "0 auto 5px",
+              display: "block",
+              border: "2px solid rgba(16,185,129,0.85)",
+            }}
+          />
+          <div style={{ color: "#fff", fontWeight: 700, fontSize: 13 }}>
+            {m.name}
+          </div>
+          <div
+            style={{
+              marginTop: 3,
+              fontSize: 8,
+              color: "#a7f3d0",
+              lineHeight: 1.3,
+            }}
+          >
+            {m.tags[0]}
+          </div>
+        </div>
+      </Html>
+    </group>
+  );
+}
+
+/* ------------------- proposals walking around the office ------------------ */
+const LOOP: [number, number][] = [
+  [-5.5, -3],
+  [5.5, -3],
+  [6.5, 3],
+  [4.5, 7.5],
+  [-4.5, 7.5],
+  [-6.5, 3],
+];
+function loopPoint(u: number) {
+  const n = LOOP.length;
+  const f = (((u % 1) + 1) % 1) * n;
+  const i = Math.floor(f);
+  const t = f - i;
+  const a = LOOP[i];
+  const b = LOOP[(i + 1) % n];
+  const x = a[0] + (b[0] - a[0]) * t;
+  const z = a[1] + (b[1] - a[1]) * t;
+  const yaw = Math.atan2(b[0] - a[0], b[1] - a[1]);
+  return { x, z, yaw };
+}
+
+function ProposalWalker({
+  p,
+  offset,
+  color,
+}: {
+  p: OfficeProposal;
+  offset: number;
+  color: string;
+}) {
+  const ref = useRef<THREE.Group>(null);
+  const bob = useRef<THREE.Group>(null);
+  useFrame((s) => {
+    const u = s.clock.elapsedTime * 0.018 + offset;
+    const { x, z, yaw } = loopPoint(u);
+    if (ref.current) {
+      ref.current.position.set(x, 0, z);
+      ref.current.rotation.y = yaw;
+    }
+    if (bob.current) {
+      bob.current.position.y =
+        0.55 + Math.sin(s.clock.elapsedTime * 3 + offset * 20) * 0.05;
+    }
+  });
+  const amount =
+    p.amount != null ? `$${p.amount.toLocaleString("en-US")}` : "—";
+  return (
+    <group ref={ref}>
+      <group ref={bob}>
+        {/* glowing token */}
+        <mesh castShadow>
+          <capsuleGeometry args={[0.28, 0.5, 6, 14]} />
+          <meshStandardMaterial
+            color={color}
+            emissive={color}
+            emissiveIntensity={0.9}
+            roughness={0.3}
+            metalness={0.2}
+          />
+        </mesh>
+        {/* little "screen" face */}
+        <mesh position={[0, 0.1, 0.26]}>
+          <planeGeometry args={[0.32, 0.22]} />
+          <meshBasicMaterial color="#02030a" />
+        </mesh>
+      </group>
+      <pointLight
+        position={[0, 1, 0]}
+        intensity={5}
+        distance={4.5}
+        color={color}
+      />
+      {/* ground glow */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.03, 0]}>
+        <circleGeometry args={[0.55, 24]} />
+        <meshBasicMaterial
+          color={color}
+          transparent
+          opacity={0.18}
+          toneMapped={false}
+        />
+      </mesh>
+      {/* floating label */}
+      <Html position={[0, 1.75, 0]} center distanceFactor={11}>
+        <div
+          style={{
+            width: 172,
+            pointerEvents: "none",
+            fontFamily: "Inter, system-ui, sans-serif",
+            background: "rgba(4,10,24,0.9)",
+            border: `1px solid ${color}`,
+            borderRadius: 11,
+            padding: "8px 10px",
+            boxShadow: `0 0 18px ${color}66`,
+          }}
+        >
+          <div
+            style={{ fontSize: 8, letterSpacing: 1, color, fontWeight: 700 }}
+          >
+            ▲ UNDER REVIEW
+          </div>
+          <div
+            style={{
+              marginTop: 3,
+              color: "#eaf1ff",
+              fontWeight: 600,
+              fontSize: 11.5,
+              lineHeight: 1.2,
+              display: "-webkit-box",
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: "vertical",
+              overflow: "hidden",
+            }}
+          >
+            {p.title}
+          </div>
+          <div
+            style={{
+              marginTop: 5,
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "baseline",
+            }}
+          >
+            <span style={{ fontSize: 8.5, color: "#7891b5" }}>
+              {p.applicant ? `@${p.applicant}` : ""}
+            </span>
+            <span style={{ fontSize: 12, fontWeight: 700, color: GOLD }}>
+              {amount}
+            </span>
+          </div>
+        </div>
+      </Html>
     </group>
   );
 }
@@ -380,14 +436,14 @@ function Zebra({
     const t = state.clock.elapsedTime * speed + phase;
     if (ref.current) {
       ref.current.position.x = Math.cos(t) * radius;
-      ref.current.position.z = 3 + Math.sin(t) * (radius * 0.5);
+      ref.current.position.z = 2 + Math.sin(t) * radius * 0.6;
       ref.current.rotation.y = -t + Math.PI / 2;
     }
   });
   const white = "#f2f2f2";
   const black = "#141414";
   return (
-    <group ref={ref} scale={0.85}>
+    <group ref={ref} scale={0.8}>
       <mesh position={[0, 0.95, 0]} castShadow>
         <boxGeometry args={[1.5, 0.62, 0.55]} />
         <meshStandardMaterial color={white} roughness={0.7} />
@@ -429,48 +485,60 @@ function Scene({
   members: OfficeMember[];
   proposals: OfficeProposal[];
 }) {
-  const shown = proposals.slice(0, 12);
+  const shown = proposals.slice(0, 10);
+  const deskXs = [-8, -4, 0, 4, 8];
   return (
     <>
-      <color attach="background" args={["#04050c"]} />
-      <fog attach="fog" args={["#04050c", 24, 60]} />
+      <color attach="background" args={["#05060e"]} />
+      <fog attach="fog" args={["#05060e", 22, 52]} />
 
-      <ambientLight intensity={0.35} />
-      <hemisphereLight intensity={0.3} groundColor="#000008" color="#25324a" />
-      <spotLight
-        position={[0, 9, 6]}
-        angle={0.9}
-        penumbra={0.8}
-        intensity={4}
-        color="#a78bfa"
+      <ambientLight intensity={0.45} />
+      <hemisphereLight intensity={0.4} groundColor="#05050c" color="#2a3a56" />
+      <directionalLight
+        position={[6, 12, 8]}
+        intensity={1.4}
+        color="#dbeafe"
         castShadow
-        shadow-mapSize={[1024, 1024]}
-        target-position={[0, 1, -4]}
+        shadow-mapSize={[2048, 2048]}
+        shadow-camera-left={-16}
+        shadow-camera-right={16}
+        shadow-camera-top={16}
+        shadow-camera-bottom={-16}
       />
-      <pointLight position={[10, 6, 8]} intensity={70} color="#0ea5e9" />
-      <pointLight position={[-10, 6, 8]} intensity={70} color={GOLD} />
-      <pointLight position={[0, 7, -8]} intensity={45} color="#22d3ee" />
+      <pointLight position={[-9, 5, 6]} intensity={45} color={GOLD} />
+      <pointLight position={[9, 5, -6]} intensity={45} color="#0ea5e9" />
+
+      <Walls />
 
       <Suspense fallback={null}>
-        <Room />
+        <Floor />
+        <OfficeFurniture />
+        {members.slice(0, 5).map((m, i) => (
+          <MemberDesk key={m.name} m={m} x={deskXs[i]} />
+        ))}
       </Suspense>
 
-      <ReviewBoard proposals={shown} />
-      <CommitteeTable members={members} />
+      {shown.map((p, i) => (
+        <ProposalWalker
+          key={p.title + i}
+          p={p}
+          offset={i / shown.length}
+          color={WALK_COLORS[i % WALK_COLORS.length]}
+        />
+      ))}
 
-      <Zebra radius={9} speed={0.16} phase={0} />
-      <Zebra radius={12} speed={-0.11} phase={2.2} />
+      <Zebra radius={8.5} speed={0.16} phase={0} />
 
       <OrbitControls
         enablePan={false}
-        target={[0, 3.4, -3]}
-        minDistance={10}
+        target={[0, 1.4, 0]}
+        minDistance={9}
         maxDistance={30}
-        minPolarAngle={0.25}
-        maxPolarAngle={Math.PI / 2.1}
-        minAzimuthAngle={-Math.PI / 2.6}
-        maxAzimuthAngle={Math.PI / 2.6}
+        minPolarAngle={0.2}
+        maxPolarAngle={Math.PI / 2.15}
         enableDamping
+        autoRotate
+        autoRotateSpeed={0.25}
       />
     </>
   );
@@ -487,10 +555,27 @@ export default function OfficeScene({
     <Canvas
       shadows
       dpr={[1, 2]}
-      camera={{ position: [0, 6.5, 21], fov: 46 }}
+      camera={{ position: [0, 8, 17], fov: 48 }}
       gl={{ antialias: true }}
     >
       <Scene members={members} proposals={proposals} />
     </Canvas>
   );
 }
+
+// Preload the furniture GLBs used above.
+[
+  "tableRound",
+  "chairModernCushion",
+  "loungeSofa",
+  "lampRoundFloor",
+  "tableCoffee",
+  "bookcaseClosed",
+  "kitchenFridgeSmall",
+  "kitchenCoffeeMachine",
+  "pottedPlant",
+  "plantSmall1",
+  "desk",
+  "chairDesk",
+  "computerScreen",
+].forEach((n) => useGLTF.preload(`${M}/${n}.glb`));
