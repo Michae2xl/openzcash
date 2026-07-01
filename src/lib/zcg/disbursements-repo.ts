@@ -125,13 +125,13 @@ export async function disbursementsSummary(): Promise<ZcgSummary> {
 
   const byCategory = await db
     .select({
-      category: sql<string>`coalesce(${zcgDisbursements.category},'(sem categoria)')`,
+      category: sql<string>`coalesce(${zcgDisbursements.category},'(uncategorized)')`,
       usdCents: sql<string>`coalesce(sum(${zcgDisbursements.amountUsdCents}),0)`,
       count: sql<number>`count(*)::int`,
     })
     .from(zcgDisbursements)
     .where(sql`not ${zcgDisbursements.isInternal}`)
-    .groupBy(sql`coalesce(${zcgDisbursements.category},'(sem categoria)')`)
+    .groupBy(sql`coalesce(${zcgDisbursements.category},'(uncategorized)')`)
     .orderBy(sql`sum(${zcgDisbursements.amountUsdCents}) desc nulls last`)
     .limit(12);
 

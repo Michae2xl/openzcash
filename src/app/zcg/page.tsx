@@ -1,12 +1,20 @@
 import Link from "next/link";
-import { Badge, Card, PageHeader, Stat } from "@/components/ui";
+import { Badge, PageHeader, Stat } from "@/components/ui";
 import {
   IconArrowUp,
   IconBalance,
+  IconChart,
   IconCheck,
   IconCoins,
-  IconList,
+  IconGrant,
+  IconNews,
+  IconReceipt,
+  IconShield,
+  IconUsers,
+  IconVote,
+  IconWallet,
 } from "@/components/icons";
+import type { ComponentType } from "react";
 import { disbursementsSummary } from "@/lib/zcg/disbursements-repo";
 import { latestSnapshot } from "@/lib/zcg/snapshots-repo";
 import { currentLockboxZec } from "@/lib/zcash/lockbox-live";
@@ -17,16 +25,95 @@ import { ElectionsSection } from "./elections-section";
 export const dynamic = "force-dynamic";
 export const metadata = { title: "ZCG · OpenZcash" };
 
+type Tile = {
+  href: string;
+  label: string;
+  sub: string;
+  Icon: ComponentType<{ className?: string }>;
+};
+
+// App-style navigation into every ZCG detail screen.
+const TILES: Tile[] = [
+  {
+    href: "/zcg/totals",
+    label: "Totals",
+    sub: "Where the money goes, by tag",
+    Icon: IconChart,
+  },
+  {
+    href: "/zcg/grants",
+    label: "Grants",
+    sub: "Approved projects (1 row = 1 grant)",
+    Icon: IconGrant,
+  },
+  {
+    href: "/zcg/disbursements",
+    label: "Disbursements",
+    sub: "The ledger, by milestone/payment",
+    Icon: IconReceipt,
+  },
+  {
+    href: "/zcg/recipients",
+    label: "Recipients",
+    sub: "Ranking by amount received",
+    Icon: IconUsers,
+  },
+  {
+    href: "/zcg/proposals",
+    label: "Proposals",
+    sub: "Governance funnel, by verdict",
+    Icon: IconVote,
+  },
+  {
+    href: "/zcg/analytics",
+    label: "Insights",
+    sub: "Burn-rate, concentration, delivery",
+    Icon: IconArrowUp,
+  },
+  {
+    href: "/zcg/stipends",
+    label: "Stipends",
+    sub: "What each committee member is paid",
+    Icon: IconCoins,
+  },
+  {
+    href: "/zcg/budget",
+    label: "Budget",
+    sub: "Discretionary budget (USD × ZEC)",
+    Icon: IconBalance,
+  },
+  {
+    href: "/zcg/coinholder",
+    label: "Coinholder",
+    sub: "The FPF-run grants pool",
+    Icon: IconWallet,
+  },
+  {
+    href: "/zcg/reconciliation",
+    label: "Reconciliation",
+    sub: "On-chain ↔ ledger check",
+    Icon: IconShield,
+  },
+  {
+    href: "/zcg/meetings",
+    label: "Meetings",
+    sub: "Committee minutes",
+    Icon: IconNews,
+  },
+  {
+    href: "/zcg/methodology",
+    label: "How we compute this",
+    sub: "Sources, tags & the public API",
+    Icon: IconCheck,
+  },
+];
+
 export default async function ZcgPage() {
   const [s, lockbox, zcg] = await Promise.all([
     disbursementsSummary(),
     currentLockboxZec(),
     latestSnapshot("zcg_operating"),
   ]);
-  const maxCat = s.byCategory.reduce(
-    (m, c) => (c.usdCents > m ? c.usdCents : m),
-    0n,
-  );
 
   return (
     <>
@@ -102,159 +189,38 @@ export default async function ZcgPage() {
 
       <ElectionsSection />
 
-      <div className="grid gap-6 lg:grid-cols-5">
-        <section className="min-w-0 lg:col-span-3">
-          <h2 className="mb-3 text-sm font-semibold text-stone-700">
-            Spending by category
-          </h2>
-          <Card className="space-y-3.5">
-            {s.byCategory.map((c) => {
-              const pct =
-                maxCat > 0n ? Number((c.usdCents * 1000n) / maxCat) / 10 : 0;
-              return (
-                <div key={c.category}>
-                  <div className="flex items-center justify-between gap-2 text-xs">
-                    <span className="truncate text-stone-700">
-                      {c.category}
-                    </span>
-                    <span className="shrink-0 text-stone-600 tnum">
-                      {formatUsdCents(c.usdCents, { compact: true })}
-                    </span>
-                  </div>
-                  <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-stone-100">
-                    <div
-                      className="h-full rounded-full bg-gradient-to-r from-amber-500/80 to-amber-400/50"
-                      style={{ width: `${Math.max(pct, 1.5)}%` }}
-                    />
-                  </div>
+      <section>
+        <div className="mb-3 flex items-baseline justify-between gap-3">
+          <h2 className="text-sm font-semibold text-stone-700">Explore ZCG</h2>
+          <span className="text-xs text-stone-400">
+            tap a card for details ↓
+          </span>
+        </div>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+          {TILES.map((t) => (
+            <Link key={t.href} href={t.href} className="group block">
+              <div className="flex h-full flex-col gap-3 rounded-2xl border border-stone-200 bg-gradient-to-b from-white to-stone-50 p-4 shadow-sm shadow-stone-300/30 ring-1 ring-inset ring-stone-900/5 transition duration-200 hover:-translate-y-0.5 hover:border-amber-500/40 hover:shadow-md hover:shadow-amber-700/10">
+                <div className="flex items-center justify-between">
+                  <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-500/10 text-amber-700 ring-1 ring-inset ring-amber-500/15">
+                    <t.Icon className="h-4 w-4" />
+                  </span>
+                  <span className="text-stone-300 transition group-hover:translate-x-0.5 group-hover:text-amber-500">
+                    →
+                  </span>
                 </div>
-              );
-            })}
-          </Card>
-        </section>
-
-        <section className="min-w-0 lg:col-span-2">
-          <h2 className="mb-3 text-sm font-semibold text-stone-700">Explore</h2>
-          <div className="space-y-3">
-            <Link href="/zcg/grants" className="block">
-              <Card interactive className="flex items-center gap-3">
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-amber-500/10 text-amber-700">
-                  <IconCoins className="h-4 w-4" />
-                </span>
                 <div>
-                  <p className="text-sm font-medium text-stone-900">Grants</p>
-                  <p className="text-xs text-stone-600">
-                    Approved projects (1 row = 1 grant)
+                  <p className="text-sm font-semibold text-stone-900 group-hover:text-amber-700">
+                    {t.label}
+                  </p>
+                  <p className="mt-0.5 text-xs leading-snug text-stone-500">
+                    {t.sub}
                   </p>
                 </div>
-              </Card>
+              </div>
             </Link>
-            <Link href="/zcg/disbursements" className="block">
-              <Card interactive className="flex items-center gap-3">
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-amber-500/10 text-amber-700">
-                  <IconList className="h-4 w-4" />
-                </span>
-                <div>
-                  <p className="text-sm font-medium text-stone-900">
-                    Disbursements
-                  </p>
-                  <p className="text-xs text-stone-600">
-                    The ledger by milestone/payment
-                  </p>
-                </div>
-              </Card>
-            </Link>
-            <Link href="/zcg/recipients" className="block">
-              <Card interactive className="flex items-center gap-3">
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-amber-500/10 text-amber-700">
-                  <IconCheck className="h-4 w-4" />
-                </span>
-                <div>
-                  <p className="text-sm font-medium text-stone-900">
-                    Recipients
-                  </p>
-                  <p className="text-xs text-stone-600">
-                    Ranking by amount received
-                  </p>
-                </div>
-              </Card>
-            </Link>
-            <Link href="/zcg/budget" className="block">
-              <Card interactive className="flex items-center gap-3">
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-amber-500/10 text-amber-700">
-                  <IconBalance className="h-4 w-4" />
-                </span>
-                <div>
-                  <p className="text-sm font-medium text-stone-900">Budget</p>
-                  <p className="text-xs text-stone-600">
-                    Discretionary budget (USD × ZEC)
-                  </p>
-                </div>
-              </Card>
-            </Link>
-            <Link href="/zcg/analytics" className="block">
-              <Card interactive className="flex items-center gap-3">
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-amber-500/10 text-amber-700">
-                  <IconArrowUp className="h-4 w-4" />
-                </span>
-                <div>
-                  <p className="text-sm font-medium text-stone-900">Insights</p>
-                  <p className="text-xs text-stone-600">
-                    Burn-rate, concentration, regions, delivery
-                  </p>
-                </div>
-              </Card>
-            </Link>
-            <Link href="/zcg/stipends" className="block">
-              <Card interactive className="flex items-center gap-3">
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-amber-500/10 text-amber-700">
-                  <IconCoins className="h-4 w-4" />
-                </span>
-                <div>
-                  <p className="text-sm font-medium text-stone-900">Stipends</p>
-                  <p className="text-xs text-stone-600">
-                    What each committee member is paid
-                  </p>
-                </div>
-              </Card>
-            </Link>
-            <Link href="/zcg/methodology" className="block">
-              <Card interactive className="flex items-center gap-3">
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-amber-500/10 text-amber-700">
-                  <IconCheck className="h-4 w-4" />
-                </span>
-                <div>
-                  <p className="text-sm font-medium text-stone-900">
-                    How we compute this
-                  </p>
-                  <p className="text-xs text-stone-600">
-                    Sources, tags & the public API
-                  </p>
-                </div>
-              </Card>
-            </Link>
-            <Card className="bg-white">
-              <p className="text-[11px] font-medium uppercase tracking-wider text-stone-600">
-                By source
-              </p>
-              <ul className="mt-2 space-y-1.5 text-xs">
-                {s.bySheet.map((b) => (
-                  <li
-                    key={b.sheet}
-                    className="flex items-center justify-between gap-2 text-stone-600"
-                  >
-                    <span className="flex items-center gap-1.5">
-                      <IconArrowUp className="h-3 w-3 text-stone-500" />
-                      {b.sheet.replace(/_/g, " ")}
-                    </span>
-                    <span className="tnum text-stone-600">{b.count}</span>
-                  </li>
-                ))}
-              </ul>
-            </Card>
-          </div>
-        </section>
-      </div>
+          ))}
+        </div>
+      </section>
     </>
   );
 }
