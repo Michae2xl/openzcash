@@ -152,14 +152,17 @@ function Floor() {
 
 function Walls() {
   const H = 5.5;
-  const wall = (
-    <meshStandardMaterial color="#eef1f5" roughness={0.95} metalness={0.02} />
-  );
+  // Graffiti murals (PIL-generated, aspect 4.36 to match the 24×5.5 walls).
+  const [back, side] = useTexture([
+    "/office-assets/graffiti/back.jpg",
+    "/office-assets/graffiti/side.jpg",
+  ]);
+  for (const t of [back, side]) t.colorSpace = THREE.SRGBColorSpace;
   return (
     <group>
       <mesh position={[0, H / 2, -11]} receiveShadow>
         <planeGeometry args={[24, H]} />
-        {wall}
+        <meshStandardMaterial map={back} roughness={0.9} metalness={0.02} />
       </mesh>
       <mesh
         position={[-12, H / 2, 0]}
@@ -167,7 +170,7 @@ function Walls() {
         receiveShadow
       >
         <planeGeometry args={[24, H]} />
-        {wall}
+        <meshStandardMaterial map={side} roughness={0.9} metalness={0.02} />
       </mesh>
       <mesh
         position={[12, H / 2, 0]}
@@ -175,7 +178,7 @@ function Walls() {
         receiveShadow
       >
         <planeGeometry args={[24, H]} />
-        {wall}
+        <meshStandardMaterial map={side} roughness={0.9} metalness={0.02} />
       </mesh>
     </group>
   );
@@ -596,9 +599,8 @@ function Scene({
         shadow-camera-bottom={-16}
       />
 
-      <Walls />
-
       <Suspense fallback={null}>
+        <Walls />
         <Floor />
         <OfficeFurniture />
         {members.slice(0, 5).map((m, i) => (
