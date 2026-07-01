@@ -20,8 +20,12 @@ the skill provides the sources and the rules.
 ## Install
 
 ```bash
-npx skills add zcash/zcg-copilot     # or copy this folder into your agent's skills dir
+npx skills add ZcashCommunityGrants/zcg-copilot   # or copy this folder into your agent's skills dir
 ```
+
+> Repo name is provisional: the goal is for the skill to live under the same
+> GitHub org where ZCG receives grant applications. Until it is published
+> there, install by copying this folder.
 
 ## Ask things like
 

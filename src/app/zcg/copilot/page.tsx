@@ -168,7 +168,7 @@ export default function CopilotPage() {
             </p>
             <div className="mt-8 border border-white/15 bg-black/60 px-5 py-3.5">
               <code className="font-mono text-sm text-emerald-400">
-                npx skills add Michae2xl/zcg-copilot
+                npx skills add ZcashCommunityGrants/zcg-copilot
               </code>
             </div>
             <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.2em] text-stone-500">
