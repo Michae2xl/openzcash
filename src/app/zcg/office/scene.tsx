@@ -308,30 +308,19 @@ function MemberSeat({ m, x, z }: { m: OfficeMember; x: number; z: number }) {
   );
 }
 
-/* ------------------- proposals walking around the office ------------------ */
-const LOOP: [number, number][] = [
-  [-5.5, -3],
-  [5.5, -3],
-  [6.5, 3],
-  [4.5, 7.5],
-  [-4.5, 7.5],
-  [-6.5, 3],
-];
-function loopPoint(u: number) {
-  const n = LOOP.length;
-  const f = (((u % 1) + 1) % 1) * n;
-  const i = Math.floor(f);
-  const t = f - i;
-  const a = LOOP[i];
-  const b = LOOP[(i + 1) % n];
-  const x = a[0] + (b[0] - a[0]) * t;
-  const z = a[1] + (b[1] - a[1]) * t;
-  const yaw = Math.atan2(b[0] - a[0], b[1] - a[1]);
-  return { x, z, yaw };
+/* --------------- proposals: zebras wandering in front of members ---------- */
+// Random-walk area in front of the members (who sit at z ≈ -5..-6.5).
+const ZEBRA_AREA = { xMin: -8.5, xMax: 8.5, zMin: -3, zMax: 8 };
+function randInArea(): THREE.Vector2 {
+  return new THREE.Vector2(
+    ZEBRA_AREA.xMin + Math.random() * (ZEBRA_AREA.xMax - ZEBRA_AREA.xMin),
+    ZEBRA_AREA.zMin + Math.random() * (ZEBRA_AREA.zMax - ZEBRA_AREA.zMin),
+  );
 }
 
 const ZEBRA_ANIM_URL = "/office-assets/models/animals/zebra-cartoon.glb";
 const ZEBRA_TARGET_H = 1.3; // rendered height — small zebra
+const ZEBRA_Y = 0; // vertical placement — 0 = pivot on the floor (tweak if it floats/sinks)
 // Tweak if the zebras walk sideways/backwards (model forward-axis offset).
 const ZEBRA_YAW = 0;
 function pickWalkClip(
@@ -364,14 +353,15 @@ function ProposalZebra({
     });
     return c;
   }, [scene]);
-  const { norm, footY, headY } = useMemo(() => {
+  const { norm, headY } = useMemo(() => {
     model.updateMatrixWorld(true); // include the model's own root scale
-    const box = new THREE.Box3().setFromObject(model);
     const size = new THREE.Vector3();
-    box.getSize(size);
+    new THREE.Box3().setFromObject(model).getSize(size);
+    // NOTE: Box3.setFromObject mis-locates skinned meshes vertically, so we do
+    // NOT derive the floor offset from it (that made the zebras float). We take
+    // only the height for scale and place feet on the floor via ZEBRA_Y.
     const n = ZEBRA_TARGET_H / (size.y || 1);
-    // feet at y=0; card sits just above the head.
-    return { norm: n, footY: -box.min.y * n, headY: ZEBRA_TARGET_H + 0.15 };
+    return { norm: n, headY: ZEBRA_TARGET_H + 0.15 };
   }, [model]);
   const mixer = useMemo(() => new THREE.AnimationMixer(model), [model]);
   useEffect(() => {
@@ -380,19 +370,35 @@ function ProposalZebra({
       const a = mixer.clipAction(clip);
       a.timeScale = 0.9;
       a.reset().play();
+      a.time = offset * (clip.duration || 1); // desync the walk cycles
     }
     return () => {
       mixer.stopAllAction();
     };
-  }, [mixer, animations]);
+  }, [mixer, animations, offset]);
   const ref = useRef<THREE.Group>(null);
-  useFrame((s, dt) => {
+  // Random wander: head toward a target point, pick a new one on arrival.
+  const posRef = useRef<THREE.Vector2>(randInArea());
+  const targetRef = useRef<THREE.Vector2>(randInArea());
+  const yawRef = useRef(0);
+  useFrame((_, dt) => {
     mixer.update(dt);
-    const u = s.clock.elapsedTime * 0.016 + offset;
-    const { x, z, yaw } = loopPoint(u);
+    const p2 = posRef.current;
+    const t = targetRef.current;
+    const dx = t.x - p2.x;
+    const dz = t.y - p2.y;
+    const d = Math.hypot(dx, dz);
+    if (d < 0.4) {
+      targetRef.current = randInArea();
+    } else {
+      const step = Math.min(1.1 * dt, d);
+      p2.x += (dx / d) * step;
+      p2.y += (dz / d) * step;
+      yawRef.current = Math.atan2(dx, dz);
+    }
     if (ref.current) {
-      ref.current.position.set(x, 0, z);
-      ref.current.rotation.y = yaw + ZEBRA_YAW;
+      ref.current.position.set(p2.x, 0, p2.y);
+      ref.current.rotation.y = yawRef.current + ZEBRA_YAW;
     }
   });
   const amount =
@@ -400,7 +406,7 @@ function ProposalZebra({
   return (
     <group ref={ref}>
       {/* inner group isolates the model's scale + floor offset from any root motion */}
-      <group scale={norm} position={[0, footY, 0]}>
+      <group scale={norm} position={[0, ZEBRA_Y, 0]}>
         <primitive object={model} />
       </group>
       {/* ground glow */}
