@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { DataTable, type Column } from "@/components/data-table";
 import { formatUsdCents } from "@/lib/zcg/format";
 import { formatZec } from "@/lib/zcash/units";
@@ -36,7 +37,13 @@ const columns: Column<RecipientRow>[] = [
     filterable: true,
     filterValue: (r) => r.recipient,
     render: (r) => (
-      <span className="font-medium text-stone-900">{r.recipient}</span>
+      <Link
+        href={`/zcg/recipient?r=${encodeURIComponent(r.recipient)}`}
+        title="See this recipient's milestones and payments"
+        className="font-medium text-stone-900 hover:text-amber-700"
+      >
+        {r.recipient}
+      </Link>
     ),
   },
   {

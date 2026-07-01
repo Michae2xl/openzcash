@@ -3,6 +3,7 @@ import { grantsSummary, listGrants } from "@/lib/zcg/grants-repo";
 import { formatUsdCents } from "@/lib/zcg/format";
 import { GrantsTable, type GrantTableRow } from "./grants-table";
 import { cached, LEDGER_TTL_MS } from "@/lib/cache/memo";
+import { Synced } from "@/components/synced";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Grants ZCG · OpenZcash" };
@@ -81,6 +82,8 @@ export default async function GrantsPage() {
         {grants.length} grants · one project per row · click to view its
         milestones
       </p>
+
+      <Synced className="mt-4" />
     </>
   );
 }

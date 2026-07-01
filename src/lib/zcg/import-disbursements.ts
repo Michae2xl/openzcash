@@ -347,6 +347,9 @@ const SPECS = [
 export type ImportResult = {
   gid: string;
   rows: number;
+  /** Rows produced by the parser. */
+  parsed: number;
+  /** Rows actually inserted (parsed minus any dropped on conflict). */
   imported: number;
   status: string;
 };
@@ -366,6 +369,7 @@ export async function importDisbursements(): Promise<ImportResult[]> {
       const rows = parseCsv(csvText);
       const status = readSheetStatus(rows);
       const disbs = spec.parse(rows, spec.gid);
+      let insertedCount = 0;
 
       await db.transaction(async (tx) => {
         await tx
@@ -378,7 +382,12 @@ export async function importDisbursements(): Promise<ImportResult[]> {
             ),
           );
         for (const batch of chunk(disbs, 400)) {
-          await tx.insert(zcgDisbursements).values(batch).onConflictDoNothing();
+          const ins = await tx
+            .insert(zcgDisbursements)
+            .values(batch)
+            .onConflictDoNothing()
+            .returning({ id: zcgDisbursements.id });
+          insertedCount += ins.length;
         }
         await tx
           .insert(zcgSheetImports)
@@ -394,16 +403,20 @@ export async function importDisbursements(): Promise<ImportResult[]> {
           .onConflictDoNothing();
       });
 
+      const dropped = disbs.length - insertedCount;
       results.push({
         gid: spec.gid,
         rows: rows.length,
-        imported: disbs.length,
-        status,
+        parsed: disbs.length,
+        imported: insertedCount,
+        status:
+          dropped > 0 ? `${status} · ${dropped} dropped (conflict)` : status,
       });
     } catch (err) {
       results.push({
         gid: spec.gid,
         rows: 0,
+        parsed: 0,
         imported: 0,
         status: `error: ${err instanceof Error ? err.message : String(err)}`,
       });

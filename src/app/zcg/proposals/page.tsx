@@ -15,6 +15,7 @@ import {
   ZCG_APPLICATIONS_REPO_URL,
 } from "@/lib/zcg/github-applications";
 import { titlesMatch } from "@/lib/zcg/match-titles";
+import { Synced } from "@/components/synced";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "ZCG Proposals · OpenZcash" };
@@ -120,6 +121,16 @@ export default async function PropostasPage({
   const maxStatus = byStatus.reduce((m, b) => Math.max(m, b.count), 0);
   const apprRate = total ? Math.round((approved / total) * 100) : 0;
 
+  // #8 How fast does ZCG decide? Average committee turnaround, from the dates
+  // already recorded on each proposal.
+  const decided = all.filter((p) => p.decisionTurnaroundDays != null);
+  const avgDecisionDays = decided.length
+    ? Math.round(
+        decided.reduce((s, p) => s + (p.decisionTurnaroundDays ?? 0), 0) /
+          decided.length,
+      )
+    : null;
+
   // Filter the table by the clicked funnel verdict.
   const active =
     filterRaw && STATUS_LABEL[filterRaw] ? (filterRaw as string) : null;
@@ -144,12 +155,17 @@ export default async function PropostasPage({
         }
       />
 
-      <section className="mb-8 grid grid-cols-2 gap-4 lg:grid-cols-4">
+      <section className="mb-8 grid grid-cols-2 gap-4 lg:grid-cols-5">
         <Stat label="Proposals" value={String(total)} sub="since 2021" />
         <Stat
           label="Approved"
           value={String(approved)}
           sub={`${apprRate}% approval rate`}
+        />
+        <Stat
+          label="Avg decision"
+          value={avgDecisionDays != null ? `${avgDecisionDays}d` : "n/a"}
+          sub="committee turnaround"
         />
         <Stat
           label="Ready for review"
@@ -265,6 +281,8 @@ export default async function PropostasPage({
         </a>{" "}
         — the rest are mirrored from the spreadsheet.
       </p>
+
+      <Synced className="mt-4" />
     </>
   );
 }

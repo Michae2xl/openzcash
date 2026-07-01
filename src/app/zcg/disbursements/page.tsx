@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 import { DisbursementsTable, type DisbTableRow } from "./disbursements-table";
 import { NewDisbursementForm } from "./disbursement-admin";
 import { cached, LEDGER_TTL_MS } from "@/lib/cache/memo";
+import { Synced } from "@/components/synced";
 
 const money = (cents: bigint | null, div: number) =>
   cents == null ? "" : String(Number(cents) / div);
@@ -154,6 +155,8 @@ export default async function DesembolsosPage({
         <span className="text-amber-700">admin-edited</span> = added or
         corrected in this back-office
       </p>
+
+      <Synced className="mt-4" />
     </>
   );
 }

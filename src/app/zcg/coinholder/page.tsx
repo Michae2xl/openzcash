@@ -39,6 +39,7 @@ export default async function CoinholderPage() {
     category: c.label,
     _usd: Number(c.usdPaidToDateCents),
     _pct: share(c.usdPaidToDateCents),
+    href: `/zcg/disbursements?sheet=coinholder_grants&category=${encodeURIComponent(c.label)}`,
   }));
 
   const recipientRows: RecipientRow[] = external.map((r, i) => ({
@@ -48,6 +49,7 @@ export default async function CoinholderPage() {
     _usd: Number(r.usdPaidToDateCents),
     _future: Number(r.usdFuturePipelineCents ?? 0n),
     _pct: share(r.usdPaidToDateCents),
+    href: `/zcg/recipient?r=${encodeURIComponent(r.label)}`,
   }));
 
   const topRecipients = recipientRows.slice(0, 10).map((r) => ({

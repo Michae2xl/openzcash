@@ -178,6 +178,7 @@ const SPECS: { gid: string; pool: Pool }[] = [
  */
 export type TotalsImportResult = {
   gid: string;
+  parsed: number;
   imported: number;
   status: string;
 };
@@ -192,21 +193,34 @@ export async function importTotals(): Promise<TotalsImportResult[]> {
       const rows = parseCsv(csvText);
       const capturedAt = new Date();
       const totals = parseTotals(rows, spec.gid, spec.pool, capturedAt);
+      let insertedCount = 0;
 
       await db.transaction(async (tx) => {
         await tx
           .delete(zcgTotals)
           .where(eq(zcgTotals.sourceSheetGid, spec.gid));
         for (const batch of chunk(totals, 400)) {
-          await tx.insert(zcgTotals).values(batch).onConflictDoNothing();
+          const ins = await tx
+            .insert(zcgTotals)
+            .values(batch)
+            .onConflictDoNothing()
+            .returning({ id: zcgTotals.id });
+          insertedCount += ins.length;
         }
       });
 
-      results.push({ gid: spec.gid, imported: totals.length, status: "ok" });
+      const dropped = totals.length - insertedCount;
+      results.push({
+        gid: spec.gid,
+        parsed: totals.length,
+        imported: insertedCount,
+        status: dropped > 0 ? `ok · ${dropped} dropped (conflict)` : "ok",
+      });
     } catch (err) {
       // Best-effort por aba: uma aba instável não derruba o refresh inteiro.
       results.push({
         gid: spec.gid,
+        parsed: 0,
         imported: 0,
         status: `error: ${err instanceof Error ? err.message : String(err)}`,
       });

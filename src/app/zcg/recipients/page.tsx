@@ -3,6 +3,7 @@ import { recipientTotals } from "@/lib/zcg/disbursements-repo";
 import { formatUsdCents } from "@/lib/zcg/format";
 import { RecipientsTable, type RecipientRow } from "./recipients-table";
 import { cached, LEDGER_TTL_MS } from "@/lib/cache/memo";
+import { Synced } from "@/components/synced";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Recipients ZCG · OpenZcash" };
@@ -58,6 +59,8 @@ export default async function RecebedoresPage() {
       <Card className="p-4">
         <RecipientsTable rows={rows} />
       </Card>
+
+      <Synced className="mt-4" />
     </>
   );
 }

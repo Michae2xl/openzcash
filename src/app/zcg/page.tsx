@@ -192,6 +192,47 @@ export default async function ZcgPage() {
                 </div>
               </Card>
             </Link>
+            <Link href="/zcg/analytics" className="block">
+              <Card interactive className="flex items-center gap-3">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-amber-500/10 text-amber-700">
+                  <IconArrowUp className="h-4 w-4" />
+                </span>
+                <div>
+                  <p className="text-sm font-medium text-stone-900">Insights</p>
+                  <p className="text-xs text-stone-600">
+                    Burn-rate, concentration, regions, delivery
+                  </p>
+                </div>
+              </Card>
+            </Link>
+            <Link href="/zcg/stipends" className="block">
+              <Card interactive className="flex items-center gap-3">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-amber-500/10 text-amber-700">
+                  <IconCoins className="h-4 w-4" />
+                </span>
+                <div>
+                  <p className="text-sm font-medium text-stone-900">Stipends</p>
+                  <p className="text-xs text-stone-600">
+                    What each committee member is paid
+                  </p>
+                </div>
+              </Card>
+            </Link>
+            <Link href="/zcg/methodology" className="block">
+              <Card interactive className="flex items-center gap-3">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-amber-500/10 text-amber-700">
+                  <IconCheck className="h-4 w-4" />
+                </span>
+                <div>
+                  <p className="text-sm font-medium text-stone-900">
+                    How we compute this
+                  </p>
+                  <p className="text-xs text-stone-600">
+                    Sources, tags & the public API
+                  </p>
+                </div>
+              </Card>
+            </Link>
             <Card className="bg-white">
               <p className="text-[11px] font-medium uppercase tracking-wider text-stone-600">
                 By source
