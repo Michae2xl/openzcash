@@ -283,6 +283,39 @@ export default async function PropostasPage({
       </p>
 
       <Synced className="mt-4" />
+
+      {/* ZCG Copilot teaser — admin-only while the skill's public repo is
+          unpublished; flip to public by dropping the isAdmin gate. */}
+      {isAdmin ? (
+        <section className="mt-8">
+          <Link href="/zcg/copilot" className="group block">
+            <div className="relative overflow-hidden rounded-2xl border border-stone-800/60 bg-gradient-to-br from-stone-950 via-stone-900 to-emerald-950 p-5 shadow-lg shadow-stone-400/30 transition duration-200 group-hover:-translate-y-0.5 group-hover:shadow-xl">
+              <div className="pointer-events-none absolute -right-10 -top-10 h-36 w-36 rounded-full bg-emerald-400/15 blur-3xl" />
+              <div className="relative flex items-center justify-between gap-4">
+                <div className="min-w-0">
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-2.5 py-0.5 text-[11px] font-medium text-white/80 ring-1 ring-inset ring-white/15">
+                    New · Agent skill · hidden preview
+                  </span>
+                  <h2 className="mt-2 text-lg font-semibold tracking-tight text-white sm:text-xl">
+                    ZCG Copilot — every answer has a receipt.
+                  </h2>
+                  <p className="mt-1 max-w-xl font-mono text-xs text-stone-400">
+                    ❯ Find any grants for merchants to accept Zcash — funded,
+                    under review, declined, with exact paid totals and
+                    citations.
+                  </p>
+                </div>
+                <span className="hidden shrink-0 items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm font-medium text-white ring-1 ring-inset ring-white/15 transition group-hover:bg-white/15 sm:inline-flex">
+                  Preview{" "}
+                  <span className="transition group-hover:translate-x-0.5">
+                    →
+                  </span>
+                </span>
+              </div>
+            </div>
+          </Link>
+        </section>
+      ) : null}
     </>
   );
 }
