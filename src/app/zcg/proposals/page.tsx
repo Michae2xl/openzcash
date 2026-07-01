@@ -1,4 +1,4 @@
-import { Badge, Card, PageHeader, Stat } from "@/components/ui";
+import { Card, PageHeader, Stat } from "@/components/ui";
 import {
   listProposals,
   proposalsFunnel,
@@ -9,11 +9,6 @@ import { getIsAdmin } from "@/lib/auth/admin";
 import { getLinks } from "@/lib/zcg/governance-repo";
 import { ProposalsTable, type ProposalTableRow } from "./proposals-table";
 import { cached, LEDGER_TTL_MS } from "@/lib/cache/memo";
-import {
-  getGrantApplications,
-  ZCG_APPLICATIONS_REPO_URL,
-  type AppStatus,
-} from "@/lib/zcg/github-applications";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "ZCG Proposals · OpenZcash" };
@@ -49,43 +44,14 @@ function toTableRow(p: ProposalRow): ProposalTableRow {
   };
 }
 
-const APP_STATUS: Record<
-  AppStatus,
-  { label: string; tone: "amber" | "emerald" | "zinc" }
-> = {
-  review: { label: "Ready for review", tone: "amber" },
-  approved: { label: "Approved", tone: "emerald" },
-  paid: { label: "Paid", tone: "emerald" },
-  other: { label: "Open", tone: "zinc" },
-};
-
-function appDate(iso: string): string {
-  const t = Date.parse(iso);
-  return Number.isNaN(t)
-    ? ""
-    : new Date(t).toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-      });
-}
-
 export default async function PropostasPage() {
-  const [isAdmin, funnel, all, links, applications] = await Promise.all([
+  const [isAdmin, funnel, all, links] = await Promise.all([
     getIsAdmin(),
     cached("proposalsFunnel", LEDGER_TTL_MS, () => proposalsFunnel()),
     cached("listProposals:all", LEDGER_TTL_MS, () => listProposals({})),
     cached("links", LEDGER_TTL_MS, () => getLinks()),
-    getGrantApplications(40),
   ]);
   const submitUrl = links.proposal_zcg ?? "#";
-  // GitHub applications, "ready for review" first then newest.
-  const apps = [...applications].sort((a, b) => {
-    const ra = a.status === "review" ? 0 : 1;
-    const rb = b.status === "review" ? 0 : 1;
-    return ra - rb || b.createdAt.localeCompare(a.createdAt);
-  });
-  const reviewCount = applications.filter((a) => a.status === "review").length;
   const proposals = all.slice(0, 400);
   const rows = proposals.map(toTableRow);
 
@@ -132,61 +98,6 @@ export default async function PropostasPage() {
           tone="warn"
         />
       </section>
-
-      {apps.length > 0 ? (
-        <section className="mb-8">
-          <div className="mb-3 flex items-center justify-between gap-3">
-            <h2 className="text-sm font-semibold text-stone-700">
-              Live applications · GitHub
-            </h2>
-            <a
-              href={ZCG_APPLICATIONS_REPO_URL}
-              target="_blank"
-              rel="noreferrer"
-              className="shrink-0 text-xs font-medium text-amber-700 hover:underline"
-            >
-              {reviewCount} ready for review ↗
-            </a>
-          </div>
-          <Card className="p-0">
-            <p className="border-b border-stone-200 px-5 py-3 text-[11px] text-stone-500">
-              Submitted as GitHub issues — the rawest stage, before the
-              spreadsheet. &ldquo;Ready for review&rdquo; means the committee
-              can judge it now.
-            </p>
-            <div className="scroll-thin max-h-[26rem] divide-y divide-stone-100 overflow-y-auto">
-              {apps.map((a) => {
-                const st = APP_STATUS[a.status];
-                return (
-                  <a
-                    key={a.number}
-                    href={a.url}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="flex items-start justify-between gap-3 px-5 py-3 transition hover:bg-amber-500/[0.05]"
-                  >
-                    <div className="min-w-0">
-                      <p className="flex items-center gap-2">
-                        <span className="shrink-0 font-mono text-[10px] text-stone-400">
-                          #{a.number}
-                        </span>
-                        <span className="truncate text-sm font-medium text-stone-900">
-                          {a.title}
-                        </span>
-                      </p>
-                      <p className="mt-0.5 text-[11px] text-stone-500">
-                        @{a.applicant} · {appDate(a.createdAt)}
-                        {a.comments > 0 ? ` · ${a.comments} comments` : ""}
-                      </p>
-                    </div>
-                    <Badge tone={st.tone}>{st.label}</Badge>
-                  </a>
-                );
-              })}
-            </div>
-          </Card>
-        </section>
-      ) : null}
 
       <section className="mb-8">
         <h2 className="mb-3 text-sm font-semibold text-stone-700">
