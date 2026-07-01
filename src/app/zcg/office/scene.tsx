@@ -297,20 +297,18 @@ function OfficeFurniture() {
         rotationY={0}
         scale={1.1}
       />
-      {/* a workstation against the right wall */}
-      <Model
-        url={`${M}/desk.glb`}
-        position={[10.5, 0, 0]}
-        rotationY={-1.55}
-        scale={1.5}
-      />
-      <Model
-        url={`${M}/computerScreen.glb`}
-        // Sits on the desk: desk native height 0.384 × scale 1.5 ≈ 0.58.
-        position={[10.1, 0.58, 0]}
-        rotationY={-1.55}
-        scale={1.1}
-      />
+      {/* Workstation against the right wall. Desk + monitor are grouped so the
+          screen sits ON the desktop regardless of the group's rotation. Desk
+          native bbox top ≈0.384 (×1.5 = 0.577) and its footprint centre is
+          (0.357, −0.184); the monitor is placed to centre on that tabletop. */}
+      <group position={[10.5, 0, 0]} rotation={[0, -1.55, 0]}>
+        <Model url={`${M}/desk.glb`} position={[0, 0, 0]} scale={1.5} />
+        <Model
+          url={`${M}/computerScreen.glb`}
+          position={[0.32, 0.577, -0.22]}
+          scale={1.1}
+        />
+      </group>
     </group>
   );
 }
