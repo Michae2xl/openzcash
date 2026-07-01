@@ -1,4 +1,4 @@
-import { and, desc, eq, ilike, sql } from "drizzle-orm";
+import { and, desc, eq, ilike, or, sql } from "drizzle-orm";
 import { getDb } from "@/lib/db/client";
 import { zcgDisbursementOverrides, zcgDisbursements } from "@/lib/db/schema";
 
@@ -30,8 +30,19 @@ export async function listDisbursements(
   if (opts.type) conds.push(eq(zcgDisbursements.disbursementType, opts.type));
   if (opts.grant) conds.push(eq(zcgDisbursements.project, opts.grant));
   if (opts.category) conds.push(eq(zcgDisbursements.category, opts.category));
-  if (opts.search)
-    conds.push(ilike(zcgDisbursements.recipientNameRaw, `%${opts.search}%`));
+  if (opts.search) {
+    // Topic search: match recipient, project title, OR milestone label — a
+    // search for "BTCPay" must find "Payment Gateway with BTCPay" (recipient
+    // Hanh), not just rows whose recipient contains the term.
+    const term = `%${opts.search}%`;
+    conds.push(
+      or(
+        ilike(zcgDisbursements.recipientNameRaw, term),
+        ilike(zcgDisbursements.project, term),
+        ilike(zcgDisbursements.milestoneLabel, term),
+      )!,
+    );
+  }
 
   return db
     .select()
