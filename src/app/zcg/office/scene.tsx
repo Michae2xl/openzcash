@@ -238,6 +238,75 @@ function OfficeFurniture() {
         position={[8.6, 0, 8.6]}
         scale={1.2}
       />
+      <Model
+        url={`${M}/plantSmall1.glb`}
+        position={[-8.6, 0, 8.6]}
+        scale={1.2}
+      />
+      {/* second bookcase (mirrors the library) + back-centre plant */}
+      <Model
+        url={`${M}/bookcaseClosed.glb`}
+        position={[-9.2, 0, -8]}
+        rotationY={1.15}
+        scale={[1.5, 2, 1.5]}
+      />
+      <Model
+        url={`${M}/pottedPlant.glb`}
+        position={[0, 0, -10.4]}
+        scale={[1.2, 1.8, 1.2]}
+      />
+      {/* two armchairs by the lounge */}
+      <Model
+        url={`${M}/loungeDesignChair.glb`}
+        position={[-9.8, 0, 4]}
+        rotationY={0.5}
+        scale={1.4}
+      />
+      <Model
+        url={`${M}/loungeDesignChair.glb`}
+        position={[-6.2, 0, 7.7]}
+        rotationY={2.7}
+        scale={1.4}
+      />
+      {/* kitchen cabinet */}
+      <Model
+        url={`${M}/kitchenCabinet.glb`}
+        position={[10.4, 0, 8.4]}
+        rotationY={-1.55}
+        scale={[1.8, 1.2, 1]}
+      />
+      {/* side meeting nook: table + two chairs */}
+      <Model
+        url={`${M}/table.glb`}
+        position={[-10.6, 0, 0]}
+        rotationY={0}
+        scale={1.3}
+      />
+      <Model
+        url={`${M}/chairModernCushion.glb`}
+        position={[-10.6, 0, 1.5]}
+        rotationY={Math.PI}
+        scale={1.1}
+      />
+      <Model
+        url={`${M}/chairModernCushion.glb`}
+        position={[-10.6, 0, -1.5]}
+        rotationY={0}
+        scale={1.1}
+      />
+      {/* a workstation against the right wall */}
+      <Model
+        url={`${M}/desk.glb`}
+        position={[10.5, 0, 0]}
+        rotationY={-1.55}
+        scale={1.5}
+      />
+      <Model
+        url={`${M}/computerScreen.glb`}
+        position={[10.1, 1.12, 0]}
+        rotationY={-1.55}
+        scale={1.1}
+      />
     </group>
   );
 }
@@ -304,20 +373,37 @@ function MemberSeat({ m, x, z }: { m: OfficeMember; x: number; z: number }) {
 }
 
 /* --------------- proposals: zebras wandering in front of members ---------- */
-// Random-walk area in front of the members (who sit at z ≈ -5..-6.5).
-const ZEBRA_AREA = { xMin: -8.5, xMax: 8.5, zMin: -3, zMax: 8 };
-function randInArea(): THREE.Vector2 {
+// Wander area in front of the members (who sit at z ≈ -5..-6.5).
+const ZEBRA_AREA = { xMin: -9, xMax: 9, zMin: -3, zMax: 8 };
+type Cell = { xMin: number; xMax: number; zMin: number; zMax: number };
+// Give each zebra its own cell in a grid so they spread out instead of clumping.
+function cellFor(index: number, count: number): Cell {
+  const cols = Math.max(1, Math.ceil(Math.sqrt(count * 1.7)));
+  const rows = Math.max(1, Math.ceil(count / cols));
+  const cx = index % cols;
+  const cz = Math.floor(index / cols) % rows;
+  const cw = (ZEBRA_AREA.xMax - ZEBRA_AREA.xMin) / cols;
+  const ch = (ZEBRA_AREA.zMax - ZEBRA_AREA.zMin) / rows;
+  const m = 0.4; // keep away from cell edges
+  return {
+    xMin: ZEBRA_AREA.xMin + cx * cw + m,
+    xMax: ZEBRA_AREA.xMin + (cx + 1) * cw - m,
+    zMin: ZEBRA_AREA.zMin + cz * ch + m,
+    zMax: ZEBRA_AREA.zMin + (cz + 1) * ch - m,
+  };
+}
+function randInCell(c: Cell): THREE.Vector2 {
   return new THREE.Vector2(
-    ZEBRA_AREA.xMin + Math.random() * (ZEBRA_AREA.xMax - ZEBRA_AREA.xMin),
-    ZEBRA_AREA.zMin + Math.random() * (ZEBRA_AREA.zMax - ZEBRA_AREA.zMin),
+    c.xMin + Math.random() * (c.xMax - c.xMin),
+    c.zMin + Math.random() * (c.zMax - c.zMin),
   );
 }
 
 const ZEBRA_ANIM_URL = "/office-assets/models/animals/zebra-cartoon.glb";
 const ZEBRA_TARGET_H = 1.3; // rendered height — small zebra
 const ZEBRA_Y = 0; // vertical placement — 0 = pivot on the floor (tweak if it floats/sinks)
-// Tweak if the zebras walk sideways/backwards (model forward-axis offset).
-const ZEBRA_YAW = 0;
+// Model faces -Z by default, so flip 180° to face its direction of travel.
+const ZEBRA_YAW = Math.PI;
 function pickWalkClip(
   clips: THREE.AnimationClip[],
 ): THREE.AnimationClip | null {
@@ -332,13 +418,17 @@ function pickWalkClip(
 // Each under-review proposal is an animated zebra walking the office loop.
 function ProposalZebra({
   p,
-  offset,
+  index,
+  count,
   color,
 }: {
   p: OfficeProposal;
-  offset: number;
+  index: number;
+  count: number;
   color: string;
 }) {
+  const offset = count > 0 ? index / count : 0;
+  const cell = useMemo(() => cellFor(index, count), [index, count]);
   const { scene, animations } = useGLTF(ZEBRA_ANIM_URL);
   const model = useMemo(() => {
     const c = cloneSkeleton(scene);
@@ -373,8 +463,8 @@ function ProposalZebra({
   }, [mixer, animations, offset]);
   const ref = useRef<THREE.Group>(null);
   // Random wander: head toward a target point, pick a new one on arrival.
-  const posRef = useRef<THREE.Vector2>(randInArea());
-  const targetRef = useRef<THREE.Vector2>(randInArea());
+  const posRef = useRef<THREE.Vector2>(randInCell(cell));
+  const targetRef = useRef<THREE.Vector2>(randInCell(cell));
   const yawRef = useRef(0);
   useFrame((_, dt) => {
     mixer.update(dt);
@@ -384,9 +474,9 @@ function ProposalZebra({
     const dz = t.y - p2.y;
     const d = Math.hypot(dx, dz);
     if (d < 0.4) {
-      targetRef.current = randInArea();
+      targetRef.current = randInCell(cell);
     } else {
-      const step = Math.min(1.1 * dt, d);
+      const step = Math.min(0.45 * dt, d);
       p2.x += (dx / d) * step;
       p2.y += (dz / d) * step;
       yawRef.current = Math.atan2(dx, dz);
@@ -521,7 +611,8 @@ function Scene({
           <ProposalZebra
             key={p.title + i}
             p={p}
-            offset={i / shown.length}
+            index={i}
+            count={shown.length}
             color={WALK_COLORS[i % WALK_COLORS.length]}
           />
         ))}
@@ -572,5 +663,11 @@ export default function OfficeScene({
   "kitchenCoffeeMachine",
   "pottedPlant",
   "plantSmall1",
+  "loungeDesignChair",
+  "kitchenCabinet",
+  "table",
+  "chairModernCushion",
+  "desk",
+  "computerScreen",
 ].forEach((n) => useGLTF.preload(`${M}/${n}.glb`));
 useGLTF.preload(ZEBRA_ANIM_URL);
