@@ -288,15 +288,16 @@ function loopPoint(u: number) {
   return { x, z, yaw };
 }
 
-const ZEBRA_ANIM_URL = "/office-assets/models/animals/zebra-anim.glb";
+const ZEBRA_ANIM_URL = "/office-assets/models/animals/zebra-cartoon.glb";
+const ZEBRA_TARGET_H = 1.3; // rendered height — small zebra
 // Tweak if the zebras walk sideways/backwards (model forward-axis offset).
 const ZEBRA_YAW = 0;
 function pickWalkClip(
   clips: THREE.AnimationClip[],
 ): THREE.AnimationClip | null {
   return (
-    clips.find((c) => /Move_Normal_Slow/i.test(c.name)) ??
-    clips.find((c) => /move/i.test(c.name)) ??
+    clips.find((c) => /walk/i.test(c.name)) ??
+    clips.find((c) => /move|loco/i.test(c.name)) ??
     clips[0] ??
     null
   );
@@ -321,12 +322,13 @@ function ProposalZebra({
     });
     return c;
   }, [scene]);
-  const { norm, footY } = useMemo(() => {
+  const { norm, footY, headY } = useMemo(() => {
     const box = new THREE.Box3().setFromObject(model);
     const size = new THREE.Vector3();
     box.getSize(size);
-    const n = 1.6 / (size.y || 1);
-    return { norm: n, footY: -box.min.y * n };
+    const n = ZEBRA_TARGET_H / (size.y || 1);
+    // feet at y=0; card sits just above the head.
+    return { norm: n, footY: -box.min.y * n, headY: ZEBRA_TARGET_H + 0.15 };
   }, [model]);
   const mixer = useMemo(() => new THREE.AnimationMixer(model), [model]);
   useEffect(() => {
@@ -354,7 +356,10 @@ function ProposalZebra({
     p.amount != null ? `$${p.amount.toLocaleString("en-US")}` : "—";
   return (
     <group ref={ref}>
-      <primitive object={model} scale={norm} position={[0, footY, 0]} />
+      {/* inner group isolates the model's scale + floor offset from any root motion */}
+      <group scale={norm} position={[0, footY, 0]}>
+        <primitive object={model} />
+      </group>
       {/* ground glow */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.03, 0]}>
         <circleGeometry args={[0.75, 24]} />
@@ -366,7 +371,7 @@ function ProposalZebra({
         />
       </mesh>
       {/* floating label */}
-      <Html position={[0, 2.4, 0]} center distanceFactor={11}>
+      <Html position={[0, headY, 0]} center distanceFactor={9}>
         <div
           style={{
             width: 172,
