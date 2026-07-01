@@ -6,15 +6,17 @@ import type { NextConfig } from "next";
 // scanner, Google Sheets) are all server-side. So 'self' is sufficient;
 // 'unsafe-inline' covers Next's hydration/bootstrap inline scripts and
 // Tailwind's inline styles. No 'unsafe-eval'.
-// 'blob:' on img-src is required by the 3D office (/zcg/office): three.js loads
-// GLB-embedded textures via URL.createObjectURL, which yields blob: image URLs.
+// 'blob:' is required by the 3D office (/zcg/office): three.js loads GLB-embedded
+// textures via URL.createObjectURL (blob: URLs) and, when createImageBitmap is
+// available, FETCHES that blob URL — so blob: must be allowed on both img-src
+// (the <img> fallback) and connect-src (the fetch/ImageBitmap path).
 const csp = [
   "default-src 'self'",
   "script-src 'self' 'unsafe-inline'",
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob:",
   "font-src 'self'",
-  "connect-src 'self'",
+  "connect-src 'self' blob:",
   "frame-ancestors 'none'",
   "base-uri 'self'",
   "form-action 'self'",
