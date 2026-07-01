@@ -490,12 +490,12 @@ function Scene({
       <color attach="background" args={["#05060e"]} />
       <fog attach="fog" args={["#05060e", 22, 52]} />
 
-      <ambientLight intensity={0.45} />
-      <hemisphereLight intensity={0.4} groundColor="#05050c" color="#2a3a56" />
+      <ambientLight intensity={0.55} />
+      <hemisphereLight intensity={0.3} groundColor="#05050c" color="#2a3a56" />
       <directionalLight
         position={[6, 12, 8]}
-        intensity={1.4}
-        color="#dbeafe"
+        intensity={0.9}
+        color="#f2f4ff"
         castShadow
         shadow-mapSize={[2048, 2048]}
         shadow-camera-left={-16}
@@ -503,8 +503,19 @@ function Scene({
         shadow-camera-top={16}
         shadow-camera-bottom={-16}
       />
-      <pointLight position={[-9, 5, 6]} intensity={45} color={GOLD} />
-      <pointLight position={[9, 5, -6]} intensity={45} color="#0ea5e9" />
+      {/* subtle coloured accents — kept low so they tint, not wash out */}
+      <pointLight
+        position={[-9, 5, 6]}
+        intensity={10}
+        distance={16}
+        color={GOLD}
+      />
+      <pointLight
+        position={[9, 5, -6]}
+        intensity={10}
+        distance={16}
+        color="#0ea5e9"
+      />
 
       <Walls />
 
@@ -554,7 +565,7 @@ export default function OfficeScene({
       shadows
       dpr={[1, 2]}
       camera={{ position: [0, 8, 17], fov: 48 }}
-      gl={{ antialias: true }}
+      gl={{ antialias: true, toneMappingExposure: 0.95 }}
     >
       <Scene members={members} proposals={proposals} />
     </Canvas>
