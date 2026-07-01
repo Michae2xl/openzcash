@@ -306,7 +306,8 @@ function OfficeFurniture() {
       />
       <Model
         url={`${M}/computerScreen.glb`}
-        position={[10.1, 1.12, 0]}
+        // Sits on the desk: desk native height 0.384 × scale 1.5 ≈ 0.58.
+        position={[10.1, 0.58, 0]}
         rotationY={-1.55}
         scale={1.1}
       />
@@ -376,8 +377,10 @@ function MemberSeat({ m, x, z }: { m: OfficeMember; x: number; z: number }) {
 }
 
 /* --------------- proposals: zebras wandering in front of members ---------- */
-// Wander area in front of the members (who sit at z ≈ -5..-6.5).
-const ZEBRA_AREA = { xMin: -9, xMax: 9, zMin: -3, zMax: 8 };
+// Central runway in front of the members (who sit at z ≈ -5..-6.5). Kept clear
+// of the perimeter furniture — the lounge (z ≳ 5.5), kitchen (x ≳ 8, z ≳ 6),
+// meeting nook (x ≈ -10.6) and workstation (x ≈ 10.5) all sit outside this box.
+const ZEBRA_AREA = { xMin: -8, xMax: 8, zMin: -2.5, zMax: 5 };
 type Cell = { xMin: number; xMax: number; zMin: number; zMax: number };
 // Give each zebra its own cell in a grid so they spread out instead of clumping.
 function cellFor(index: number, count: number): Cell {
@@ -400,6 +403,40 @@ function randInCell(c: Cell): THREE.Vector2 {
     c.xMin + Math.random() * (c.xMax - c.xMin),
     c.zMin + Math.random() * (c.zMax - c.zMin),
   );
+}
+
+// Furniture footprints the zebras must walk around: (x, z, radius). Radii are
+// generous so the zebra body never visibly clips a model. Pieces fully outside
+// the wander box still get an entry to guard the box's edges/corners.
+const ZEBRA_RADIUS = 0.7;
+const OBSTACLES: ReadonlyArray<{ x: number; z: number; r: number }> = [
+  { x: -8.5, z: 5.5, r: 2.6 }, // lounge sofa
+  { x: -7, z: 6.6, r: 1.4 }, // coffee table
+  { x: -9.8, z: 4, r: 1.3 }, // armchair
+  { x: -6.2, z: 7.7, r: 1.3 }, // armchair
+  { x: -10, z: 3.4, r: 1.0 }, // floor lamp
+  { x: 10, z: 6, r: 1.7 }, // fridge
+  { x: 8.4, z: 7.2, r: 1.1 }, // coffee machine
+  { x: 10.4, z: 8.4, r: 1.7 }, // kitchen cabinet
+  { x: -10.6, z: 0, r: 1.7 }, // meeting table
+  { x: 10.5, z: 0, r: 1.9 }, // workstation desk
+];
+function hitsObstacle(x: number, z: number): boolean {
+  for (const o of OBSTACLES) {
+    const rr = o.r + ZEBRA_RADIUS;
+    const dx = x - o.x;
+    const dz = z - o.z;
+    if (dx * dx + dz * dz < rr * rr) return true;
+  }
+  return false;
+}
+// Pick a wander target inside the cell that isn't buried in furniture.
+function freeTargetInCell(c: Cell): THREE.Vector2 {
+  for (let i = 0; i < 16; i++) {
+    const v = randInCell(c);
+    if (!hitsObstacle(v.x, v.y)) return v;
+  }
+  return randInCell(c); // give up after retries — better than freezing
 }
 
 const ZEBRA_ANIM_URL = "/office-assets/models/animals/zebra-cartoon.glb";
@@ -466,8 +503,8 @@ function ProposalZebra({
   }, [mixer, animations, offset]);
   const ref = useRef<THREE.Group>(null);
   // Random wander: head toward a target point, pick a new one on arrival.
-  const posRef = useRef<THREE.Vector2>(randInCell(cell));
-  const targetRef = useRef<THREE.Vector2>(randInCell(cell));
+  const posRef = useRef<THREE.Vector2>(freeTargetInCell(cell));
+  const targetRef = useRef<THREE.Vector2>(freeTargetInCell(cell));
   const yawRef = useRef(0);
   useFrame((_, dt) => {
     mixer.update(dt);
@@ -477,12 +514,19 @@ function ProposalZebra({
     const dz = t.y - p2.y;
     const d = Math.hypot(dx, dz);
     if (d < 0.4) {
-      targetRef.current = randInCell(cell);
+      targetRef.current = freeTargetInCell(cell);
     } else {
       const step = Math.min(0.45 * dt, d);
-      p2.x += (dx / d) * step;
-      p2.y += (dz / d) * step;
-      yawRef.current = Math.atan2(dx, dz);
+      const nx = p2.x + (dx / d) * step;
+      const nz = p2.y + (dz / d) * step;
+      if (hitsObstacle(nx, nz)) {
+        // About to walk into furniture — turn away and head somewhere clear.
+        targetRef.current = freeTargetInCell(cell);
+      } else {
+        p2.x = nx;
+        p2.y = nz;
+        yawRef.current = Math.atan2(dx, dz);
+      }
     }
     if (ref.current) {
       ref.current.position.set(p2.x, 0, p2.y);
