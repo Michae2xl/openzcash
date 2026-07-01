@@ -7,7 +7,6 @@ import {
 } from "@/lib/zcg/totals-repo";
 import { formatUsdCents } from "@/lib/zcg/format";
 import { classifyLabel, type ClassKind } from "@/lib/zcg/classification-tags";
-import { BudgetCards } from "../budget-cards";
 import {
   TotalsTables,
   type CategoryRow,
@@ -193,13 +192,6 @@ export default async function TotaisPage() {
             budget above — the pool has no standalone &ldquo;travel&rdquo; line.
           </p>
         </Card>
-      </section>
-
-      <section className="mb-8">
-        <h2 className="mb-3 text-sm font-semibold text-stone-700">
-          Discretionary budget
-        </h2>
-        <BudgetCards />
       </section>
 
       <section className="mb-8 grid grid-cols-2 gap-4 lg:grid-cols-4">

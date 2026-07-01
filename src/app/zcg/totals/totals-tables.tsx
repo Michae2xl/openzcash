@@ -194,12 +194,12 @@ export function TotalsTables({
     <div className="space-y-6">
       <section className="min-w-0">
         <h2 className="mb-3 text-sm font-semibold text-stone-700">
-          By recipient
+          By classification
         </h2>
         <Card className="overflow-hidden p-0">
           <DataTable
-            columns={recipientColumns}
-            rows={recipientRows}
+            columns={categoryColumns}
+            rows={categoryRows}
             initialSort={{ key: "usd", dir: "desc" }}
             className="p-4"
             maxHeight="max-h-[60vh]"
@@ -209,12 +209,12 @@ export function TotalsTables({
 
       <section className="min-w-0">
         <h2 className="mb-3 text-sm font-semibold text-stone-700">
-          By classification
+          By recipient
         </h2>
         <Card className="overflow-hidden p-0">
           <DataTable
-            columns={categoryColumns}
-            rows={categoryRows}
+            columns={recipientColumns}
+            rows={recipientRows}
             initialSort={{ key: "usd", dir: "desc" }}
             className="p-4"
             maxHeight="max-h-[60vh]"
