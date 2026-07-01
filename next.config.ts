@@ -43,7 +43,35 @@ const nextConfig: NextConfig = {
   // Don't advertise the framework/version in responses.
   poweredByHeader: false,
   async headers() {
-    return [{ source: "/:path*", headers: securityHeaders }];
+    return [
+      { source: "/:path*", headers: securityHeaders },
+      // Heavy 3D assets (GLB models, graffiti textures) never change in place —
+      // a new model gets a new filename. Without this, Next serves public/
+      // files with max-age=0 and every office visitor re-downloads ~6MB.
+      {
+        source: "/office-assets/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+      {
+        source: "/committee/:path*",
+        headers: [
+          { key: "Cache-Control", value: "public, max-age=604800" }, // 7 days
+        ],
+      },
+      {
+        source: "/zcash-emblem.png",
+        headers: [{ key: "Cache-Control", value: "public, max-age=86400" }],
+      },
+      {
+        source: "/zbo-emblem.png",
+        headers: [{ key: "Cache-Control", value: "public, max-age=86400" }],
+      },
+    ];
   },
 };
 

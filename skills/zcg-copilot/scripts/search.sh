@@ -11,7 +11,7 @@ fi
 
 TERMS="$*"
 GRANTS_JSON=$(curl -sf "https://openzcash.org/api/zcg/data/grants")
-DISB_JSON=$(curl -sf "https://openzcash.org/api/zcg/data/disbursements?limit=3000")
+DISB_JSON=$(curl -sf "https://openzcash.org/api/zcg/data/disbursements?limit=2000")
 OFFICE_JSON=$(curl -sf "https://openzcash.org/api/zcg/office")
 
 TERMS="$TERMS" python3 - "$GRANTS_JSON" "$DISB_JSON" "$OFFICE_JSON" <<'PY'

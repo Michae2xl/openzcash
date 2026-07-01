@@ -10,7 +10,7 @@ fi
 
 NAME="$*"
 REC_JSON=$(curl -sf "https://openzcash.org/api/zcg/data/recipients")
-DISB_JSON=$(curl -sf "https://openzcash.org/api/zcg/data/disbursements?limit=3000")
+DISB_JSON=$(curl -sf "https://openzcash.org/api/zcg/data/disbursements?limit=2000")
 
 NAME="$NAME" python3 - "$REC_JSON" "$DISB_JSON" <<'PY'
 import json, os, sys

@@ -44,8 +44,8 @@ One row per payment. Fields: `id`, `recipient`, `project`, `category`, `type`,
 `status`, `milestone`, `paidOutDate`, `amountUsd`, `zec`, `sourceSheet`, `isPaid`.
 Query params: `search=<text>` (case-insensitive substring over recipient, project
 title, and milestone label), `grant=<exact project title>` (precise per-grant trail),
-`category=`, `type=`, `sheet=`, `limit=` (default 500 — RAISE it for aggregations,
-e.g. `limit=3000`; ~900+ rows exist).
+`category=`, `type=`, `sheet=`, `limit=` (default 500, hard cap 2000 — RAISE it
+for aggregations, e.g. `limit=2000`; ~900+ rows exist today).
 
 `sourceSheet` values and what they mean: `grants_disbursed` (main ZCG grant
 milestones), `coinholder_grants` (FPF Coinholder program), `monthly` (committee
@@ -161,13 +161,13 @@ Present as: funded (with exact paid totals) / under review (requested) / decline
 Match on synonyms too (merchant, POS, payment processor, point-of-sale, checkout, pay).
 
 **"How much did <recipient> get?":** `data/recipients` for the headline (remember:
-its `usd` is budgeted), then `data/disbursements?search=<name>&limit=3000` and sum the
+its `usd` is budgeted), then `data/disbursements?search=<name>&limit=2000` and sum the
 `isPaid` rows for money actually paid. Report both when they differ ("$X budgeted,
 $Y paid to date").
 
 **"What's under review right now?":** `/api/zcg/office`; sum `amount` for the total ask.
 
-**"Burn rate / spend over time":** fetch `data/disbursements?limit=3000&format=csv`,
+**"Burn rate / spend over time":** fetch `data/disbursements?limit=2000&format=csv`,
 group `amountUsd` by month of `paidOutDate` locally (only `isPaid` rows).
 
 **"Was proposal X funded?":** check `/api/zcg/office` (still under review?) → GitHub
