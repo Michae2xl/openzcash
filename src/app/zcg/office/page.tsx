@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getGrantApplications } from "@/lib/zcg/github-applications";
+import { getUnderReviewProposals } from "@/lib/zcg/github-applications";
 import { OfficeCanvas } from "./office-canvas";
 import type { OfficeMember } from "./scene";
 
@@ -39,14 +39,8 @@ const MEMBERS: OfficeMember[] = [
 ];
 
 export default async function OfficePage() {
-  const apps = await getGrantApplications(40);
-  const proposals = apps
-    .filter((a) => a.status === "review")
-    .map((a) => ({
-      title: a.title,
-      amount: a.amountUsd,
-      applicant: a.applicant,
-    }));
+  // Initial snapshot; the scene then polls /api/zcg/office to stay live.
+  const proposals = await getUnderReviewProposals(40);
 
   return (
     <>

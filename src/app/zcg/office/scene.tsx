@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useEffect, useMemo, useRef } from "react";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import {
   Grid,
@@ -14,6 +14,8 @@ import { clone as cloneSkeleton } from "three/examples/jsm/utils/SkeletonUtils.j
 
 export type OfficeMember = { name: string; img: string; tags: string[] };
 export type OfficeProposal = {
+  /** GitHub issue number — stable id for React keys + live diffing. */
+  number: number;
   title: string;
   amount: number | null;
   applicant: string;
@@ -653,7 +655,7 @@ function Scene({
       <Suspense fallback={null}>
         {shown.map((p, i) => (
           <ProposalZebra
-            key={p.title + i}
+            key={p.number}
             p={p}
             index={i}
             count={shown.length}
@@ -677,6 +679,51 @@ function Scene({
   );
 }
 
+/**
+ * Keeps the proposal list live: starts from the server snapshot, then polls the
+ * public office API so an open tab adds/removes zebras as proposals enter or
+ * leave "under review" — no reload needed. Keeps the current list on any fetch
+ * error, and only re-renders when the set actually changed.
+ */
+const POLL_MS = 180_000; // 3 min (the API itself is cached ~15 min server-side)
+function proposalsKey(list: OfficeProposal[]): string {
+  return list
+    .map((p) => `${p.number}:${p.amount}:${p.applicant}:${p.title}`)
+    .sort()
+    .join("|");
+}
+function useLiveProposals(initial: OfficeProposal[]): OfficeProposal[] {
+  const [proposals, setProposals] = useState(initial);
+  useEffect(() => {
+    let alive = true;
+    const load = async () => {
+      try {
+        const res = await fetch("/api/zcg/office", { cache: "no-store" });
+        if (!res.ok) return;
+        const data = (await res.json()) as { proposals?: OfficeProposal[] };
+        if (!alive || !Array.isArray(data.proposals)) return;
+        const next = data.proposals;
+        setProposals((prev) =>
+          proposalsKey(prev) === proposalsKey(next) ? prev : next,
+        );
+      } catch {
+        /* keep the current list on any network/parse error */
+      }
+    };
+    const id = setInterval(load, POLL_MS);
+    const onVisible = () => {
+      if (document.visibilityState === "visible") load();
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    return () => {
+      alive = false;
+      clearInterval(id);
+      document.removeEventListener("visibilitychange", onVisible);
+    };
+  }, []);
+  return proposals;
+}
+
 export default function OfficeScene({
   members,
   proposals,
@@ -684,6 +731,7 @@ export default function OfficeScene({
   members: OfficeMember[];
   proposals: OfficeProposal[];
 }) {
+  const live = useLiveProposals(proposals);
   return (
     <Canvas
       shadows
@@ -691,7 +739,7 @@ export default function OfficeScene({
       camera={{ position: [0, 8, 17], fov: 48 }}
       gl={{ antialias: true, toneMappingExposure: 1 }}
     >
-      <Scene members={members} proposals={proposals} />
+      <Scene members={members} proposals={live} />
     </Canvas>
   );
 }

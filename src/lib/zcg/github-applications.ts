@@ -112,4 +112,33 @@ export async function getGrantApplications(
   }
 }
 
+/** One under-review proposal, shaped for the 3D office (one zebra each). */
+export interface OfficeProposalDTO {
+  /** GitHub issue number — a stable id for diffing/keys across refreshes. */
+  number: number;
+  title: string;
+  amount: number | null;
+  applicant: string;
+}
+
+/**
+ * The live "under review" proposals that become zebras in the 3D office. Shared
+ * by the office page (initial server render) and GET /api/zcg/office (the client
+ * poll), so both apply the exact same filter and a proposal that leaves "review"
+ * — approved, paid, or its issue closed — drops out of both on the next fetch.
+ */
+export async function getUnderReviewProposals(
+  limit = 40,
+): Promise<OfficeProposalDTO[]> {
+  const apps = await getGrantApplications(limit);
+  return apps
+    .filter((a) => a.status === "review")
+    .map((a) => ({
+      number: a.number,
+      title: a.title,
+      amount: a.amountUsd,
+      applicant: a.applicant,
+    }));
+}
+
 export const ZCG_APPLICATIONS_REPO_URL = `https://github.com/${REPO}/issues`;
