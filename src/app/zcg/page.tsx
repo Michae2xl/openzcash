@@ -210,21 +210,21 @@ export default async function ZcgPage() {
         <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-4">
           {TILES.map((t) => (
             <Link key={t.href} href={t.href} className="group block">
-              <div className="flex h-full items-center gap-3 rounded-2xl border border-stone-200/80 bg-white p-3 shadow-sm shadow-stone-300/25 ring-1 ring-inset ring-stone-900/[0.04] transition duration-200 group-hover:-translate-y-0.5 group-hover:border-stone-300 group-hover:shadow-md group-hover:shadow-stone-400/20">
+              <div className="flex h-full flex-col gap-2 rounded-2xl border border-stone-200/80 bg-white p-3 shadow-sm shadow-stone-300/25 ring-1 ring-inset ring-stone-900/[0.04] transition duration-200 group-hover:-translate-y-0.5 group-hover:border-stone-300 group-hover:shadow-md group-hover:shadow-stone-400/20 sm:flex-row sm:items-center sm:gap-3">
                 <span
-                  className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br ${t.grad} text-white shadow-md shadow-stone-500/20 ring-1 ring-inset ring-white/25`}
+                  className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br ${t.grad} text-white shadow-md shadow-stone-500/20 ring-1 ring-inset ring-white/25 sm:h-11 sm:w-11`}
                 >
-                  <t.Icon className="h-[22px] w-[22px]" />
+                  <t.Icon className="h-6 w-6 sm:h-[22px] sm:w-[22px]" />
                 </span>
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-[15px] font-semibold leading-tight tracking-tight text-stone-900">
+                  <p className="text-[15px] font-semibold leading-tight tracking-tight text-stone-900 line-clamp-2 sm:truncate">
                     {t.label}
                   </p>
-                  <p className="mt-0.5 truncate text-xs font-medium text-stone-500">
+                  <p className="mt-0.5 hidden truncate text-xs font-medium text-stone-500 sm:block">
                     {t.sub}
                   </p>
                 </div>
-                <span className="shrink-0 text-stone-300 transition group-hover:translate-x-0.5 group-hover:text-stone-500">
+                <span className="hidden shrink-0 text-stone-300 transition group-hover:translate-x-0.5 group-hover:text-stone-500 sm:block">
                   →
                 </span>
               </div>
