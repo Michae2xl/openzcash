@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Terminal } from "./terminal";
 
 export const dynamic = "force-dynamic";
 // Hidden preview: not linked publicly (admin-only banner on /zcg/proposals),
@@ -8,75 +9,6 @@ export const metadata = {
   robots: { index: false, follow: false },
 };
 
-/** Static terminal mock. Every line is a real, validated answer the skill
- * produced against the live APIs (adversarial validation, 2026-07-01). */
-function Terminal() {
-  return (
-    <div className="overflow-hidden border border-stone-900 bg-[#0b0d10] shadow-2xl shadow-stone-400/40">
-      <div className="flex items-center gap-2 border-b border-white/10 px-4 py-2.5">
-        <span className="h-3 w-3 rounded-full bg-[#ff5f57]" />
-        <span className="h-3 w-3 rounded-full bg-[#febc2e]" />
-        <span className="h-3 w-3 rounded-full bg-[#28c840]" />
-        <span className="ml-auto font-mono text-[11px] tracking-wide text-stone-500">
-          your agent
-        </span>
-      </div>
-      <div className="space-y-4 p-5 font-mono text-[13px] leading-relaxed antialiased">
-        <p className="text-stone-100">
-          <span className="mr-2 text-emerald-400">❯</span>
-          Find any grants having to do with tools for merchants to accept Zcash
-        </p>
-        <p className="text-stone-500">
-          <span className="mr-2 text-emerald-500">●</span>
-          Fetching the ledger, live pipeline, and GitHub applications...
-        </p>
-        <div className="space-y-1.5 text-stone-300">
-          <p>
-            <span className="font-semibold text-emerald-400">Funded:</span>{" "}
-            Payment Gateway with BTCPay,{" "}
-            <span className="text-amber-300">$120,000</span> paid (2022) ·
-            Elemental ZEC payment processor,{" "}
-            <span className="text-amber-300">$51,144</span> (6/6 milestones) ·
-            CoinPayments, <span className="text-amber-300">$76,800</span> before
-            cancellation
-          </p>
-          <p>
-            <span className="font-semibold text-sky-400">
-              Under review now:
-            </span>{" "}
-            Rozo Merchant POS (#336),{" "}
-            <span className="text-amber-300">$48,000</span> requested
-          </p>
-          <p>
-            <span className="font-semibold text-rose-400">Declined:</span>{" "}
-            weave-zec ($48k), ZecPay ($44k), ZAPS ($120k)...
-          </p>
-          <p className="text-[11px] text-stone-600">
-            sources: openzcash.org/api/zcg/data/grants · /api/zcg/office ·
-            github #336
-          </p>
-        </div>
-        <p className="text-stone-100">
-          <span className="mr-2 text-emerald-400">❯</span>
-          Was Zenith Full-node Wallet 2026 funded?
-        </p>
-        <div className="space-y-1.5 text-stone-300">
-          <p>
-            <span className="font-semibold text-rose-400">No.</span> It is under
-            review right now (#334,{" "}
-            <span className="text-amber-300">$122,600</span> requested). It is
-            not the completed 2024 Zenith Full Node Wallet grant (
-            <span className="text-amber-300">$124,800</span> paid). Same name,
-            different application.
-          </p>
-          <p className="text-[11px] text-stone-600">
-            sources: /api/zcg/office · github #334 · /api/zcg/data/grants
-          </p>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 const USE_CASES = [
   {
