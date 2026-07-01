@@ -69,6 +69,48 @@ function Model({
   );
 }
 
+/** Loads a GLB and normalises it to a target height with feet on the floor —
+ * robust against a model's unknown native scale (used for the throne). */
+function FitModel({
+  url,
+  targetH,
+  position,
+  rotationY = 0,
+}: {
+  url: string;
+  targetH: number;
+  position: [number, number, number];
+  rotationY?: number;
+}) {
+  const { scene } = useGLTF(url);
+  const obj = useMemo(() => {
+    const c = scene.clone(true);
+    c.traverse((o) => {
+      const mesh = o as THREE.Mesh;
+      if (mesh.isMesh) {
+        mesh.castShadow = true;
+        mesh.receiveShadow = true;
+      }
+    });
+    return c;
+  }, [scene]);
+  const { norm, footY } = useMemo(() => {
+    obj.updateMatrixWorld(true);
+    const box = new THREE.Box3().setFromObject(obj);
+    const size = new THREE.Vector3();
+    box.getSize(size);
+    const n = targetH / (size.y || 1);
+    return { norm: n, footY: -box.min.y * n };
+  }, [obj, targetH]);
+  return (
+    <group position={position} rotation={[0, rotationY, 0]}>
+      <group scale={norm} position={[0, footY, 0]}>
+        <primitive object={obj} />
+      </group>
+    </group>
+  );
+}
+
 /* ------------------------------ floor + room ------------------------------ */
 function Floor() {
   const tex = useTexture("/zcash-emblem.png");
@@ -209,15 +251,15 @@ function OfficeFurniture() {
 function MemberSeat({ m, x, z }: { m: OfficeMember; x: number; z: number }) {
   return (
     <group position={[x, 0, z]}>
-      {/* big chair, facing the proposals (+z, toward the room centre) */}
-      <Model
-        url={`${M}/chairDesk.glb`}
+      {/* throne, facing the proposals (+z, toward the room centre) */}
+      <FitModel
+        url={`${M}/throne_chair.glb`}
+        targetH={2.2}
         position={[0, 0, 0]}
         rotationY={0}
-        scale={2.5}
       />
-      {/* avatar seated in the chair, facing the proposals */}
-      <Html position={[0, 2.55, 0.15]} center distanceFactor={8}>
+      {/* avatar seated on the throne, facing the proposals */}
+      <Html position={[0, 2.35, 0.2]} center distanceFactor={8}>
         <div
           style={{
             width: 168,
@@ -323,6 +365,7 @@ function ProposalZebra({
     return c;
   }, [scene]);
   const { norm, footY, headY } = useMemo(() => {
+    model.updateMatrixWorld(true); // include the model's own root scale
     const box = new THREE.Box3().setFromObject(model);
     const size = new THREE.Vector3();
     box.getSize(size);
@@ -520,7 +563,7 @@ export default function OfficeScene({
 
 // Preload the furniture GLBs used above.
 [
-  "chairDesk",
+  "throne_chair",
   "loungeSofa",
   "lampRoundFloor",
   "tableCoffee",
