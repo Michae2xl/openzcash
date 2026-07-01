@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { Card } from "@/components/ui";
+import { Badge, Card } from "@/components/ui";
 import { DataTable, type Column } from "@/components/data-table";
 import { formatUsdCents } from "@/lib/zcg/format";
+import { classifyLabel } from "@/lib/zcg/classification-tags";
 
 // Headers mirror the ZCG spreadsheet so the team recognizes each column.
 
@@ -68,6 +69,23 @@ const categoryColumns: Column<CategoryRow>[] = [
         {r.category}
       </span>
     ),
+  },
+  {
+    key: "kind",
+    header: "What it is",
+    filterable: true,
+    filterType: "select",
+    filterValue: (r) => classifyLabel(r.category).label,
+    sortable: true,
+    sortValue: (r) => classifyLabel(r.category).label,
+    render: (r) => {
+      const t = classifyLabel(r.category);
+      return (
+        <span title={t.note}>
+          <Badge tone={t.tone}>{t.label}</Badge>
+        </span>
+      );
+    },
   },
   {
     key: "usd",

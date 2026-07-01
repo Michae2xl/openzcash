@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Badge, Card, PageHeader, Stat } from "@/components/ui";
 import { currentLockboxZec } from "@/lib/zcash/lockbox-live";
 import { currentZecUsdCents, zatToUsdCents } from "@/lib/pricing/live-price";
@@ -74,6 +75,23 @@ export default async function CoinholderPage() {
         title="Coinholder Grants"
         subtitle="The FPF-run Coinholder Grants program, funded from the ZIP-1016 Lockbox pool. Balances and totals mirror the ZCG public spreadsheet."
       />
+
+      {/* Two separate funding pools — make it obvious which one this is. */}
+      <div className="mb-6 flex flex-wrap items-center gap-2 rounded-xl border border-stone-200 bg-stone-50/70 p-1.5">
+        <Link
+          href="/zcg/totals"
+          className="rounded-lg px-3 py-1.5 text-sm font-medium text-stone-600 transition hover:bg-white hover:text-stone-900"
+        >
+          ← ZCG grants pool
+        </Link>
+        <span className="rounded-lg bg-amber-500/15 px-3 py-1.5 text-sm font-semibold text-amber-800 ring-1 ring-inset ring-amber-500/25">
+          Coinholder grants pool
+        </span>
+        <span className="px-1 text-xs text-stone-500">
+          Two separate pools. You&apos;re viewing the{" "}
+          <span className="font-medium text-stone-700">Coinholder</span> pool.
+        </span>
+      </div>
 
       <section className="mb-8 grid grid-cols-2 gap-4 lg:grid-cols-4">
         <Stat
