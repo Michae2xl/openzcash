@@ -13,6 +13,8 @@ export type CategoryRow = {
   category: string;
   _usd: number;
   _pct: number;
+  /** Drill-down: where clicking this row's name/value leads. */
+  href?: string;
 };
 
 export type RecipientRow = {
@@ -22,7 +24,25 @@ export type RecipientRow = {
   _usd: number;
   _future: number;
   _pct: number;
+  /** Drill-down: where clicking this row's name/value leads. */
+  href?: string;
 };
+
+/** A USD amount that links to its drill-down when a href is present. */
+function LinkedUsd({ usd, href }: { usd: number; href?: string }) {
+  const text = formatUsdCents(usd, { compact: true });
+  if (!href)
+    return <span className="font-medium text-amber-700/90">{text}</span>;
+  return (
+    <Link
+      href={href}
+      title="See the disbursements behind this figure"
+      className="font-medium text-amber-700 underline decoration-amber-700/25 underline-offset-2 hover:decoration-amber-700"
+    >
+      {text}
+    </Link>
+  );
+}
 
 interface TotalsTablesProps {
   categoryRows: CategoryRow[];
@@ -64,11 +84,20 @@ const categoryColumns: Column<CategoryRow>[] = [
     sortable: true,
     filterable: true,
     filterType: "select",
-    render: (r) => (
-      <span className="block max-w-[16rem] truncate font-medium text-stone-900">
-        {r.category}
-      </span>
-    ),
+    render: (r) =>
+      r.href ? (
+        <Link
+          href={r.href}
+          title="See the disbursements in this classification"
+          className="block max-w-[16rem] truncate font-medium text-stone-900 hover:text-amber-700"
+        >
+          {r.category}
+        </Link>
+      ) : (
+        <span className="block max-w-[16rem] truncate font-medium text-stone-900">
+          {r.category}
+        </span>
+      ),
   },
   {
     key: "kind",
@@ -93,11 +122,7 @@ const categoryColumns: Column<CategoryRow>[] = [
     align: "right",
     sortable: true,
     sortValue: (r) => r._usd,
-    render: (r) => (
-      <span className="font-medium text-amber-700/90">
-        {formatUsdCents(r._usd, { compact: true })}
-      </span>
-    ),
+    render: (r) => <LinkedUsd usd={r._usd} href={r.href} />,
   },
   pctColumn,
 ];
@@ -116,11 +141,20 @@ const recipientColumns: Column<RecipientRow>[] = [
     header: "Recipient or Classification",
     sortable: true,
     filterable: true,
-    render: (r) => (
-      <span className="block max-w-[16rem] truncate font-medium text-stone-900">
-        {r.recipient}
-      </span>
-    ),
+    render: (r) =>
+      r.href ? (
+        <Link
+          href={r.href}
+          title="See this recipient's milestones and payments"
+          className="block max-w-[16rem] truncate font-medium text-stone-900 hover:text-amber-700"
+        >
+          {r.recipient}
+        </Link>
+      ) : (
+        <span className="block max-w-[16rem] truncate font-medium text-stone-900">
+          {r.recipient}
+        </span>
+      ),
   },
   {
     key: "usd",
@@ -128,11 +162,7 @@ const recipientColumns: Column<RecipientRow>[] = [
     align: "right",
     sortable: true,
     sortValue: (r) => r._usd,
-    render: (r) => (
-      <span className="font-medium text-amber-700/90">
-        {formatUsdCents(r._usd, { compact: true })}
-      </span>
-    ),
+    render: (r) => <LinkedUsd usd={r._usd} href={r.href} />,
   },
   {
     key: "future",

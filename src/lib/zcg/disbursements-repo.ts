@@ -16,6 +16,7 @@ export type DisbFilters = {
   sheet?: string;
   type?: string;
   grant?: string;
+  category?: string;
   search?: string;
   limit?: number;
 };
@@ -28,6 +29,7 @@ export async function listDisbursements(
   if (opts.sheet) conds.push(eq(zcgDisbursements.sourceSheet, opts.sheet));
   if (opts.type) conds.push(eq(zcgDisbursements.disbursementType, opts.type));
   if (opts.grant) conds.push(eq(zcgDisbursements.project, opts.grant));
+  if (opts.category) conds.push(eq(zcgDisbursements.category, opts.category));
   if (opts.search)
     conds.push(ilike(zcgDisbursements.recipientNameRaw, `%${opts.search}%`));
 

@@ -29,13 +29,15 @@ const SHEETS: { id?: string; label: string }[] = [
 export default async function DesembolsosPage({
   searchParams,
 }: {
-  searchParams: Promise<{ sheet?: string; grant?: string }>;
+  searchParams: Promise<{ sheet?: string; grant?: string; category?: string }>;
 }) {
-  const { sheet, grant } = await searchParams;
+  const { sheet, grant, category } = await searchParams;
   const [isAdmin, rows, overridden] = await Promise.all([
     getIsAdmin(),
-    cached(`disb:${sheet ?? ""}:${grant ?? ""}`, LEDGER_TTL_MS, () =>
-      listDisbursements({ sheet, grant, limit: 400 }),
+    cached(
+      `disb:${sheet ?? ""}:${grant ?? ""}:${category ?? ""}`,
+      LEDGER_TTL_MS,
+      () => listDisbursements({ sheet, grant, category, limit: 400 }),
     ),
     cached("disb:overridden", LEDGER_TTL_MS, () => overriddenDisbursementIds()),
   ]);
@@ -98,6 +100,21 @@ export default async function DesembolsosPage({
             className="text-xs text-stone-600 hover:text-stone-800"
           >
             All grants
+          </Link>
+        </div>
+      ) : null}
+
+      {category ? (
+        <div className="mb-8 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-amber-500/20 bg-amber-500/[0.06] px-4 py-3">
+          <p className="text-sm text-amber-800/80">
+            Disbursements classified as{" "}
+            <span className="font-medium text-amber-800">{category}</span>
+          </p>
+          <Link
+            href="/zcg/totals"
+            className="text-xs text-stone-600 hover:text-stone-800"
+          >
+            ‹ Back to totals
           </Link>
         </div>
       ) : null}

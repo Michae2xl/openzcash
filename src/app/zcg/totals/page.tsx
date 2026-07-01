@@ -7,7 +7,6 @@ import {
 } from "@/lib/zcg/totals-repo";
 import { formatUsdCents } from "@/lib/zcg/format";
 import { classifyLabel, type ClassKind } from "@/lib/zcg/classification-tags";
-import { TotalsCharts } from "../totals-charts";
 import { BudgetCards } from "../budget-cards";
 import {
   TotalsTables,
@@ -63,6 +62,7 @@ export default async function TotaisPage() {
       usd: grantsUsd,
       bar: "bg-emerald-500/70",
       tone: "emerald" as const,
+      href: "/zcg/disbursements?sheet=grants_disbursed",
     },
     {
       label: "ZCG operations",
@@ -70,6 +70,7 @@ export default async function TotaisPage() {
       usd: opsUsd,
       bar: "bg-amber-500/70",
       tone: "amber" as const,
+      href: "/zcg/disbursements?sheet=discretionary",
     },
     {
       label: "Committee stipends",
@@ -77,14 +78,26 @@ export default async function TotaisPage() {
       usd: stipendsUsd,
       bar: "bg-violet-500/70",
       tone: "violet" as const,
+      href: "/zcg/disbursements?sheet=monthly",
     },
   ];
+
+  // Where clicking a classification leads: grant classifications drill into the
+  // ledger filtered by that category; the internal buckets drill into their own
+  // source sheet (discretionary budget / monthly stipends).
+  const classHref = (label: string): string => {
+    const k = classifyLabel(label).kind;
+    if (k === "operations") return "/zcg/disbursements?sheet=discretionary";
+    if (k === "stipends") return "/zcg/disbursements?sheet=monthly";
+    return `/zcg/disbursements?category=${encodeURIComponent(label)}`;
+  };
 
   const categoryRows: CategoryRow[] = cats.map((c) => ({
     key: `${c.pool}:${c.label}`,
     category: c.label,
     _usd: Number(c.usdPaidToDateCents),
     _pct: share(c.usdPaidToDateCents),
+    href: classHref(c.label),
   }));
 
   const recipientRows: RecipientRow[] = external.map((r, i) => ({
@@ -94,17 +107,7 @@ export default async function TotaisPage() {
     _usd: Number(r.usdPaidToDateCents),
     _future: Number(r.usdFuturePipelineCents ?? 0n),
     _pct: share(r.usdPaidToDateCents),
-  }));
-
-  const topRecipients = recipientRows.slice(0, 10).map((r) => ({
-    label: r.recipient,
-    value: r._usd,
-    display: formatUsdCents(r._usd, { compact: true }),
-  }));
-  const byClassification = categoryRows.map((c) => ({
-    label: c.category,
-    value: c._usd,
-    display: formatUsdCents(c._usd, { compact: true }),
+    href: `/zcg/recipient?r=${encodeURIComponent(r.label)}`,
   }));
 
   return (
@@ -133,9 +136,14 @@ export default async function TotaisPage() {
       </div>
 
       <section className="mb-8">
-        <h2 className="mb-3 text-sm font-semibold text-stone-700">
-          Where the ZCG pool goes
-        </h2>
+        <div className="mb-3 flex items-baseline justify-between gap-3">
+          <h2 className="text-sm font-semibold text-stone-700">
+            Where the money goes
+          </h2>
+          <span className="text-xs text-stone-400">
+            click a card to drill in ↓
+          </span>
+        </div>
         <Card>
           <div className="flex h-3 w-full overflow-hidden rounded-full bg-stone-100">
             {spendSplit.map((s) =>
@@ -149,22 +157,27 @@ export default async function TotaisPage() {
               ) : null,
             )}
           </div>
-          <div className="mt-4 grid gap-4 sm:grid-cols-3">
+          <div className="mt-4 grid gap-3 sm:grid-cols-3">
             {spendSplit.map((s) => (
-              <div key={s.label} className="min-w-0">
+              <Link
+                key={s.label}
+                href={s.href}
+                title={`See the ${s.label.toLowerCase()} disbursements`}
+                className="group min-w-0 rounded-xl border border-transparent p-2 transition hover:border-stone-200 hover:bg-stone-50"
+              >
                 <div className="flex items-baseline justify-between gap-2">
                   <Badge tone={s.tone}>{s.label}</Badge>
                   <span className="text-xs text-stone-400 tnum">
                     {pct(s.usd).toFixed(1)}%
                   </span>
                 </div>
-                <p className="mt-1.5 text-lg font-semibold text-stone-900 tnum">
+                <p className="mt-1.5 text-lg font-semibold text-stone-900 tnum group-hover:text-amber-700">
                   {formatUsdCents(s.usd, { compact: true })}
                 </p>
                 <p className="mt-0.5 text-xs leading-snug text-stone-500">
                   {s.sub}
                 </p>
-              </div>
+              </Link>
             ))}
           </div>
           <p className="mt-4 border-t border-stone-100 pt-3 text-xs leading-relaxed text-stone-500">
@@ -212,12 +225,6 @@ export default async function TotaisPage() {
           sub="orgs (excludes internal buckets)"
         />
       </section>
-
-      <TotalsCharts
-        recipients={topRecipients}
-        classifications={byClassification}
-        format={(v) => formatUsdCents(v, { compact: true })}
-      />
 
       <TotalsTables categoryRows={categoryRows} recipientRows={recipientRows} />
 
