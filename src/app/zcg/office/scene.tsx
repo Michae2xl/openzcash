@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useMemo, useRef } from "react";
+import { Suspense, useEffect, useMemo, useRef } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import {
   Grid,
@@ -10,6 +10,7 @@ import {
   useTexture,
 } from "@react-three/drei";
 import * as THREE from "three";
+import { clone as cloneSkeleton } from "three/examples/jsm/utils/SkeletonUtils.js";
 
 export type OfficeMember = { name: string; img: string; tags: string[] };
 export type OfficeProposal = {
@@ -287,7 +288,22 @@ function loopPoint(u: number) {
   return { x, z, yaw };
 }
 
-function ProposalWalker({
+const ZEBRA_ANIM_URL = "/office-assets/models/animals/zebra-anim.glb";
+// Tweak if the zebras walk sideways/backwards (model forward-axis offset).
+const ZEBRA_YAW = 0;
+function pickWalkClip(
+  clips: THREE.AnimationClip[],
+): THREE.AnimationClip | null {
+  return (
+    clips.find((c) => /Move_Normal_Slow/i.test(c.name)) ??
+    clips.find((c) => /move/i.test(c.name)) ??
+    clips[0] ??
+    null
+  );
+}
+
+// Each under-review proposal is an animated zebra walking the office loop.
+function ProposalZebra({
   p,
   offset,
   color,
@@ -296,60 +312,61 @@ function ProposalWalker({
   offset: number;
   color: string;
 }) {
+  const { scene, animations } = useGLTF(ZEBRA_ANIM_URL);
+  const model = useMemo(() => {
+    const c = cloneSkeleton(scene);
+    c.traverse((o) => {
+      const m = o as THREE.Mesh;
+      if (m.isMesh) m.castShadow = true;
+    });
+    return c;
+  }, [scene]);
+  const { norm, footY } = useMemo(() => {
+    const box = new THREE.Box3().setFromObject(model);
+    const size = new THREE.Vector3();
+    box.getSize(size);
+    const n = 1.6 / (size.y || 1);
+    return { norm: n, footY: -box.min.y * n };
+  }, [model]);
+  const mixer = useMemo(() => new THREE.AnimationMixer(model), [model]);
+  useEffect(() => {
+    const clip = pickWalkClip(animations);
+    if (clip) {
+      const a = mixer.clipAction(clip);
+      a.timeScale = 0.9;
+      a.reset().play();
+    }
+    return () => {
+      mixer.stopAllAction();
+    };
+  }, [mixer, animations]);
   const ref = useRef<THREE.Group>(null);
-  const bob = useRef<THREE.Group>(null);
-  useFrame((s) => {
-    const u = s.clock.elapsedTime * 0.018 + offset;
+  useFrame((s, dt) => {
+    mixer.update(dt);
+    const u = s.clock.elapsedTime * 0.016 + offset;
     const { x, z, yaw } = loopPoint(u);
     if (ref.current) {
       ref.current.position.set(x, 0, z);
-      ref.current.rotation.y = yaw;
-    }
-    if (bob.current) {
-      bob.current.position.y =
-        0.55 + Math.sin(s.clock.elapsedTime * 3 + offset * 20) * 0.05;
+      ref.current.rotation.y = yaw + ZEBRA_YAW;
     }
   });
   const amount =
     p.amount != null ? `$${p.amount.toLocaleString("en-US")}` : "—";
   return (
     <group ref={ref}>
-      <group ref={bob}>
-        {/* glowing token */}
-        <mesh castShadow>
-          <capsuleGeometry args={[0.28, 0.5, 6, 14]} />
-          <meshStandardMaterial
-            color={color}
-            emissive={color}
-            emissiveIntensity={0.9}
-            roughness={0.3}
-            metalness={0.2}
-          />
-        </mesh>
-        {/* little "screen" face */}
-        <mesh position={[0, 0.1, 0.26]}>
-          <planeGeometry args={[0.32, 0.22]} />
-          <meshBasicMaterial color="#02030a" />
-        </mesh>
-      </group>
-      <pointLight
-        position={[0, 1, 0]}
-        intensity={5}
-        distance={4.5}
-        color={color}
-      />
+      <primitive object={model} scale={norm} position={[0, footY, 0]} />
       {/* ground glow */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.03, 0]}>
-        <circleGeometry args={[0.55, 24]} />
+        <circleGeometry args={[0.75, 24]} />
         <meshBasicMaterial
           color={color}
           transparent
-          opacity={0.18}
+          opacity={0.16}
           toneMapped={false}
         />
       </mesh>
       {/* floating label */}
-      <Html position={[0, 1.75, 0]} center distanceFactor={11}>
+      <Html position={[0, 2.4, 0]} center distanceFactor={11}>
         <div
           style={{
             width: 172,
@@ -403,54 +420,6 @@ function ProposalWalker({
   );
 }
 
-/* ------------------------------- zebra (GLB) ------------------------------ */
-const ZEBRA_URL = "/office-assets/models/animals/zebra.glb";
-function Zebra({
-  radius,
-  speed,
-  phase,
-}: {
-  radius: number;
-  speed: number;
-  phase: number;
-}) {
-  const { scene } = useGLTF(ZEBRA_URL);
-  const model = useMemo(() => {
-    const c = scene.clone(true);
-    // Normalise the unknown native scale to ~1.7 units tall, feet on the floor.
-    const size = new THREE.Vector3();
-    new THREE.Box3().setFromObject(c).getSize(size);
-    c.scale.setScalar(1.7 / (size.y || 1));
-    const min = new THREE.Box3().setFromObject(c).min;
-    c.position.y = -min.y;
-    c.traverse((o) => {
-      const m = o as THREE.Mesh;
-      if (m.isMesh) m.castShadow = true;
-    });
-    return c;
-  }, [scene]);
-  const ref = useRef<THREE.Group>(null);
-  useFrame((state) => {
-    const t = state.clock.elapsedTime * speed + phase;
-    if (ref.current) {
-      ref.current.position.set(
-        Math.cos(t) * radius,
-        0,
-        2 + Math.sin(t) * radius * 0.6,
-      );
-      // Face the direction of travel (model assumed +Z forward).
-      const vx = -Math.sin(t) * radius;
-      const vz = Math.cos(t) * radius * 0.6;
-      ref.current.rotation.y = Math.atan2(vx, vz) * Math.sign(speed);
-    }
-  });
-  return (
-    <group ref={ref}>
-      <primitive object={model} />
-    </group>
-  );
-}
-
 /* ------------------------------- the scene -------------------------------- */
 function Scene({
   members,
@@ -499,18 +468,15 @@ function Scene({
         ))}
       </Suspense>
 
-      {shown.map((p, i) => (
-        <ProposalWalker
-          key={p.title + i}
-          p={p}
-          offset={i / shown.length}
-          color={WALK_COLORS[i % WALK_COLORS.length]}
-        />
-      ))}
-
       <Suspense fallback={null}>
-        <Zebra radius={8.5} speed={0.15} phase={0} />
-        <Zebra radius={6.2} speed={-0.12} phase={2.6} />
+        {shown.map((p, i) => (
+          <ProposalZebra
+            key={p.title + i}
+            p={p}
+            offset={i / shown.length}
+            color={WALK_COLORS[i % WALK_COLORS.length]}
+          />
+        ))}
       </Suspense>
 
       <OrbitControls
@@ -559,4 +525,4 @@ export default function OfficeScene({
   "pottedPlant",
   "plantSmall1",
 ].forEach((n) => useGLTF.preload(`${M}/${n}.glb`));
-useGLTF.preload(ZEBRA_URL);
+useGLTF.preload(ZEBRA_ANIM_URL);

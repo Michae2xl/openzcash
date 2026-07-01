@@ -78,9 +78,10 @@ export default async function OfficePage() {
       <p className="mt-3 text-xs text-stone-500">
         Experimental 3D view of the ZCG committee and the live under-review
         proposals (read from the GitHub tracker), which walk the office floor.
-        Built with React Three Fiber; low-poly furniture by Kenney (CC0) via the
-        open-source Claw3D project (MIT), zebra by Poly/Google (CC-BY). Unlisted
-        while we polish it.
+        Each under-review proposal is an animated zebra walking the floor. Built
+        with React Three Fiber; low-poly furniture by Kenney (CC0) via the
+        open-source Claw3D project (MIT); animated zebra is a third-party model.
+        Unlisted while we polish it and confirm asset licensing.
       </p>
     </>
   );
