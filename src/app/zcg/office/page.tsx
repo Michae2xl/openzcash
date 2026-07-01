@@ -4,10 +4,10 @@ import { OfficeCanvas } from "./office-canvas";
 import type { OfficeMember } from "./scene";
 
 export const dynamic = "force-dynamic";
-// Hidden from search + not linked anywhere — reachable only by direct URL.
 export const metadata = {
   title: "ZCG Office · OpenZcash",
-  robots: { index: false, follow: false },
+  description:
+    "A living 3D office where every ZCG proposal under review walks the floor as a zebra, in front of the committee.",
 };
 
 const MEMBERS: OfficeMember[] = [
@@ -56,7 +56,7 @@ export default async function OfficePage() {
             ZCG Office
           </h1>
           <span className="rounded-full bg-violet-500/15 px-2.5 py-0.5 text-xs font-medium text-violet-700 ring-1 ring-inset ring-violet-500/25">
-            preview · hidden
+            3D · beta
           </span>
         </div>
         <Link
@@ -70,9 +70,39 @@ export default async function OfficePage() {
       <div className="relative h-[78vh] w-full overflow-hidden rounded-2xl border border-stone-200 bg-[#dce3ec] shadow-xl shadow-stone-300/40">
         <OfficeCanvas members={MEMBERS} proposals={proposals} />
       </div>
-      {/* Attribution kept in source (page is unlisted): low-poly furniture by
-          Kenney (CC0) via the open-source Claw3D project (MIT); animated zebra is
-          a third-party model — confirm its licence before making this public. */}
+
+      <p className="mt-3 text-[11px] leading-relaxed text-stone-400">
+        Each zebra is a live grant proposal under review (source: GitHub). Drag
+        to orbit, scroll to zoom. Credits: 3D model{" "}
+        <a
+          href="https://sketchfab.com/3d-models/cartoon-zebra-with-7-animations-c77056f81b564805a1001f3933d5d0fc"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="underline decoration-stone-300 underline-offset-2 hover:text-stone-600"
+        >
+          “Cartoon Zebra with 7 animations”
+        </a>{" "}
+        by{" "}
+        <a
+          href="https://sketchfab.com/jungle_jim"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="underline decoration-stone-300 underline-offset-2 hover:text-stone-600"
+        >
+          Jungle Jim
+        </a>
+        , licensed{" "}
+        <a
+          href="http://creativecommons.org/licenses/by/4.0/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="underline decoration-stone-300 underline-offset-2 hover:text-stone-600"
+        >
+          CC-BY 4.0
+        </a>{" "}
+        (modified: compressed, re-scaled, instanced). Low-poly furniture by
+        Kenney (CC0) via the open-source Claw3D project (MIT).
+      </p>
     </>
   );
 }
