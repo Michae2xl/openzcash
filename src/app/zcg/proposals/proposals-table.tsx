@@ -15,6 +15,8 @@ export type ProposalTableRow = {
   statusLabel: string;
   /** "github" = live GitHub issue (ready for review); "sheet" = mirrored row. */
   source?: "sheet" | "github";
+  /** Requested grant amount in whole USD (from the GitHub application), or null. */
+  amountUsd?: number | null;
 };
 
 function tone(status: string) {
@@ -85,6 +87,24 @@ const columns: Column<ProposalTableRow>[] = [
         {r.submitted || "·"}
       </span>
     ),
+  },
+  {
+    key: "amountUsd",
+    header: "Requested",
+    align: "right",
+    sortable: true,
+    sortValue: (r) => r.amountUsd ?? -1,
+    render: (r) =>
+      r.amountUsd != null ? (
+        <span
+          className="whitespace-nowrap text-xs font-semibold text-stone-800 tnum"
+          title={`Requested grant amount: $${r.amountUsd.toLocaleString("en-US")} USD`}
+        >
+          ${r.amountUsd.toLocaleString("en-US")}
+        </span>
+      ) : (
+        <span className="text-stone-300">·</span>
+      ),
   },
   {
     key: "statusLabel",

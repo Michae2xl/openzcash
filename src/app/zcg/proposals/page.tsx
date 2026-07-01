@@ -87,6 +87,7 @@ export default async function PropostasPage({
         ...r,
         source: "github" as const,
         platformLink: ghApps[idx].url ?? r.platformLink,
+        amountUsd: ghApps[idx].amountUsd,
       };
     });
 
@@ -101,6 +102,7 @@ export default async function PropostasPage({
       status: "under_review",
       statusLabel: "Under review",
       source: "github" as const,
+      amountUsd: a.amountUsd,
     }));
 
   const allRows = [...netNewGhRows, ...enrichedSheet];

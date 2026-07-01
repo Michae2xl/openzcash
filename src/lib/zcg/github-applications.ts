@@ -1,4 +1,5 @@
 import "server-only";
+import { requestedAmountFromBody } from "./github-applications-parse";
 
 /**
  * Live ZCG grant applications, read first-hand from the GitHub repo where they
@@ -24,6 +25,8 @@ export interface GrantApplication {
   createdAt: string; // ISO
   status: AppStatus;
   comments: number;
+  /** "Requested Grant Amount (USD)" from the issue form, in whole USD, or null. */
+  amountUsd: number | null;
 }
 
 interface GhLabel {
@@ -35,6 +38,7 @@ interface GhIssue {
   html_url: string;
   created_at: string;
   comments: number;
+  body?: string;
   user?: { login?: string };
   labels?: GhLabel[];
   pull_request?: unknown;
@@ -97,6 +101,7 @@ export async function getGrantApplications(
         createdAt: it.created_at,
         status: statusFromLabels(labels),
         comments: it.comments ?? 0,
+        amountUsd: requestedAmountFromBody(it.body),
       }));
 
     if (items.length === 0) return cache?.items.slice(0, limit) ?? [];
