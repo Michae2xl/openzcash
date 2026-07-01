@@ -29,81 +29,94 @@ type Tile = {
   href: string;
   label: string;
   sub: string;
+  grad: string;
   Icon: ComponentType<{ className?: string }>;
 };
 
-// App-style navigation into every ZCG detail screen.
+// App-style navigation into every ZCG detail screen — one colour per app.
 const TILES: Tile[] = [
   {
     href: "/zcg/totals",
     label: "Totals",
-    sub: "Where the money goes, by tag",
+    sub: "Where the money goes",
+    grad: "from-amber-400 to-orange-500",
     Icon: IconChart,
   },
   {
     href: "/zcg/grants",
     label: "Grants",
-    sub: "Approved projects (1 row = 1 grant)",
+    sub: "Approved projects",
+    grad: "from-emerald-400 to-teal-500",
     Icon: IconGrant,
   },
   {
     href: "/zcg/disbursements",
     label: "Disbursements",
-    sub: "The ledger, by milestone/payment",
+    sub: "The full ledger",
+    grad: "from-sky-400 to-blue-500",
     Icon: IconReceipt,
   },
   {
     href: "/zcg/recipients",
     label: "Recipients",
-    sub: "Ranking by amount received",
+    sub: "By amount received",
+    grad: "from-violet-400 to-purple-500",
     Icon: IconUsers,
   },
   {
     href: "/zcg/proposals",
     label: "Proposals",
-    sub: "Governance funnel, by verdict",
+    sub: "Governance funnel",
+    grad: "from-rose-400 to-pink-500",
     Icon: IconVote,
   },
   {
     href: "/zcg/analytics",
     label: "Insights",
-    sub: "Burn-rate, concentration, delivery",
+    sub: "Burn-rate & delivery",
+    grad: "from-fuchsia-400 to-purple-500",
     Icon: IconArrowUp,
   },
   {
     href: "/zcg/stipends",
     label: "Stipends",
-    sub: "What each committee member is paid",
+    sub: "Committee pay",
+    grad: "from-teal-400 to-cyan-500",
     Icon: IconCoins,
   },
   {
     href: "/zcg/budget",
     label: "Budget",
-    sub: "Discretionary budget (USD × ZEC)",
+    sub: "Discretionary · USD × ZEC",
+    grad: "from-orange-400 to-amber-500",
     Icon: IconBalance,
   },
   {
     href: "/zcg/coinholder",
     label: "Coinholder",
-    sub: "The FPF-run grants pool",
+    sub: "FPF grants pool",
+    grad: "from-cyan-400 to-sky-500",
     Icon: IconWallet,
   },
   {
     href: "/zcg/reconciliation",
     label: "Reconciliation",
-    sub: "On-chain ↔ ledger check",
+    sub: "On-chain ↔ ledger",
+    grad: "from-lime-400 to-emerald-500",
     Icon: IconShield,
   },
   {
     href: "/zcg/meetings",
     label: "Meetings",
     sub: "Committee minutes",
+    grad: "from-pink-400 to-rose-500",
     Icon: IconNews,
   },
   {
     href: "/zcg/methodology",
-    label: "How we compute this",
-    sub: "Sources, tags & the public API",
+    label: "Methodology",
+    sub: "Sources & API",
+    grad: "from-slate-400 to-slate-600",
     Icon: IconCheck,
   },
 ];
@@ -189,33 +202,31 @@ export default async function ZcgPage() {
 
       <ElectionsSection />
 
-      <section>
+      <section className="antialiased">
         <div className="mb-3 flex items-baseline justify-between gap-3">
           <h2 className="text-sm font-semibold text-stone-700">Explore ZCG</h2>
-          <span className="text-xs text-stone-400">
-            tap a card for details ↓
-          </span>
+          <span className="text-xs text-stone-400">tap a card ↓</span>
         </div>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-4">
           {TILES.map((t) => (
             <Link key={t.href} href={t.href} className="group block">
-              <div className="flex h-full flex-col gap-3 rounded-2xl border border-stone-200 bg-gradient-to-b from-white to-stone-50 p-4 shadow-sm shadow-stone-300/30 ring-1 ring-inset ring-stone-900/5 transition duration-200 hover:-translate-y-0.5 hover:border-amber-500/40 hover:shadow-md hover:shadow-amber-700/10">
-                <div className="flex items-center justify-between">
-                  <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-500/10 text-amber-700 ring-1 ring-inset ring-amber-500/15">
-                    <t.Icon className="h-4 w-4" />
-                  </span>
-                  <span className="text-stone-300 transition group-hover:translate-x-0.5 group-hover:text-amber-500">
-                    →
-                  </span>
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-stone-900 group-hover:text-amber-700">
+              <div className="flex h-full items-center gap-3 rounded-2xl border border-stone-200/80 bg-white p-3 shadow-sm shadow-stone-300/25 ring-1 ring-inset ring-stone-900/[0.04] transition duration-200 group-hover:-translate-y-0.5 group-hover:border-stone-300 group-hover:shadow-md group-hover:shadow-stone-400/20">
+                <span
+                  className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br ${t.grad} text-white shadow-md shadow-stone-500/20 ring-1 ring-inset ring-white/25`}
+                >
+                  <t.Icon className="h-[22px] w-[22px]" />
+                </span>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-[15px] font-semibold leading-tight tracking-tight text-stone-900">
                     {t.label}
                   </p>
-                  <p className="mt-0.5 text-xs leading-snug text-stone-500">
+                  <p className="mt-0.5 truncate text-xs font-medium text-stone-500">
                     {t.sub}
                   </p>
                 </div>
+                <span className="shrink-0 text-stone-300 transition group-hover:translate-x-0.5 group-hover:text-stone-500">
+                  →
+                </span>
               </div>
             </Link>
           ))}
