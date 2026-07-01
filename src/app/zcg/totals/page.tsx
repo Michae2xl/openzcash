@@ -164,14 +164,14 @@ export default async function TotaisPage() {
                 title={`See the ${s.label.toLowerCase()} disbursements`}
                 className="group min-w-0 rounded-xl border border-transparent p-2 transition hover:border-stone-200 hover:bg-stone-50"
               >
-                <div className="flex items-baseline justify-between gap-2">
-                  <Badge tone={s.tone}>{s.label}</Badge>
-                  <span className="text-xs text-stone-400 tnum">
+                <Badge tone={s.tone}>{s.label}</Badge>
+                <p className="mt-1.5 flex items-baseline gap-1.5">
+                  <span className="text-lg font-semibold text-stone-900 tnum group-hover:text-amber-700">
+                    {formatUsdCents(s.usd, { compact: true })}
+                  </span>
+                  <span className="text-xs font-medium text-stone-400 tnum">
                     {pct(s.usd).toFixed(1)}%
                   </span>
-                </div>
-                <p className="mt-1.5 text-lg font-semibold text-stone-900 tnum group-hover:text-amber-700">
-                  {formatUsdCents(s.usd, { compact: true })}
                 </p>
                 <p className="mt-0.5 text-xs leading-snug text-stone-500">
                   {s.sub}
