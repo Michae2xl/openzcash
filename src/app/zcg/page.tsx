@@ -10,6 +10,7 @@ import {
   IconNews,
   IconReceipt,
   IconShield,
+  IconSwap,
   IconUsers,
   IconVote,
   IconWallet,
@@ -63,6 +64,12 @@ const TILES: Tile[] = [
     label: "Proposals",
     sub: "Governance funnel, by verdict",
     Icon: IconVote,
+  },
+  {
+    href: "/zcg/conversion",
+    label: "Proposal → grant",
+    sub: "How many approvals became funded",
+    Icon: IconSwap,
   },
   {
     href: "/zcg/analytics",

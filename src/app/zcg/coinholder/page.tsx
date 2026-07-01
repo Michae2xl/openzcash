@@ -8,8 +8,8 @@ import {
   recipientTotalsFromSheet,
 } from "@/lib/zcg/totals-repo";
 import { formatUsdCents } from "@/lib/zcg/format";
+import { Synced } from "@/components/synced";
 import { formatZec } from "@/lib/zcash/units";
-import { TotalsCharts } from "../totals-charts";
 import {
   TotalsTables,
   type CategoryRow,
@@ -50,17 +50,6 @@ export default async function CoinholderPage() {
     _future: Number(r.usdFuturePipelineCents ?? 0n),
     _pct: share(r.usdPaidToDateCents),
     href: `/zcg/recipient?r=${encodeURIComponent(r.label)}`,
-  }));
-
-  const topRecipients = recipientRows.slice(0, 10).map((r) => ({
-    label: r.recipient,
-    value: r._usd,
-    display: formatUsdCents(r._usd, { compact: true }),
-  }));
-  const byClassification = categoryRows.map((c) => ({
-    label: c.category,
-    value: c._usd,
-    display: formatUsdCents(c._usd, { compact: true }),
   }));
 
   const zec = lock?.zat ?? 0n;
@@ -118,12 +107,6 @@ export default async function CoinholderPage() {
         />
       </section>
 
-      <TotalsCharts
-        recipients={topRecipients}
-        classifications={byClassification}
-        format={(v) => formatUsdCents(v, { compact: true })}
-      />
-
       <TotalsTables categoryRows={categoryRows} recipientRows={recipientRows} />
 
       {total > 0n ? (
@@ -138,6 +121,8 @@ export default async function CoinholderPage() {
           <Badge tone="emerald">Imported</Badge>
         </Card>
       ) : null}
+
+      <Synced className="mt-6" />
     </>
   );
 }
