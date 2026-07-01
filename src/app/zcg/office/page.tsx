@@ -67,7 +67,7 @@ export default async function OfficePage() {
         </Link>
       </div>
 
-      <div className="relative h-[78vh] w-full overflow-hidden rounded-2xl border border-stone-800 bg-[#04050c] shadow-xl shadow-stone-900/30">
+      <div className="relative h-[78vh] w-full overflow-hidden rounded-2xl border border-stone-200 bg-[#dce3ec] shadow-xl shadow-stone-300/40">
         <OfficeCanvas members={MEMBERS} proposals={proposals} />
         <div className="pointer-events-none absolute bottom-3 left-3 rounded-lg bg-black/40 px-3 py-1.5 text-[11px] text-sky-200/80 backdrop-blur">
           drag to look around · {proposals.length} proposals under review · 5

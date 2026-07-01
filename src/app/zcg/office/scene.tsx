@@ -120,19 +120,19 @@ function Floor() {
       <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
         <planeGeometry args={[44, 44]} />
         <meshStandardMaterial
-          color="#0b0c15"
-          roughness={0.85}
-          metalness={0.15}
+          color="#e9ecf1"
+          roughness={0.9}
+          metalness={0.04}
         />
       </mesh>
       <Grid
         args={[44, 44]}
         cellSize={1.4}
         cellThickness={0.5}
-        cellColor="#1b3b66"
+        cellColor="#c3ccd8"
         sectionSize={5.6}
         sectionThickness={1}
-        sectionColor="#6d28d9"
+        sectionColor="#9aa7b8"
         fadeDistance={34}
         fadeStrength={1.4}
         position={[0, 0.01, 0]}
@@ -153,7 +153,7 @@ function Floor() {
 function Walls() {
   const H = 5.5;
   const wall = (
-    <meshStandardMaterial color="#0c0d18" roughness={0.95} metalness={0.05} />
+    <meshStandardMaterial color="#eef1f5" roughness={0.95} metalness={0.02} />
   );
   return (
     <group>
@@ -176,11 +176,6 @@ function Walls() {
       >
         <planeGeometry args={[24, H]} />
         {wall}
-      </mesh>
-      {/* neon baseboard on the back wall */}
-      <mesh position={[0, 0.06, -10.98]}>
-        <boxGeometry args={[24, 0.08, 0.08]} />
-        <meshBasicMaterial color="#22d3ee" toneMapped={false} />
       </mesh>
     </group>
   );
@@ -493,34 +488,22 @@ function Scene({
   ];
   return (
     <>
-      <color attach="background" args={["#05060e"]} />
-      <fog attach="fog" args={["#05060e", 22, 52]} />
+      <color attach="background" args={["#dce3ec"]} />
+      <fog attach="fog" args={["#dce3ec", 34, 80]} />
 
-      <ambientLight intensity={0.55} />
-      <hemisphereLight intensity={0.3} groundColor="#05050c" color="#2a3a56" />
+      {/* bright neutral studio light so the models show their real colours */}
+      <ambientLight intensity={0.9} />
+      <hemisphereLight intensity={0.7} groundColor="#c6cbd4" color="#ffffff" />
       <directionalLight
         position={[6, 12, 8]}
-        intensity={0.9}
-        color="#f2f4ff"
+        intensity={1.15}
+        color="#ffffff"
         castShadow
         shadow-mapSize={[2048, 2048]}
         shadow-camera-left={-16}
         shadow-camera-right={16}
         shadow-camera-top={16}
         shadow-camera-bottom={-16}
-      />
-      {/* subtle coloured accents — kept low so they tint, not wash out */}
-      <pointLight
-        position={[-9, 5, 6]}
-        intensity={10}
-        distance={16}
-        color={GOLD}
-      />
-      <pointLight
-        position={[9, 5, -6]}
-        intensity={10}
-        distance={16}
-        color="#0ea5e9"
       />
 
       <Walls />
@@ -571,7 +554,7 @@ export default function OfficeScene({
       shadows
       dpr={[1, 2]}
       camera={{ position: [0, 8, 17], fov: 48 }}
-      gl={{ antialias: true, toneMappingExposure: 0.95 }}
+      gl={{ antialias: true, toneMappingExposure: 1 }}
     >
       <Scene members={members} proposals={proposals} />
     </Canvas>
