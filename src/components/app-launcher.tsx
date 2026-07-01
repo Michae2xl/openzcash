@@ -212,7 +212,7 @@ const APPS: AppDef[] = [
   },
   {
     id: "wallets",
-    label: "Zcash Wallets",
+    label: "Wallets",
     sub: "Self-custody · shielded",
     href: "/wallets",
     Icon: IconWallet,
