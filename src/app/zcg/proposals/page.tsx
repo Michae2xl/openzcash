@@ -14,6 +14,7 @@ import {
   getGrantApplications,
   ZCG_APPLICATIONS_REPO_URL,
 } from "@/lib/zcg/github-applications";
+import { titlesMatch } from "@/lib/zcg/match-titles";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "ZCG Proposals · OpenZcash" };
@@ -65,10 +66,32 @@ export default async function PropostasPage({
   ]);
   const submitUrl = links.proposal_zcg ?? "#";
 
-  // Live "ready for review" applications from GitHub → table rows, upstream of
-  // the spreadsheet's under-review bucket.
-  const ghRows: ProposalTableRow[] = applications
-    .filter((a) => a.status === "review")
+  // Live "ready for review" grant applications, read first-hand from GitHub.
+  const ghApps = applications.filter((a) => a.status === "review");
+
+  // Each GitHub application is usually already mirrored in the spreadsheet's
+  // under-review bucket. Enrich the matching sheet row with a "GitHub live"
+  // badge + direct issue link instead of listing it twice; only applications
+  // with no sheet counterpart become their own new rows.
+  const usedGh = new Set<number>();
+  const enrichedSheet = all
+    .slice(0, 400)
+    .map(toTableRow)
+    .map((r) => {
+      const idx = ghApps.findIndex(
+        (g, i) => !usedGh.has(i) && titlesMatch(r.title, g.title),
+      );
+      if (idx < 0) return r;
+      usedGh.add(idx);
+      return {
+        ...r,
+        source: "github" as const,
+        platformLink: ghApps[idx].url ?? r.platformLink,
+      };
+    });
+
+  const netNewGhRows: ProposalTableRow[] = ghApps
+    .filter((_, i) => !usedGh.has(i))
     .map((a) => ({
       id: `gh-${a.number}`,
       title: a.title,
@@ -80,16 +103,17 @@ export default async function PropostasPage({
       source: "github" as const,
     }));
 
-  const allRows = [...ghRows, ...all.slice(0, 400).map(toTableRow)];
+  const allRows = [...netNewGhRows, ...enrichedSheet];
 
-  // Funnel counts with the live GitHub under-review folded in.
+  // Funnel: only applications with no sheet counterpart are net-new to the counts.
+  const netNewCount = netNewGhRows.length;
   let byStatus = funnel.byStatus.map((b) =>
-    b.status === "under_review" ? { ...b, count: b.count + ghRows.length } : b,
+    b.status === "under_review" ? { ...b, count: b.count + netNewCount } : b,
   );
-  if (ghRows.length > 0 && !byStatus.some((b) => b.status === "under_review")) {
-    byStatus = [...byStatus, { status: "under_review", count: ghRows.length }];
+  if (netNewCount > 0 && !byStatus.some((b) => b.status === "under_review")) {
+    byStatus = [...byStatus, { status: "under_review", count: netNewCount }];
   }
-  const total = funnel.total + ghRows.length;
+  const total = funnel.total + netNewCount;
   const approved = byStatus.find((b) => b.status === "approved")?.count ?? 0;
   const maxStatus = byStatus.reduce((m, b) => Math.max(m, b.count), 0);
   const apprRate = total ? Math.round((approved / total) * 100) : 0;
@@ -127,7 +151,7 @@ export default async function PropostasPage({
         />
         <Stat
           label="Ready for review"
-          value={String(ghRows.length)}
+          value={String(ghApps.length)}
           sub="live from GitHub"
           tone="warn"
         />
