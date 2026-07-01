@@ -8,7 +8,6 @@ import { monthlySpend } from "@/lib/zcg/analytics-repo";
 import { recipientTotalsFromSheet } from "@/lib/zcg/totals-repo";
 import { listGrants } from "@/lib/zcg/grants-repo";
 import { listDisbursements } from "@/lib/zcg/disbursements-repo";
-import { classifyRegion } from "@/lib/zcg/regions";
 import { disbTypeLabel } from "@/lib/zcg/format";
 
 export const dynamic = "force-dynamic";
@@ -80,21 +79,6 @@ export default async function AnalyticsPage() {
   const top1 = shareOf(1);
   const top10 = shareOf(10);
   const top25 = shareOf(25);
-
-  // ── #10 By region (community grants) ──
-  const regionMap = new Map<string, number>();
-  for (const g of grants) {
-    const region = classifyRegion(g.grantKey, g.grantee);
-    if (!region) continue;
-    regionMap.set(region, (regionMap.get(region) ?? 0) + Number(g.usdCents));
-  }
-  const regionBars = [...regionMap.entries()]
-    .map(([label, value]) => ({
-      label,
-      value,
-      display: formatUsdCents(value, { compact: true }),
-    }))
-    .sort((a, b) => b.value - a.value);
 
   // ── #12 Grant velocity & stalled ──
   const withMs = grants.filter((g) => g.milestoneCount > 0);
@@ -193,22 +177,6 @@ export default async function AnalyticsPage() {
           />
         </div>
       </section>
-
-      {/* #10 By region */}
-      {regionBars.length > 0 ? (
-        <section className="mb-8">
-          <h2 className="mb-3 text-sm font-semibold text-stone-700">
-            Community grants by region
-          </h2>
-          <Card>
-            <BarList items={regionBars} />
-            <p className="mt-3 text-xs text-stone-500">
-              Regional community programmes only (grants whose name references a
-              country/region). Global/technical grants are not shown here.
-            </p>
-          </Card>
-        </section>
-      ) : null}
 
       {/* #12 Grant velocity & stalled */}
       <section className="mb-8">
