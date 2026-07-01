@@ -147,20 +147,6 @@ function Walls() {
 function OfficeFurniture() {
   return (
     <group>
-      {/* meeting table + chairs */}
-      <Model url={`${M}/tableRound.glb`} position={[0, 0, 0]} scale={3.2} />
-      {[0, 1, 2, 3].map((i) => {
-        const a = (i / 4) * Math.PI * 2 + Math.PI / 4;
-        return (
-          <Model
-            key={i}
-            url={`${M}/chairModernCushion.glb`}
-            position={[Math.cos(a) * 2.3, 0, Math.sin(a) * 2.3]}
-            rotationY={-a + Math.PI / 2}
-            scale={1.2}
-          />
-        );
-      })}
       {/* lounge corner */}
       <Model
         url={`${M}/loungeSofa.glb`}
@@ -218,59 +204,55 @@ function OfficeFurniture() {
   );
 }
 
-/* --------------------------- members at desks ----------------------------- */
-function MemberDesk({ m, x }: { m: OfficeMember; x: number }) {
+/* ----------------------- members in big chairs (seated) ------------------- */
+function MemberSeat({ m, x, z }: { m: OfficeMember; x: number; z: number }) {
   return (
-    <group position={[x, 0, -8.5]}>
-      <Model url={`${M}/desk.glb`} position={[0, 0, 0]} scale={1.5} />
+    <group position={[x, 0, z]}>
+      {/* big chair, facing the proposals (+z, toward the room centre) */}
       <Model
         url={`${M}/chairDesk.glb`}
-        position={[0, 0, -1.2]}
-        rotationY={Math.PI}
-        scale={1.2}
+        position={[0, 0, 0]}
+        rotationY={0}
+        scale={2.5}
       />
-      <Model
-        url={`${M}/computerScreen.glb`}
-        position={[0, 1.12, 0.15]}
-        scale={1.1}
-      />
-      <Html position={[0, 2.9, 0]} center distanceFactor={9}>
+      {/* avatar seated in the chair, facing the proposals */}
+      <Html position={[0, 2.55, 0.15]} center distanceFactor={8}>
         <div
           style={{
-            width: 150,
+            width: 168,
             pointerEvents: "none",
             textAlign: "center",
             fontFamily: "Inter, system-ui, sans-serif",
             background: "rgba(10,12,22,0.85)",
             border: "1px solid rgba(16,185,129,0.5)",
-            borderRadius: 14,
-            padding: "9px 10px",
-            boxShadow: "0 0 20px rgba(16,185,129,0.3)",
+            borderRadius: 16,
+            padding: "11px 12px",
+            boxShadow: "0 0 24px rgba(16,185,129,0.32)",
           }}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={m.img}
             alt={m.name}
-            width={42}
-            height={42}
+            width={56}
+            height={56}
             style={{
-              width: 42,
-              height: 42,
+              width: 56,
+              height: 56,
               borderRadius: "50%",
               objectFit: "cover",
-              margin: "0 auto 5px",
+              margin: "0 auto 6px",
               display: "block",
               border: "2px solid rgba(16,185,129,0.85)",
             }}
           />
-          <div style={{ color: "#fff", fontWeight: 700, fontSize: 13 }}>
+          <div style={{ color: "#fff", fontWeight: 700, fontSize: 15 }}>
             {m.name}
           </div>
           <div
             style={{
-              marginTop: 3,
-              fontSize: 8,
+              marginTop: 4,
+              fontSize: 9,
               color: "#a7f3d0",
               lineHeight: 1.3,
             }}
@@ -478,7 +460,14 @@ function Scene({
   proposals: OfficeProposal[];
 }) {
   const shown = proposals.slice(0, 10);
-  const deskXs = [-8, -4, 0, 4, 8];
+  // Big chairs in a shallow arc, close in, facing the proposals in the centre.
+  const SEATS: [number, number][] = [
+    [-7.5, -5],
+    [-3.9, -6],
+    [0, -6.4],
+    [3.9, -6],
+    [7.5, -5],
+  ];
   return (
     <>
       <color attach="background" args={["#05060e"]} />
@@ -506,7 +495,7 @@ function Scene({
         <Floor />
         <OfficeFurniture />
         {members.slice(0, 5).map((m, i) => (
-          <MemberDesk key={m.name} m={m} x={deskXs[i]} />
+          <MemberSeat key={m.name} m={m} x={SEATS[i][0]} z={SEATS[i][1]} />
         ))}
       </Suspense>
 
@@ -560,8 +549,7 @@ export default function OfficeScene({
 
 // Preload the furniture GLBs used above.
 [
-  "tableRound",
-  "chairModernCushion",
+  "chairDesk",
   "loungeSofa",
   "lampRoundFloor",
   "tableCoffee",
@@ -570,8 +558,5 @@ export default function OfficeScene({
   "kitchenCoffeeMachine",
   "pottedPlant",
   "plantSmall1",
-  "desk",
-  "chairDesk",
-  "computerScreen",
 ].forEach((n) => useGLTF.preload(`${M}/${n}.glb`));
 useGLTF.preload(ZEBRA_URL);
