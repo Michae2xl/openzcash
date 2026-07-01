@@ -1,7 +1,29 @@
 /* eslint-disable @next/next/no-img-element */
+import type { CSSProperties } from "react";
 import { Card, PageHeader } from "@/components/ui";
 import { IconShield } from "@/components/icons";
 import { cn } from "@/lib/utils";
+
+// A distinct "LED" glow colour per wallet — everyone gets one, nobody is
+// singled out or promoted. Assigned by position so the grid never repeats.
+const LED = [
+  "#10b981",
+  "#0ea5e9",
+  "#8b5cf6",
+  "#f59e0b",
+  "#f43f5e",
+  "#14b8a6",
+  "#6366f1",
+  "#ec4899",
+  "#84cc16",
+  "#06b6d4",
+  "#f97316",
+  "#a855f7",
+  "#3b82f6",
+  "#22c55e",
+  "#eab308",
+  "#d946ef",
+];
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Zcash Wallets · OpenZcash" };
@@ -215,7 +237,7 @@ const SHIELDED: Record<
   },
 };
 
-function WalletCard({ w }: { w: Wallet }) {
+function WalletCard({ w, led }: { w: Wallet; led: string }) {
   const s = SHIELDED[w.shielded];
   const star = w.flagship || STARRED.has(w.name);
   return (
@@ -223,16 +245,10 @@ function WalletCard({ w }: { w: Wallet }) {
       href={w.url}
       target="_blank"
       rel="noreferrer"
+      style={{ "--led": led } as CSSProperties}
       className="group block h-full"
     >
-      <div
-        className={cn(
-          "flex h-full flex-col rounded-2xl border bg-white p-4 shadow-sm shadow-stone-200/60 transition duration-150 group-hover:-translate-y-0.5 group-hover:shadow-md group-hover:shadow-stone-300/50",
-          w.flagship
-            ? "border-amber-400/50 bg-gradient-to-br from-amber-50/50 to-white"
-            : "border-stone-200/80 group-hover:border-stone-300",
-        )}
-      >
+      <div className="flex h-full flex-col rounded-2xl bg-white p-4 shadow-[0_0_0_1px_var(--led),0_5px_18px_-9px_var(--led)] transition duration-200 group-hover:-translate-y-0.5 group-hover:shadow-[0_0_0_1.5px_var(--led),0_12px_28px_-7px_var(--led)]">
         <div className="flex items-center gap-3">
           {w.logo ? (
             <img
@@ -240,16 +256,12 @@ function WalletCard({ w }: { w: Wallet }) {
               alt=""
               width={40}
               height={40}
-              className={cn(
-                "h-10 w-10 shrink-0 rounded-full bg-white object-contain p-1.5 ring-2 ring-inset",
-                s.ringColor,
-              )}
+              className="h-10 w-10 shrink-0 rounded-full bg-white object-contain p-1.5 ring-1 ring-inset ring-stone-200"
             />
           ) : (
             <span
               className={cn(
-                "flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-semibold ring-2 ring-inset",
-                s.ringColor,
+                "flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-semibold ring-1 ring-inset ring-stone-200",
                 s.monoBg,
               )}
               aria-hidden="true"
@@ -345,8 +357,8 @@ export default function WalletsPage() {
           Software wallets
         </h2>
         <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-3">
-          {SOFTWARE.map((w) => (
-            <WalletCard key={w.name} w={w} />
+          {SOFTWARE.map((w, i) => (
+            <WalletCard key={w.name} w={w} led={LED[i % LED.length]} />
           ))}
         </div>
       </section>
@@ -356,8 +368,12 @@ export default function WalletsPage() {
           Hardware wallets
         </h2>
         <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-3">
-          {HARDWARE.map((w) => (
-            <WalletCard key={w.name} w={w} />
+          {HARDWARE.map((w, i) => (
+            <WalletCard
+              key={w.name}
+              w={w}
+              led={LED[(SOFTWARE.length + i) % LED.length]}
+            />
           ))}
         </div>
       </section>
