@@ -13,6 +13,8 @@ export type ProposalTableRow = {
   submitted: string;
   status: string;
   statusLabel: string;
+  /** "github" = live GitHub issue (ready for review); "sheet" = mirrored row. */
+  source?: "sheet" | "github";
 };
 
 function tone(status: string) {
@@ -31,21 +33,29 @@ const columns: Column<ProposalTableRow>[] = [
     filterable: true,
     sortValue: (r) => r.title.toLowerCase(),
     filterValue: (r) => r.title,
-    render: (r) =>
-      r.platformLink ? (
-        <a
-          href={r.platformLink}
-          target="_blank"
-          rel="noreferrer"
-          className="block max-w-[26rem] truncate font-medium text-stone-900 hover:text-amber-700"
-        >
-          {r.title}
-        </a>
-      ) : (
-        <span className="block max-w-[26rem] truncate font-medium text-stone-900">
-          {r.title}
-        </span>
-      ),
+    render: (r) => (
+      <div className="flex items-center gap-2">
+        {r.platformLink ? (
+          <a
+            href={r.platformLink}
+            target="_blank"
+            rel="noreferrer"
+            className="block max-w-[24rem] truncate font-medium text-stone-900 hover:text-amber-700"
+          >
+            {r.title}
+          </a>
+        ) : (
+          <span className="block max-w-[24rem] truncate font-medium text-stone-900">
+            {r.title}
+          </span>
+        )}
+        {r.source === "github" ? (
+          <span className="shrink-0 rounded bg-indigo-500/10 px-1.5 py-px text-[9px] font-semibold uppercase tracking-wide text-indigo-700 ring-1 ring-inset ring-indigo-500/20">
+            GitHub live
+          </span>
+        ) : null}
+      </div>
+    ),
   },
   {
     key: "applicant",
