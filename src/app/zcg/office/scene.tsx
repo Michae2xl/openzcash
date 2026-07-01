@@ -421,7 +421,8 @@ function ProposalWalker({
   );
 }
 
-/* --------------------------------- zebra ---------------------------------- */
+/* ------------------------------- zebra (GLB) ------------------------------ */
+const ZEBRA_URL = "/office-assets/models/animals/zebra.glb";
 function Zebra({
   radius,
   speed,
@@ -431,48 +432,39 @@ function Zebra({
   speed: number;
   phase: number;
 }) {
+  const { scene } = useGLTF(ZEBRA_URL);
+  const model = useMemo(() => {
+    const c = scene.clone(true);
+    // Normalise the unknown native scale to ~1.7 units tall, feet on the floor.
+    const size = new THREE.Vector3();
+    new THREE.Box3().setFromObject(c).getSize(size);
+    c.scale.setScalar(1.7 / (size.y || 1));
+    const min = new THREE.Box3().setFromObject(c).min;
+    c.position.y = -min.y;
+    c.traverse((o) => {
+      const m = o as THREE.Mesh;
+      if (m.isMesh) m.castShadow = true;
+    });
+    return c;
+  }, [scene]);
   const ref = useRef<THREE.Group>(null);
   useFrame((state) => {
     const t = state.clock.elapsedTime * speed + phase;
     if (ref.current) {
-      ref.current.position.x = Math.cos(t) * radius;
-      ref.current.position.z = 2 + Math.sin(t) * radius * 0.6;
-      ref.current.rotation.y = -t + Math.PI / 2;
+      ref.current.position.set(
+        Math.cos(t) * radius,
+        0,
+        2 + Math.sin(t) * radius * 0.6,
+      );
+      // Face the direction of travel (model assumed +Z forward).
+      const vx = -Math.sin(t) * radius;
+      const vz = Math.cos(t) * radius * 0.6;
+      ref.current.rotation.y = Math.atan2(vx, vz) * Math.sign(speed);
     }
   });
-  const white = "#f2f2f2";
-  const black = "#141414";
   return (
-    <group ref={ref} scale={0.8}>
-      <mesh position={[0, 0.95, 0]} castShadow>
-        <boxGeometry args={[1.5, 0.62, 0.55]} />
-        <meshStandardMaterial color={white} roughness={0.7} />
-      </mesh>
-      {[-0.55, -0.25, 0.05, 0.35].map((sx, i) => (
-        <mesh key={i} position={[sx, 0.95, 0]}>
-          <boxGeometry args={[0.09, 0.64, 0.57]} />
-          <meshStandardMaterial color={black} roughness={0.7} />
-        </mesh>
-      ))}
-      <mesh position={[0.82, 1.32, 0]} rotation={[0, 0, -0.5]} castShadow>
-        <boxGeometry args={[0.32, 0.72, 0.34]} />
-        <meshStandardMaterial color={white} roughness={0.7} />
-      </mesh>
-      <mesh position={[1.08, 1.68, 0]} castShadow>
-        <boxGeometry args={[0.5, 0.3, 0.3]} />
-        <meshStandardMaterial color={black} roughness={0.7} />
-      </mesh>
-      {[
-        [-0.5, 0.32],
-        [0.5, 0.32],
-        [-0.5, -0.32],
-        [0.5, -0.32],
-      ].map(([lx, lz], i) => (
-        <mesh key={i} position={[lx, 0.38, lz]} castShadow>
-          <boxGeometry args={[0.16, 0.75, 0.16]} />
-          <meshStandardMaterial color={i % 2 ? black : white} roughness={0.7} />
-        </mesh>
-      ))}
+    <group ref={ref}>
+      <primitive object={model} />
     </group>
   );
 }
@@ -527,7 +519,10 @@ function Scene({
         />
       ))}
 
-      <Zebra radius={8.5} speed={0.16} phase={0} />
+      <Suspense fallback={null}>
+        <Zebra radius={8.5} speed={0.15} phase={0} />
+        <Zebra radius={6.2} speed={-0.12} phase={2.6} />
+      </Suspense>
 
       <OrbitControls
         enablePan={false}
@@ -579,3 +574,4 @@ export default function OfficeScene({
   "chairDesk",
   "computerScreen",
 ].forEach((n) => useGLTF.preload(`${M}/${n}.glb`));
+useGLTF.preload(ZEBRA_URL);

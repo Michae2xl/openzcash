@@ -79,7 +79,8 @@ export default async function OfficePage() {
         Experimental 3D view of the ZCG committee and the live under-review
         proposals (read from the GitHub tracker), which walk the office floor.
         Built with React Three Fiber; low-poly furniture by Kenney (CC0) via the
-        open-source Claw3D project (MIT). Unlisted while we polish it.
+        open-source Claw3D project (MIT), zebra by Poly/Google (CC-BY). Unlisted
+        while we polish it.
       </p>
     </>
   );
