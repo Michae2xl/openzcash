@@ -4,19 +4,24 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 /**
- * Premium "back" control. By default every internal screen goes back to the
- * Apps home; only DRILL-DOWN pages (reached from within another screen) follow
- * their own trail ("calda") back to that parent — e.g. a grant detail returns
- * to the grants list, not to the home.
+ * Premium "back" control that follows the trail ("calda") to the right parent:
+ *   - deep drill-downs return to their own list (a grant → the grants list);
+ *   - any other ZCG screen returns to the ZCG home, NOT the Apps launcher, so
+ *     you stay inside the app you're browsing;
+ *   - the ZCG home (and every other top-level screen) returns to Apps.
  */
 const DRILLDOWN: Record<string, { href: string; label: string }> = {
   "/zcg/grant": { href: "/zcg/grants", label: "Grants" },
-  "/zcg/reconciliation": { href: "/zcg", label: "ZCG" },
+  "/zcg/recipient": { href: "/zcg/recipients", label: "Recipients" },
 };
 
 export function BackButton() {
   const pathname = usePathname();
-  const dest = DRILLDOWN[pathname] ?? { href: "/", label: "Apps" };
+  const dest =
+    DRILLDOWN[pathname] ??
+    (pathname.startsWith("/zcg/")
+      ? { href: "/zcg", label: "ZCG" }
+      : { href: "/", label: "Apps" });
 
   return (
     <Link
