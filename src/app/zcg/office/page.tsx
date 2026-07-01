@@ -69,20 +69,10 @@ export default async function OfficePage() {
 
       <div className="relative h-[78vh] w-full overflow-hidden rounded-2xl border border-stone-200 bg-[#dce3ec] shadow-xl shadow-stone-300/40">
         <OfficeCanvas members={MEMBERS} proposals={proposals} />
-        <div className="pointer-events-none absolute bottom-3 left-3 rounded-lg bg-black/40 px-3 py-1.5 text-[11px] text-sky-200/80 backdrop-blur">
-          drag to look around · {proposals.length} proposals under review · 5
-          committee members
-        </div>
       </div>
-
-      <p className="mt-3 text-xs text-stone-500">
-        Experimental 3D view of the ZCG committee and the live under-review
-        proposals (read from the GitHub tracker), which walk the office floor.
-        Each under-review proposal is an animated zebra walking the floor. Built
-        with React Three Fiber; low-poly furniture by Kenney (CC0) via the
-        open-source Claw3D project (MIT); animated zebra is a third-party model.
-        Unlisted while we polish it and confirm asset licensing.
-      </p>
+      {/* Attribution kept in source (page is unlisted): low-poly furniture by
+          Kenney (CC0) via the open-source Claw3D project (MIT); animated zebra is
+          a third-party model — confirm its licence before making this public. */}
     </>
   );
 }
