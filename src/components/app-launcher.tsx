@@ -272,6 +272,14 @@ export function AppLauncher({ isAdmin = false }: { isAdmin?: boolean }) {
     let seen: string | null = null;
     try {
       seen = window.localStorage.getItem("openzcash-news-seen");
+      // Self-heal markers poisoned by a future-dated feed item (a spreadsheet
+      // typo once pushed "latest" months ahead): clamp to now so the badge can
+      // fire again as fresh items arrive.
+      const now = new Date().toISOString();
+      if (seen && seen > now) {
+        seen = now;
+        window.localStorage.setItem("openzcash-news-seen", now);
+      }
     } catch {
       /* ignore */
     }

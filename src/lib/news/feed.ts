@@ -216,6 +216,10 @@ export async function getNews(): Promise<NewsItem[]> {
     fetchApplications(),
     ...GITHUB_REPOS.map(fetchRepo),
   ]);
+  // Guard against future-dated source rows (e.g. a spreadsheet typo): one item
+  // dated months ahead becomes `latest`, poisons every visitor's last-seen
+  // marker, and the unread badge never fires again until that date passes.
+  const maxTs = new Date(now + 48 * 3600 * 1000).toISOString();
   const items = [
     ...forum,
     ...sheet,
@@ -224,7 +228,7 @@ export async function getNews(): Promise<NewsItem[]> {
     ...apps,
     ...repos.flat(),
   ]
-    .filter((i) => i.ts)
+    .filter((i) => i.ts && i.ts <= maxTs)
     .sort((a, b) => b.ts.localeCompare(a.ts))
     .slice(0, 60);
   if (items.length === 0 && cache) return cache.items; // keep last good snapshot
@@ -232,10 +236,18 @@ export async function getNews(): Promise<NewsItem[]> {
   return items;
 }
 
-/** Number of items newer than the visitor's last-seen ISO timestamp. */
+/** How far back the badge counts for a visitor with no last-seen marker. */
+const FIRST_VISIT_WINDOW_MS = 48 * 3600 * 1000;
+
+/**
+ * Number of items newer than the visitor's last-seen ISO timestamp. First-time
+ * visitors (no marker) get the recent window only — "today's news", not the
+ * whole 60-item history as one scary 9+ badge.
+ */
 export function unreadCount(items: NewsItem[], since: string | null): number {
-  if (!since) return items.length;
-  return items.filter((i) => i.ts > since).length;
+  const floor =
+    since ?? new Date(Date.now() - FIRST_VISIT_WINDOW_MS).toISOString();
+  return items.filter((i) => i.ts > floor).length;
 }
 
 /** Server wall-clock, kept out of component render bodies (purity lint). */
