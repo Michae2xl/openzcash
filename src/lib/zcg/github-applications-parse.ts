@@ -6,16 +6,25 @@
 /** A whole trimmed line that is nothing but a dollar amount, e.g. "$477,658" or "24,500". */
 const AMOUNT_LINE = /^\$?\s?\d[\d,]*(\.\d+)?$/;
 
-/** First pure-amount line inside the "### <header>" section of an issue body. */
+/** A markdown section header at any of the levels applications use. The issue
+ * form renders "###", but hand-written re-applications use "##" (e.g. #341). */
+const HEADER = /^#{2,4}\s+/;
+
+/** First pure-amount line inside the "<header>" section of an issue body. */
 function sectionAmount(body: string, header: string): number | null {
   const lines = body.split(/\r?\n/);
-  const target = `### ${header}`.toLowerCase();
-  const i = lines.findIndex((l) => l.trim().toLowerCase() === target);
+  const target = header.toLowerCase();
+  const i = lines.findIndex((l) => {
+    const t = l.trim();
+    return (
+      HEADER.test(t) && t.replace(HEADER, "").trim().toLowerCase() === target
+    );
+  });
   if (i < 0) return null;
   for (let j = i + 1; j < lines.length; j++) {
     const t = lines[j].trim();
     if (!t) continue;
-    if (t.startsWith("### ")) break; // section ended, no amount
+    if (HEADER.test(t)) break; // section ended, no amount
     if (AMOUNT_LINE.test(t)) {
       const n = Number(t.replace(/[^0-9.]/g, ""));
       return Number.isFinite(n) && n > 0 ? Math.round(n) : null;
