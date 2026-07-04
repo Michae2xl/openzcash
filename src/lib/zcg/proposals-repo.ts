@@ -137,12 +137,29 @@ export async function officeUnderReview(
     getGrantApplications(limit),
     cached("listProposals:all", LEDGER_TTL_MS, () => listProposals({})),
   ]);
-  const decidedTitles = sheet
-    .filter((p) => p.status && DECIDED_STATUSES.has(p.status))
-    .map((p) => p.title);
-  return apps
-    .filter((a) => a.status === "review")
-    .filter((a) => !decidedTitles.some((t) => titlesMatch(a.title, t)))
+  const ghApps = apps.filter((a) => a.status === "review");
+
+  // Pair each sheet proposal with the first still-unused GitHub review app that
+  // matches by title — the exact one-to-one greedy pass /zcg/proposals uses
+  // (same source, order and 400-row cap), so the two always agree. A GitHub app
+  // is excluded only when the row it actually pairs with is one the committee
+  // has DECIDED. This matters when a title is reused: #334 "Zenith Full-node
+  // Wallet 2026" pairs with its own under-review row, not the older decided
+  // Zenith grant, so it stays; #335 red·bridge pairs with its approved row, so
+  // it drops.
+  const usedGh = new Set<number>();
+  const absorbedByDecided = new Set<number>();
+  for (const p of sheet.slice(0, 400)) {
+    const idx = ghApps.findIndex(
+      (g, i) => !usedGh.has(i) && titlesMatch(p.title, g.title),
+    );
+    if (idx < 0) continue;
+    usedGh.add(idx);
+    if (p.status && DECIDED_STATUSES.has(p.status)) absorbedByDecided.add(idx);
+  }
+
+  return ghApps
+    .filter((_, i) => !absorbedByDecided.has(i))
     .map((a) => ({
       number: a.number,
       title: a.title,
