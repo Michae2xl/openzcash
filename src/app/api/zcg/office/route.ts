@@ -13,7 +13,7 @@ export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
-    const proposals = await getUnderReviewProposals(40);
+    const proposals = await getUnderReviewProposals(100);
     return Response.json(
       { proposals },
       { headers: { "cache-control": "no-store" } },

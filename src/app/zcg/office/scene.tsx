@@ -617,7 +617,9 @@ function Scene({
   members: OfficeMember[];
   proposals: OfficeProposal[];
 }) {
-  const shown = proposals.slice(0, 10);
+  // Show every proposal under review (one zebra each). Cap only as a safety net
+  // against a pathological spike; the real bound is the count the page fetches.
+  const shown = proposals.slice(0, 40);
   // Big chairs in a shallow arc, close in, facing the proposals in the centre.
   const SEATS: [number, number][] = [
     [-7.5, -5],

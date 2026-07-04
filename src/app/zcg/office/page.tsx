@@ -40,7 +40,7 @@ const MEMBERS: OfficeMember[] = [
 
 export default async function OfficePage() {
   // Initial snapshot; the scene then polls /api/zcg/office to stay live.
-  const proposals = await getUnderReviewProposals(40);
+  const proposals = await getUnderReviewProposals(100);
 
   return (
     <>
