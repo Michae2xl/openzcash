@@ -137,9 +137,9 @@ export default async function ZcgPage() {
         actions={
           <Link
             href="/zcg/copilot"
-            className="inline-flex items-center gap-2 rounded-xl border border-stone-900 bg-[#0b0d10] px-3.5 py-2 text-sm font-medium text-emerald-400 shadow-sm shadow-stone-300/40 transition hover:border-emerald-400/40"
+            className="inline-flex items-center gap-2.5 rounded-xl border border-stone-900 bg-[#0b0d10] px-5 py-3 text-base font-semibold text-emerald-400 shadow-lg shadow-emerald-900/10 ring-1 ring-emerald-500/20 transition hover:-translate-y-0.5 hover:border-emerald-400/50 hover:shadow-emerald-500/20"
           >
-            <IconTerminal className="h-4 w-4" />
+            <IconTerminal className="h-5 w-5" />
             ZCG Copilot
           </Link>
         }
