@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Terminal } from "./terminal";
+import { AddToAgent } from "./add-to-agent";
 
 export const dynamic = "force-dynamic";
 export const metadata = {
@@ -91,6 +92,9 @@ export default function CopilotPage() {
           <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.2em] text-stone-400">
             BYO-LLM · no key · no hosted service
           </p>
+          <div className="mt-8">
+            <AddToAgent />
+          </div>
         </div>
         <Terminal />
       </section>
