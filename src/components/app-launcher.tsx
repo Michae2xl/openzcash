@@ -18,7 +18,6 @@ import {
   IconReceipt,
   IconShield,
   IconSigma,
-  IconTerminal,
   IconUsers,
   IconVote,
   IconWallet,
@@ -102,14 +101,6 @@ const APPS: AppDef[] = [
     Icon: IconCoins,
     grad: GRAD.amber,
     logo: "/logos/zcg.png",
-  },
-  {
-    id: "copilot",
-    label: "Copilot",
-    sub: "Ask the ledger",
-    href: "/zcg/copilot",
-    Icon: IconTerminal,
-    grad: GRAD.emerald,
   },
   {
     id: "grants",

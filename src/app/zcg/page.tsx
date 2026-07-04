@@ -10,6 +10,7 @@ import {
   IconNews,
   IconReceipt,
   IconShield,
+  IconTerminal,
   IconUsers,
   IconVote,
   IconWallet,
@@ -133,6 +134,15 @@ export default async function ZcgPage() {
       <PageHeader
         title="ZCG · Ecosystem grants"
         subtitle="Public accounting for Zcash Community Grants, imported from the official spreadsheet. An off-chain disbursement ledger that can be cross-referenced with the on-chain Lockbox/ZCG outflows."
+        actions={
+          <Link
+            href="/zcg/copilot"
+            className="inline-flex items-center gap-2 rounded-xl border border-stone-900 bg-[#0b0d10] px-3.5 py-2 text-sm font-medium text-emerald-400 shadow-sm shadow-stone-300/40 transition hover:border-emerald-400/40"
+          >
+            <IconTerminal className="h-4 w-4" />
+            ZCG Copilot
+          </Link>
+        }
       />
 
       <section className="mb-8 grid gap-6 lg:grid-cols-2">
