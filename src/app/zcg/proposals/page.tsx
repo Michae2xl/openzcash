@@ -75,9 +75,6 @@ export default async function PropostasPage({
   // badge + direct issue link instead of listing it twice; only applications
   // with no sheet counterpart become their own new rows.
   const usedGh = new Set<number>();
-  // Sheet statuses we override because GitHub still lists the proposal as
-  // actively under review (see below); recorded so the funnel counts move too.
-  const movedToReview: string[] = [];
   const enrichedSheet = all
     .slice(0, 400)
     .map(toTableRow)
@@ -87,15 +84,8 @@ export default async function PropostasPage({
       );
       if (idx < 0) return r;
       usedGh.add(idx);
-      // The GitHub issue is open with the "Ready For ZCG Review" label and no
-      // decision label, which is the live truth. If the sheet mirror disagrees
-      // (a stale or wrong decided status, e.g. #335 red·bridge marked approved
-      // while still under review), GitHub wins: flip the row to under_review.
-      if (r.status !== "under_review") movedToReview.push(r.status);
       return {
         ...r,
-        status: "under_review",
-        statusLabel: STATUS_LABEL.under_review ?? "Under review",
         source: "github" as const,
         platformLink: ghApps[idx].url ?? r.platformLink,
         amountUsd: ghApps[idx].amountUsd,
@@ -118,23 +108,14 @@ export default async function PropostasPage({
 
   const allRows = [...netNewGhRows, ...enrichedSheet];
 
-  // Funnel counts. Net-new GitHub applications (no sheet counterpart) add to
-  // under_review; and every sheet row we flipped to under_review above moves out
-  // of its old (stale) status here too, so the bars agree with the table.
+  // Funnel: only applications with no sheet counterpart are net-new to the counts.
   const netNewCount = netNewGhRows.length;
-  const counts = new Map<string, number>(
-    funnel.byStatus.map((b) => [b.status, b.count]),
+  let byStatus = funnel.byStatus.map((b) =>
+    b.status === "under_review" ? { ...b, count: b.count + netNewCount } : b,
   );
-  const add = (status: string, delta: number) =>
-    counts.set(status, (counts.get(status) ?? 0) + delta);
-  add("under_review", netNewCount);
-  for (const st of movedToReview) {
-    add(st, -1);
-    add("under_review", 1);
+  if (netNewCount > 0 && !byStatus.some((b) => b.status === "under_review")) {
+    byStatus = [...byStatus, { status: "under_review", count: netNewCount }];
   }
-  const byStatus = [...counts.entries()]
-    .filter(([, count]) => count > 0)
-    .map(([status, count]) => ({ status, count }));
   const total = funnel.total + netNewCount;
   const approved = byStatus.find((b) => b.status === "approved")?.count ?? 0;
   const maxStatus = byStatus.reduce((m, b) => Math.max(m, b.count), 0);

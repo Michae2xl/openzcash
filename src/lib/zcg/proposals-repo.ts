@@ -2,6 +2,12 @@ import { and, asc, desc, eq, sql } from "drizzle-orm";
 import { getDb } from "@/lib/db/client";
 import { zcgProposals } from "@/lib/db/schema";
 import type { ProposalStatus } from "./import-proposals";
+import { cached, LEDGER_TTL_MS } from "@/lib/cache/memo";
+import {
+  getGrantApplications,
+  type OfficeProposalDTO,
+} from "./github-applications";
+import { titlesMatch } from "./match-titles";
 
 export type ProposalRow = typeof zcgProposals.$inferSelect;
 
@@ -101,4 +107,46 @@ export async function proposalsFunnel(): Promise<ProposalFunnel> {
     .sort((a, b) => b.count - a.count);
 
   return { byBucket, byStatus, byProgram, total };
+}
+
+// Proposal statuses meaning the committee has already decided (the spreadsheet
+// is the authoritative source for status; a GitHub issue can still carry a
+// stale "Ready For ZCG Review" label after the sheet records the decision).
+const DECIDED_STATUSES = new Set<string>([
+  "approved",
+  "rejected",
+  "withdrawn",
+  "cancelled",
+  "filtered",
+  "vetoed",
+  "paid",
+]);
+
+/**
+ * Proposals genuinely under review, for the 3D office and its API. Starts from
+ * the live GitHub "ready for review" applications, then drops any the
+ * spreadsheet has already decided — the sheet is canonical for status, and
+ * GitHub's review label is routinely left on after a decision (e.g. #335
+ * red·bridge, approved in the sheet but still review-labelled on GitHub). This
+ * mirrors how /zcg/proposals counts "under review", so the two always agree.
+ */
+export async function officeUnderReview(
+  limit = 100,
+): Promise<OfficeProposalDTO[]> {
+  const [apps, sheet] = await Promise.all([
+    getGrantApplications(limit),
+    cached("listProposals:all", LEDGER_TTL_MS, () => listProposals({})),
+  ]);
+  const decidedTitles = sheet
+    .filter((p) => p.status && DECIDED_STATUSES.has(p.status))
+    .map((p) => p.title);
+  return apps
+    .filter((a) => a.status === "review")
+    .filter((a) => !decidedTitles.some((t) => titlesMatch(a.title, t)))
+    .map((a) => ({
+      number: a.number,
+      title: a.title,
+      amount: a.amountUsd,
+      applicant: a.applicant,
+    }));
 }

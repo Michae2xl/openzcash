@@ -7,13 +7,13 @@
  * Not gated by the admin middleware (see ADMIN_APIS). Backed by the same 15-min
  * in-process cache as the page, so polling never hammers GitHub.
  */
-import { getUnderReviewProposals } from "@/lib/zcg/github-applications";
+import { officeUnderReview } from "@/lib/zcg/proposals-repo";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
-    const proposals = await getUnderReviewProposals(100);
+    const proposals = await officeUnderReview(100);
     return Response.json(
       { proposals },
       { headers: { "cache-control": "no-store" } },

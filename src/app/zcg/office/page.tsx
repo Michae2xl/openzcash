@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getUnderReviewProposals } from "@/lib/zcg/github-applications";
+import { officeUnderReview } from "@/lib/zcg/proposals-repo";
 import { OfficeCanvas } from "./office-canvas";
 import type { OfficeMember } from "./scene";
 
@@ -40,7 +40,7 @@ const MEMBERS: OfficeMember[] = [
 
 export default async function OfficePage() {
   // Initial snapshot; the scene then polls /api/zcg/office to stay live.
-  const proposals = await getUnderReviewProposals(100);
+  const proposals = await officeUnderReview(100);
 
   return (
     <>
