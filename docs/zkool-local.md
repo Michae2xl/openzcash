@@ -51,5 +51,5 @@ Enquanto a imagem não é buildada, dá para usar o `zkool_graphql` que roda no 
 túnel SSH (a engine fica acessível em `localhost:8000`, igual ao compose):
 
 ```bash
-ssh -fN -L 8000:127.0.0.1:8000 zebra@192.168.0.28
+ssh -fN -L 8000:127.0.0.1:8000 zebra@NODE_HOST
 ```

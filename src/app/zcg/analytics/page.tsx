@@ -9,6 +9,7 @@ import { recipientTotalsFromSheet } from "@/lib/zcg/totals-repo";
 import { listGrants } from "@/lib/zcg/grants-repo";
 import { listDisbursements } from "@/lib/zcg/disbursements-repo";
 import { disbTypeLabel } from "@/lib/zcg/format";
+import { nowMs } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Insights ZCG · OpenZcash" };
@@ -97,7 +98,7 @@ export default async function AnalyticsPage() {
         g.paidCount < g.milestoneCount &&
         !isClosed(g.status) &&
         (!g.lastPaid ||
-          Date.now() - new Date(g.lastPaid).getTime() > 270 * MS_PER_DAY),
+          nowMs() - new Date(g.lastPaid).getTime() > 270 * MS_PER_DAY),
     )
     .sort((a, b) => (a.lastPaid ?? "").localeCompare(b.lastPaid ?? ""))
     .slice(0, 12);

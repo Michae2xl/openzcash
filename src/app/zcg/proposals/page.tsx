@@ -284,37 +284,34 @@ export default async function PropostasPage({
 
       <Synced className="mt-4" />
 
-      {/* ZCG Copilot teaser (admin-only while the skill's public repo is
-          unpublished; flip to public by dropping the isAdmin gate). */}
-      {isAdmin ? (
-        <section className="mt-8">
-          <Link href="/zcg/copilot" className="group block">
-            <div className="relative overflow-hidden border border-stone-900 bg-[#0b0d10] p-5 antialiased shadow-lg shadow-stone-400/30 transition duration-200 group-hover:-translate-y-0.5 group-hover:shadow-xl">
-              <div className="pointer-events-none absolute -right-10 -top-10 h-36 w-36 rounded-full bg-emerald-400/10 blur-3xl" />
-              <div className="relative flex items-center justify-between gap-4">
-                <div className="min-w-0">
-                  <span className="font-mono text-[11px] font-semibold uppercase tracking-[0.3em] text-emerald-400">
-                    ZCG Copilot · agent skill · hidden preview
-                  </span>
-                  <h2 className="mt-2 text-lg font-semibold tracking-tight text-white sm:text-xl">
-                    Every answer has a receipt.
-                  </h2>
-                  <p className="mt-1.5 max-w-xl font-mono text-xs leading-relaxed text-stone-500">
-                    ❯ Find any grants for merchants to accept Zcash. Funded,
-                    under review, declined. Exact totals, cited.
-                  </p>
-                </div>
-                <span className="hidden shrink-0 items-center gap-2 border border-white/15 bg-black/60 px-4 py-2 font-mono text-sm text-emerald-400 transition group-hover:border-emerald-400/40 sm:inline-flex">
-                  Preview{" "}
-                  <span className="transition group-hover:translate-x-0.5">
-                    →
-                  </span>
+      {/* ZCG Copilot teaser — links the agent skill from the proposals context. */}
+      <section className="mt-8">
+        <Link href="/zcg/copilot" className="group block">
+          <div className="relative overflow-hidden border border-stone-900 bg-[#0b0d10] p-5 antialiased shadow-lg shadow-stone-400/30 transition duration-200 group-hover:-translate-y-0.5 group-hover:shadow-xl">
+            <div className="pointer-events-none absolute -right-10 -top-10 h-36 w-36 rounded-full bg-emerald-400/10 blur-3xl" />
+            <div className="relative flex items-center justify-between gap-4">
+              <div className="min-w-0">
+                <span className="font-mono text-[11px] font-semibold uppercase tracking-[0.3em] text-emerald-400">
+                  ZCG Copilot · agent skill
                 </span>
+                <h2 className="mt-2 text-lg font-semibold tracking-tight text-white sm:text-xl">
+                  Every answer has a receipt.
+                </h2>
+                <p className="mt-1.5 max-w-xl font-mono text-xs leading-relaxed text-stone-500">
+                  ❯ Find any grants for merchants to accept Zcash. Funded, under
+                  review, declined. Exact totals, cited.
+                </p>
               </div>
+              <span className="hidden shrink-0 items-center gap-2 border border-white/15 bg-black/60 px-4 py-2 font-mono text-sm text-emerald-400 transition group-hover:border-emerald-400/40 sm:inline-flex">
+                Open{" "}
+                <span className="transition group-hover:translate-x-0.5">
+                  →
+                </span>
+              </span>
             </div>
-          </Link>
-        </section>
-      ) : null}
+          </div>
+        </Link>
+      </section>
     </>
   );
 }

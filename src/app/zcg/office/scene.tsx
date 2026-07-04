@@ -115,8 +115,9 @@ function FitModel({
 
 /* ------------------------------ floor + room ------------------------------ */
 function Floor() {
-  const tex = useTexture("/zcash-emblem.png");
-  tex.colorSpace = THREE.SRGBColorSpace;
+  const tex = useTexture("/zcash-emblem.png", (t) => {
+    (t as THREE.Texture).colorSpace = THREE.SRGBColorSpace;
+  });
   return (
     <group>
       <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
@@ -155,11 +156,13 @@ function Floor() {
 function Walls() {
   const H = 5.5;
   // Graffiti murals (PIL-generated, aspect 4.36 to match the 24×5.5 walls).
-  const [back, side] = useTexture([
-    "/office-assets/graffiti/back.jpg",
-    "/office-assets/graffiti/side.jpg",
-  ]);
-  for (const t of [back, side]) t.colorSpace = THREE.SRGBColorSpace;
+  const [back, side] = useTexture(
+    ["/office-assets/graffiti/back.jpg", "/office-assets/graffiti/side.jpg"],
+    (loaded) => {
+      for (const t of loaded as THREE.Texture[])
+        t.colorSpace = THREE.SRGBColorSpace;
+    },
+  );
   return (
     <group>
       <mesh position={[0, H / 2, -11]} receiveShadow>

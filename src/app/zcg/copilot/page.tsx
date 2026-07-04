@@ -2,13 +2,11 @@ import Link from "next/link";
 import { Terminal } from "./terminal";
 
 export const dynamic = "force-dynamic";
-// Hidden preview: not linked publicly (admin-only banner on /zcg/proposals),
-// noindex until the skill's public repo ships.
 export const metadata = {
   title: "ZCG Copilot · OpenZcash",
-  robots: { index: false, follow: false },
+  description:
+    "An agent skill that turns your coding agent into a ZCG grants copilot — live, cited answers about Zcash Community Grants funding.",
 };
-
 
 const USE_CASES = [
   {
@@ -56,8 +54,8 @@ export default function CopilotPage() {
           <h1 className="text-2xl font-semibold tracking-tight text-stone-900">
             ZCG Copilot
           </h1>
-          <span className="rounded-full bg-violet-500/15 px-2.5 py-0.5 text-xs font-medium text-violet-700 ring-1 ring-inset ring-violet-500/25">
-            preview · hidden
+          <span className="rounded-full bg-emerald-500/15 px-2.5 py-0.5 text-xs font-medium text-emerald-700 ring-1 ring-inset ring-emerald-500/25">
+            agent skill
           </span>
         </div>
         <Link
@@ -87,7 +85,7 @@ export default function CopilotPage() {
           </p>
           <div className="mt-8 inline-block border border-stone-900 bg-[#0b0d10] px-5 py-3.5 shadow-lg shadow-stone-400/30">
             <code className="font-mono text-sm text-emerald-400">
-              npx skills add ZcashCommunityGrants/zcg-copilot
+              npx skills add Michae2xl/openzcash --skill zcg-copilot
             </code>
           </div>
           <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.2em] text-stone-400">

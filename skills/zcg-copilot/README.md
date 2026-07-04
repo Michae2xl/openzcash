@@ -20,12 +20,13 @@ the skill provides the sources and the rules.
 ## Install
 
 ```bash
-npx skills add ZcashCommunityGrants/zcg-copilot   # or copy this folder into your agent's skills dir
+npx skills add Michae2xl/openzcash --skill zcg-copilot
 ```
 
-> Repo name is provisional: the goal is for the skill to live under the same
-> GitHub org where ZCG receives grant applications. Until it is published
-> there, install by copying this folder.
+Uses the [`skills`](https://github.com/vercel-labs/skills) CLI, which discovers
+skills under the repo's `skills/` directory. Works with Claude Code, Cursor,
+opencode, and the other agents it supports. You can also just copy this folder
+into your agent's skills directory.
 
 ## Ask things like
 

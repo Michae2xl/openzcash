@@ -102,7 +102,7 @@ also carry `👀 Ready For ZCG Review`; decisions add `✅ Grant Approved`,
 (exact strings, emoji included — label-filtered API queries need them verbatim).
 The issue body contains the "Requested Grant Amount (USD)" field.
 
-Three traps: (1) **the review label is never removed** — an approved+paid grant still
+Four traps: (1) **the review label is never removed** — an approved+paid grant still
 carries `👀 Ready For ZCG Review`, so filtering by that label alone over-counts what's
 under review (use `/api/zcg/office` instead, or exclude issues that also carry a
 decision label). (2) **Pagination**: `per_page=100` caps each page and there are 250+
@@ -111,6 +111,13 @@ applications — loop `&page=N` until an empty page for `state=all` queries.
 pre-2025 grants exist only in the ledger. Also, the GitHub `applicant` is the login of
 whoever filed the issue and may differ from the ledger's grantee name (e.g. login
 `khazaddum` filed for grantee "Vergara Technologies") — match on project, not login.
+(4) **Hand-written re-applications break both label and body assumptions**: some
+proposals are filed outside the issue form, so they arrive with **no labels** (do not
+drop them just because `📋 Grant Application` is missing — the title still starts with
+"Grant Application"), and their body uses `##` headers where the form uses `###` (real
+case: #341 KeepKey, requesting $135,000 under a `## Requested Grant Amount (USD)`
+section). Parse amounts under `##`–`####` headers, and treat an open, undecided
+application as under review even if unlabelled.
 Unauthenticated rate limit is 60 req/h — fetch once, filter locally.
 
 ## Ground rules (these encode real failure modes — do not skip)

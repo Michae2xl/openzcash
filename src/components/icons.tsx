@@ -125,6 +125,13 @@ export const IconVote = svg(
 
 export const IconSigma = svg(<path d="M18 4H6l6 8-6 8h12" />);
 
+export const IconTerminal = svg(
+  <>
+    <rect x="3" y="4" width="18" height="16" rx="2" />
+    <path d="M7 9l3 3-3 3M13 15h4" />
+  </>,
+);
+
 export const IconSwap = svg(
   <>
     <path d="M16 3l4 4-4 4" />

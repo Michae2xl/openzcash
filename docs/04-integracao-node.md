@@ -1,6 +1,6 @@
 # Integração com o node real (Zebra + zallet)
 
-> Estado: a stack do app está pronta para o node real; o RPC do `192.168.0.28` **não está acessível pela LAN** ainda. Enquanto isso, o app roda com `ZCASH_GATEWAY=mock` + Postgres.
+> Estado: a stack do app está pronta para o node real; o RPC do `NODE_HOST` **não está acessível pela LAN** ainda. Enquanto isso, o app roda com `ZCASH_GATEWAY=mock` + Postgres.
 
 ## Como ligar o gateway real
 

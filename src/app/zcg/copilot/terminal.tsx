@@ -114,8 +114,10 @@ export function Terminal() {
 
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setIdx(EVENTS.length);
-      return;
+      // Show the full transcript at once; defer the setState off the effect
+      // body so it doesn't cascade a synchronous re-render.
+      const t = setTimeout(() => setIdx(EVENTS.length), 0);
+      return () => clearTimeout(t);
     }
     const ev = EVENTS[idx];
     let t: ReturnType<typeof setTimeout>;
