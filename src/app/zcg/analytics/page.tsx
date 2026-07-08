@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Card, PageHeader, Stat } from "@/components/ui";
 import { BarList } from "@/components/bar-list";
 import { Synced } from "@/components/synced";
@@ -69,6 +70,7 @@ export default async function AnalyticsPage() {
     label: monthLabel(m.month),
     value: Number(m.usdCents),
     display: formatUsdCents(Number(m.usdCents), { compact: true }),
+    href: `/zcg/disbursements?month=${m.month}`,
   }));
 
   // ── #9 Funding concentration ──
@@ -132,6 +134,7 @@ export default async function AnalyticsPage() {
       display: `${formatUsdCents(m.paid12, { compact: true })} · ${
         m.deltaPp >= 0 ? "▲" : "▼"
       } ${Math.abs(m.deltaPp).toFixed(1)}pp`,
+      href: `/zcg/disbursements?category=${encodeURIComponent(m.category)}`,
     }));
 
   // ── #11 Bounties ──
@@ -141,6 +144,7 @@ export default async function AnalyticsPage() {
       recipient: d.recipientNameRaw,
       project: d.project ?? d.deliverable ?? "",
       type: disbTypeLabel(d.disbursementType),
+      rawType: d.disbursementType,
       usd: d.amountUsdCents != null ? Number(d.amountUsdCents) : 0,
       date: d.paidOutDate ?? "",
     }))
@@ -160,22 +164,33 @@ export default async function AnalyticsPage() {
           Spend over time
         </h2>
         <div className="mb-4 grid grid-cols-2 gap-4 lg:grid-cols-3">
-          <Stat
-            label="Paid to date"
-            value={formatUsdCents(totalPaid, { compact: true })}
-            sub="settled milestones"
-            tone="warn"
-          />
+          <Link href="/zcg/disbursements" className="block">
+            <Stat
+              label="Paid to date"
+              value={formatUsdCents(totalPaid, { compact: true })}
+              sub="settled milestones"
+              tone="warn"
+            />
+          </Link>
           <Stat
             label="Avg monthly burn"
             value={formatUsdCents(burn12, { compact: true })}
             sub="trailing 12 months"
           />
-          <Stat
-            label="Busiest month"
-            value={formatUsdCents(busiest.v, { compact: true })}
-            sub={busiest.m ? monthLabel(busiest.m) : "n/a"}
-          />
+          <Link
+            href={
+              busiest.m
+                ? `/zcg/disbursements?month=${busiest.m}`
+                : "/zcg/disbursements"
+            }
+            className="block"
+          >
+            <Stat
+              label="Busiest month"
+              value={formatUsdCents(busiest.v, { compact: true })}
+              sub={busiest.m ? monthLabel(busiest.m) : "n/a"}
+            />
+          </Link>
         </div>
         <Card>
           <p className="mb-2 text-xs text-stone-500">
@@ -191,22 +206,28 @@ export default async function AnalyticsPage() {
           How concentrated is the funding?
         </h2>
         <div className="grid grid-cols-3 gap-4">
-          <Stat
-            label="Top recipient"
-            value={`${top1.toFixed(1)}%`}
-            sub="of all grants"
-          />
-          <Stat
-            label="Top 10"
-            value={`${top10.toFixed(1)}%`}
-            sub={`of ${external.length} recipients`}
-            tone="warn"
-          />
-          <Stat
-            label="Top 25"
-            value={`${top25.toFixed(1)}%`}
-            sub="of all grants"
-          />
+          <Link href="/zcg/recipients" className="block">
+            <Stat
+              label="Top recipient"
+              value={`${top1.toFixed(1)}%`}
+              sub="of all grants"
+            />
+          </Link>
+          <Link href="/zcg/recipients" className="block">
+            <Stat
+              label="Top 10"
+              value={`${top10.toFixed(1)}%`}
+              sub={`of ${external.length} recipients`}
+              tone="warn"
+            />
+          </Link>
+          <Link href="/zcg/recipients" className="block">
+            <Stat
+              label="Top 25"
+              value={`${top25.toFixed(1)}%`}
+              sub="of all grants"
+            />
+          </Link>
         </div>
       </section>
 
@@ -216,21 +237,27 @@ export default async function AnalyticsPage() {
           Grant delivery
         </h2>
         <div className="grid grid-cols-2 gap-4 lg:grid-cols-3">
-          <Stat
-            label="Grants"
-            value={String(withMs.length)}
-            sub="with milestones"
-          />
-          <Stat
-            label="Fully delivered"
-            value={`${fullyPaidPct}%`}
-            sub={`${fullyPaid} of ${withMs.length} paid out`}
-          />
-          <Stat
-            label="In delivery"
-            value={String(inDelivery)}
-            sub="open, milestones remaining"
-          />
+          <Link href="/zcg/grants" className="block">
+            <Stat
+              label="Grants"
+              value={String(withMs.length)}
+              sub="with milestones"
+            />
+          </Link>
+          <Link href="/zcg/grants" className="block">
+            <Stat
+              label="Fully delivered"
+              value={`${fullyPaidPct}%`}
+              sub={`${fullyPaid} of ${withMs.length} paid out`}
+            />
+          </Link>
+          <Link href="/zcg/grants" className="block">
+            <Stat
+              label="In delivery"
+              value={String(inDelivery)}
+              sub="open, milestones remaining"
+            />
+          </Link>
         </div>
       </section>
 
@@ -240,25 +267,37 @@ export default async function AnalyticsPage() {
           Where the money flows now
         </h2>
         <div className="mb-4 grid grid-cols-2 gap-4 lg:grid-cols-3">
-          <Stat
-            label="Paid last 12 months"
-            value={formatUsdCents(total12Cat, { compact: true })}
-            sub="categorized grant spend"
-            tone="warn"
-          />
-          {heating ? (
+          <Link href="/zcg/disbursements" className="block">
             <Stat
-              label="Heating up"
-              value={heating.category}
-              sub={`+${heating.deltaPp.toFixed(1)}pp vs all-time share`}
+              label="Paid last 12 months"
+              value={formatUsdCents(total12Cat, { compact: true })}
+              sub="categorized grant spend"
+              tone="warn"
             />
+          </Link>
+          {heating ? (
+            <Link
+              href={`/zcg/disbursements?category=${encodeURIComponent(heating.category)}`}
+              className="block"
+            >
+              <Stat
+                label="Heating up"
+                value={heating.category}
+                sub={`+${heating.deltaPp.toFixed(1)}pp vs all-time share`}
+              />
+            </Link>
           ) : null}
           {cooling ? (
-            <Stat
-              label="Cooling down"
-              value={cooling.category}
-              sub={`${cooling.deltaPp.toFixed(1)}pp vs all-time share`}
-            />
+            <Link
+              href={`/zcg/disbursements?category=${encodeURIComponent(cooling.category)}`}
+              className="block"
+            >
+              <Stat
+                label="Cooling down"
+                value={cooling.category}
+                sub={`${cooling.deltaPp.toFixed(1)}pp vs all-time share`}
+              />
+            </Link>
           ) : null}
         </div>
         <Card>
@@ -287,9 +326,10 @@ export default async function AnalyticsPage() {
             </div>
             <div className="divide-y divide-stone-100">
               {bounties.map((b) => (
-                <div
+                <Link
                   key={b.id}
-                  className="flex items-center justify-between gap-3 px-4 py-2.5 text-sm"
+                  href={`/zcg/disbursements?type=${encodeURIComponent(b.rawType)}`}
+                  className="flex items-center justify-between gap-3 px-4 py-2.5 text-sm transition hover:bg-stone-50"
                 >
                   <span className="min-w-0 flex-1 truncate font-medium text-stone-800">
                     {b.recipient}
@@ -305,7 +345,7 @@ export default async function AnalyticsPage() {
                   <span className="w-20 shrink-0 text-right text-xs text-stone-600 tnum">
                     {formatUsdCents(b.usd, { compact: true })}
                   </span>
-                </div>
+                </Link>
               ))}
             </div>
           </Card>

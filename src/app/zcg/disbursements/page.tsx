@@ -30,18 +30,38 @@ const SHEETS: { id?: string; label: string }[] = [
 export default async function DesembolsosPage({
   searchParams,
 }: {
-  searchParams: Promise<{ sheet?: string; grant?: string; category?: string }>;
+  searchParams: Promise<{
+    sheet?: string;
+    grant?: string;
+    category?: string;
+    type?: string;
+    month?: string;
+  }>;
 }) {
-  const { sheet, grant, category } = await searchParams;
-  const [isAdmin, rows, overridden] = await Promise.all([
+  const { sheet, grant, category, type, month: monthRaw } = await searchParams;
+  // Month drill-down (YYYY-MM) from the analytics bars; filtered here after the
+  // fetch since the ledger repo has no date filter.
+  const month =
+    monthRaw && /^\d{4}-\d{2}$/.test(monthRaw) ? monthRaw : undefined;
+  const [isAdmin, fetched, overridden] = await Promise.all([
     getIsAdmin(),
     cached(
-      `disb:${sheet ?? ""}:${grant ?? ""}:${category ?? ""}`,
+      `disb:${sheet ?? ""}:${grant ?? ""}:${category ?? ""}:${type ?? ""}:${month ?? ""}`,
       LEDGER_TTL_MS,
-      () => listDisbursements({ sheet, grant, category, limit: 400 }),
+      () =>
+        listDisbursements({
+          sheet,
+          grant,
+          category,
+          type,
+          limit: month ? 2000 : 400,
+        }),
     ),
     cached("disb:overridden", LEDGER_TTL_MS, () => overriddenDisbursementIds()),
   ]);
+  const rows = month
+    ? fetched.filter((d) => (d.paidOutDate ?? "").startsWith(month))
+    : fetched;
 
   const tableRows: DisbTableRow[] = rows.map((d) => {
     const zec = d.zecDisbursedZat;
@@ -116,6 +136,38 @@ export default async function DesembolsosPage({
             className="text-xs text-stone-600 hover:text-stone-800"
           >
             ‹ Back to totals
+          </Link>
+        </div>
+      ) : null}
+
+      {type ? (
+        <div className="mb-8 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-amber-500/20 bg-amber-500/[0.06] px-4 py-3">
+          <p className="text-sm text-amber-800/80">
+            Payments of type{" "}
+            <span className="font-medium text-amber-800">
+              {disbTypeLabel(type)}
+            </span>
+          </p>
+          <Link
+            href="/zcg/analytics"
+            className="text-xs text-stone-600 hover:text-stone-800"
+          >
+            ‹ Back to insights
+          </Link>
+        </div>
+      ) : null}
+
+      {month ? (
+        <div className="mb-8 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-amber-500/20 bg-amber-500/[0.06] px-4 py-3">
+          <p className="text-sm text-amber-800/80">
+            Disbursements paid in{" "}
+            <span className="font-medium text-amber-800">{month}</span>
+          </p>
+          <Link
+            href="/zcg/analytics"
+            className="text-xs text-stone-600 hover:text-stone-800"
+          >
+            ‹ Back to insights
           </Link>
         </div>
       ) : null}
