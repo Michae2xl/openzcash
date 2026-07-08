@@ -16,7 +16,7 @@ cite its source URL.
 | -------------------------------------------------- | ---------------------------------------------------------------- | ------------------------------------------------------------------------------- |
 | Money actually paid (grants, payments, recipients) | OpenZcash ledger (mirrors the official ZCG spreadsheet, audited) | `https://openzcash.org/api/zcg/data/*`                                          |
 | Proposals under review **right now**               | OpenZcash live (from GitHub)                                     | `https://openzcash.org/api/zcg/office`                                          |
-| Requested vs approved amounts, canonical grant IDs | ZCG grants prototype (committee-run)                             | `https://zcg.pgpz.org/api/public/grants`                                        |
+| Requested vs approved amounts, stable grant IDs    | ZCG grants prototype (a committee member's side project)         | `https://zcg.pgpz.org/api/public/grants`                                        |
 | Full application text, labels, discussion          | GitHub issues                                                    | `https://api.github.com/repos/ZcashCommunityGrants/zcashcommunitygrants/issues` |
 | Community debate on a proposal                     | Zcash forum search                                               | `https://forum.zcashcommunity.com/search?q=<terms>`                             |
 | Current chain height                               | OpenZcash                                                        | `https://openzcash.org/api/chain-tip`                                           |
@@ -75,7 +75,13 @@ that gets approved, paid, or closed drops out. Filter logic: open issues labelle
 endpoint over raw GitHub label queries for "what's under review" (see the label
 staleness warning below).
 
-### `GET https://zcg.pgpz.org/api/public/grants` — canonical grant records (committee prototype)
+### `GET https://zcg.pgpz.org/api/public/grants` — grant records (a committee member's prototype)
+
+Supplementary source. **The ZCG Grant Dashboard spreadsheet (mirrored by the
+OpenZcash ledger) is the ecosystem's source of truth** — per FPF, when any source
+disagrees, the spreadsheet wins. Use this prototype for the fields the public
+spreadsheet does not carry (requested/approved amounts, stable IDs), not for
+status or paid totals.
 
 `{ grants: [...], projection, allowlistedFields }`. Fields per grant: `publicGrantId`
 (stable UUID), `title`, `publicApplicantName`, `status`, `requestedAmountUsd`,

@@ -39,7 +39,7 @@ const SOURCES = [
   },
   {
     name: "Canonical records",
-    desc: "Requested vs approved amounts from the committee's grants system (zcg.pgpz.org).",
+    desc: "Requested vs approved amounts from a committee member's grants prototype (zcg.pgpz.org). The Grant Dashboard spreadsheet stays the source of truth.",
   },
   {
     name: "GitHub + forum",

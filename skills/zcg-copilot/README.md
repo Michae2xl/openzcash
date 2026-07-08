@@ -7,8 +7,9 @@ in live public APIs, with citations, instead of stale training data.
 
 ## Why
 
-Grant data changes weekly and lives in four places (a public spreadsheet, GitHub
-issues, the community forum, and the committee's grants system). LLMs answer questions
+Grant data changes weekly and lives in several places (the Grant Dashboard
+spreadsheet, which is the source of truth, plus GitHub issues, the community
+forum, and side tooling). LLMs answer questions
 about it from memory — confidently and wrong. This skill wires your agent to the live
 sources and encodes the domain's real failure modes (same-title collisions between
 re-applications, requested-vs-paid confusion, milestone double-counting) so the answers
@@ -42,8 +43,9 @@ into your agent's skills directory.
 
 - **OpenZcash** — https://openzcash.org — audited mirror of the official ZCG public
   spreadsheet + live on-chain Dev Fund data. JSON/CSV API under `/api/zcg/*`.
-- **ZCG grants prototype** — https://zcg.pgpz.org — committee-run canonical grant
-  records (requested/approved amounts, stable IDs) at `/api/public/grants`.
+- **ZCG grants prototype** — https://zcg.pgpz.org — a committee member's side
+  project exposing requested/approved amounts and stable IDs at
+  `/api/public/grants` (supplementary; the spreadsheet remains authoritative).
 - **GitHub** — `ZcashCommunityGrants/zcashcommunitygrants` issues (the applications
   themselves).
 - **Zcash Community Forum** — discussion threads.
