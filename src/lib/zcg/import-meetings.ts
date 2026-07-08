@@ -15,8 +15,12 @@ import { sha256 } from "./sheets";
  */
 
 const FORUM = "https://forum.zcashcommunity.com";
+// order:latest matters: without it Discourse ranks by phrase relevance and the
+// 50-result window fills with OLD minutes, silently dropping the newest thread
+// whenever its title drifts (e.g. "Zcash Community Grants (ZCG) Meeting
+// Minutes 7/6/2026" ranked below 50 and never imported).
 const SEARCH = `${FORUM}/search.json?q=${encodeURIComponent(
-  "Zcash Community Grants Meeting Minutes #grants",
+  "Zcash Community Grants Meeting Minutes #grants order:latest",
 )}`;
 
 const MONTHS: Record<string, number> = {
