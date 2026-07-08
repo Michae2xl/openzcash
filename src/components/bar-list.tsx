@@ -16,7 +16,16 @@ export type BarItem = {
   href?: string;
 };
 
+/** Fixed value ramp across the whole track: green (small) → lime → gold →
+ * amber → orange (large). Each bar reveals only its stretch of the ramp, so a
+ * short bar stays green and a long one sweeps into orange — the colour at the
+ * bar's end restates the value the length already encodes (reinforcement, not
+ * the only encoding). */
+const RAMP =
+  "linear-gradient(90deg, #10b981, #84cc16, #eab308, #f59e0b, #ea580c)";
+
 function Row({ it, max }: { it: BarItem; max: number }) {
+  const pct = Math.max((it.value / max) * 100, 1);
   return (
     <>
       <div className="flex items-baseline justify-between gap-3 text-xs">
@@ -29,8 +38,13 @@ function Row({ it, max }: { it: BarItem; max: number }) {
       </div>
       <div className="mt-1 h-2 overflow-hidden rounded-full bg-stone-100">
         <div
-          className="h-full rounded-full bg-gradient-to-r from-amber-400 to-amber-600"
-          style={{ width: `${Math.max((it.value / max) * 100, 1)}%` }}
+          className="h-full rounded-full"
+          style={{
+            width: `${pct}%`,
+            backgroundImage: RAMP,
+            backgroundSize: `${(100 / pct) * 100}% 100%`,
+            backgroundPosition: "left",
+          }}
         />
       </div>
     </>
