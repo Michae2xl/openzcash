@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { Card, PageHeader, Stat } from "@/components/ui";
 import { BarList } from "@/components/bar-list";
 import { Synced } from "@/components/synced";
@@ -37,13 +36,16 @@ function monthLabel(m: string): string {
 }
 
 export default async function AnalyticsPage() {
-  const [months, recips, grants, secBounties, matchBounties] =
+  const [months, recips, grants, allDisb, secBounties, matchBounties] =
     await Promise.all([
       cached("an:monthly", LEDGER_TTL_MS, () => monthlySpend()),
       cached("an:recips", LEDGER_TTL_MS, () =>
         recipientTotalsFromSheet("zcg_grants"),
       ),
       cached("an:grants", LEDGER_TTL_MS, () => listGrants()),
+      cached("an:disb:all", LEDGER_TTL_MS, () =>
+        listDisbursements({ limit: 2000 }),
+      ),
       cached("an:bounty:sec", LEDGER_TTL_MS, () =>
         listDisbursements({ type: "security_bounty", limit: 200 }),
       ),
@@ -81,7 +83,7 @@ export default async function AnalyticsPage() {
   const top10 = shareOf(10);
   const top25 = shareOf(25);
 
-  // ── #12 Grant velocity & stalled ──
+  // ── #12 Grant delivery ──
   const withMs = grants.filter((g) => g.milestoneCount > 0);
   const fullyPaid = withMs.filter(
     (g) => g.paidCount >= g.milestoneCount,
@@ -91,17 +93,46 @@ export default async function AnalyticsPage() {
     : 0;
   const isClosed = (s: string | null) =>
     !!s && /cancel|complet|closed|done/i.test(s);
-  const stalled = grants
-    .filter(
-      (g) =>
-        g.milestoneCount > 0 &&
-        g.paidCount < g.milestoneCount &&
-        !isClosed(g.status) &&
-        (!g.lastPaid ||
-          nowMs() - new Date(g.lastPaid).getTime() > 270 * MS_PER_DAY),
-    )
-    .sort((a, b) => (a.lastPaid ?? "").localeCompare(b.lastPaid ?? ""))
-    .slice(0, 12);
+  const inDelivery = withMs.filter(
+    (g) => g.paidCount < g.milestoneCount && !isClosed(g.status),
+  ).length;
+
+  // ── Where the money flows now: paid last 12 months by category, and how each
+  // category's share compares with its all-time share (momentum in pp). ──
+  const cutoffIso = new Date(nowMs() - 365 * MS_PER_DAY)
+    .toISOString()
+    .slice(0, 10);
+  const catAll = new Map<string, number>();
+  const cat12 = new Map<string, number>();
+  for (const d of allDisb) {
+    if (!d.isPaid || !d.category || d.amountUsdCents == null) continue;
+    const usd = Number(d.amountUsdCents);
+    catAll.set(d.category, (catAll.get(d.category) ?? 0) + usd);
+    if ((d.paidOutDate ?? "") >= cutoffIso)
+      cat12.set(d.category, (cat12.get(d.category) ?? 0) + usd);
+  }
+  const totalAllCat = [...catAll.values()].reduce((s, v) => s + v, 0) || 1;
+  const total12Cat = [...cat12.values()].reduce((s, v) => s + v, 0) || 1;
+  const momentum = [...catAll.keys()]
+    .map((c) => {
+      const paid12 = cat12.get(c) ?? 0;
+      const share12 = (paid12 / total12Cat) * 100;
+      const shareAll = ((catAll.get(c) ?? 0) / totalAllCat) * 100;
+      return { category: c, paid12, deltaPp: share12 - shareAll };
+    })
+    .sort((a, b) => b.paid12 - a.paid12);
+  const heating = [...momentum].sort((a, b) => b.deltaPp - a.deltaPp)[0];
+  const cooling = [...momentum].sort((a, b) => a.deltaPp - b.deltaPp)[0];
+  const flowBars = momentum
+    .filter((m) => m.paid12 > 0)
+    .slice(0, 10)
+    .map((m) => ({
+      label: m.category,
+      value: m.paid12,
+      display: `${formatUsdCents(m.paid12, { compact: true })} · ${
+        m.deltaPp >= 0 ? "▲" : "▼"
+      } ${Math.abs(m.deltaPp).toFixed(1)}pp`,
+    }));
 
   // ── #11 Bounties ──
   const bounties = [...secBounties, ...matchBounties]
@@ -179,12 +210,12 @@ export default async function AnalyticsPage() {
         </div>
       </section>
 
-      {/* #12 Grant velocity & stalled */}
+      {/* #12 Grant delivery */}
       <section className="mb-8">
         <h2 className="mb-3 text-sm font-semibold text-stone-700">
           Grant delivery
         </h2>
-        <div className="mb-4 grid grid-cols-2 gap-4 lg:grid-cols-3">
+        <div className="grid grid-cols-2 gap-4 lg:grid-cols-3">
           <Stat
             label="Grants"
             value={String(withMs.length)}
@@ -196,35 +227,49 @@ export default async function AnalyticsPage() {
             sub={`${fullyPaid} of ${withMs.length} paid out`}
           />
           <Stat
-            label="Possibly stalled"
-            value={String(stalled.length)}
-            sub="open milestones, quiet 9m+"
-            tone={stalled.length > 0 ? "warn" : "default"}
+            label="In delivery"
+            value={String(inDelivery)}
+            sub="open, milestones remaining"
           />
         </div>
-        {stalled.length > 0 ? (
-          <Card className="p-0">
-            <div className="divide-y divide-stone-100">
-              {stalled.map((g) => (
-                <Link
-                  key={g.grantKey}
-                  href={`/zcg/grant?g=${encodeURIComponent(g.grantKey)}`}
-                  className="flex items-center justify-between gap-3 px-4 py-2.5 text-sm transition hover:bg-stone-50"
-                >
-                  <span className="min-w-0 flex-1 truncate font-medium text-stone-800">
-                    {g.grantKey}
-                  </span>
-                  <span className="shrink-0 text-xs text-stone-500 tnum">
-                    {g.paidCount}/{g.milestoneCount} paid
-                  </span>
-                  <span className="w-24 shrink-0 text-right text-xs text-stone-400 tnum">
-                    {g.lastPaid || "never"}
-                  </span>
-                </Link>
-              ))}
-            </div>
-          </Card>
-        ) : null}
+      </section>
+
+      {/* Where the money flows now (category momentum) */}
+      <section className="mb-8">
+        <h2 className="mb-3 text-sm font-semibold text-stone-700">
+          Where the money flows now
+        </h2>
+        <div className="mb-4 grid grid-cols-2 gap-4 lg:grid-cols-3">
+          <Stat
+            label="Paid last 12 months"
+            value={formatUsdCents(total12Cat, { compact: true })}
+            sub="categorized grant spend"
+            tone="warn"
+          />
+          {heating ? (
+            <Stat
+              label="Heating up"
+              value={heating.category}
+              sub={`+${heating.deltaPp.toFixed(1)}pp vs all-time share`}
+            />
+          ) : null}
+          {cooling ? (
+            <Stat
+              label="Cooling down"
+              value={cooling.category}
+              sub={`${cooling.deltaPp.toFixed(1)}pp vs all-time share`}
+            />
+          ) : null}
+        </div>
+        <Card>
+          <p className="mb-2 text-xs text-stone-500">
+            Paid in the last 12 months by category. The ▲▼ delta compares each
+            category&apos;s share of the last 12 months with its all-time share,
+            in percentage points: which themes the committee is leaning into,
+            and which cycles have wound down.
+          </p>
+          <BarList items={flowBars} />
+        </Card>
       </section>
 
       {/* #11 Bounties */}
