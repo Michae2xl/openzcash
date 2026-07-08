@@ -166,6 +166,16 @@ const SOFTWARE: Wallet[] = [
     tag: "Coming soon",
     note: "Native Rust desktop wallet with hardware support and DEX swaps.",
   },
+  {
+    name: "Zapp",
+    maker: "JustZappIt",
+    url: "https://www.justzappit.xyz/",
+    logo: "/wallet-logos/zappit.png",
+    platforms: ["Android"],
+    shielded: "full",
+    tag: "Beta",
+    note: "P2P messenger with a shielded Zodl-based wallet and PIX/UPI offramp.",
+  },
 ];
 
 const HARDWARE: Wallet[] = [
