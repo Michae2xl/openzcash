@@ -4,6 +4,19 @@ import { Badge } from "@/components/ui";
 import { DataTable, type Column } from "@/components/data-table";
 import { ProposalAdminControls } from "./proposal-admin";
 
+/** Public-data diligence signals for an under-review row (see lib/zcg/diligence). */
+export type RowDiligence = {
+  accountAgeYears: number | null;
+  publicRepos: number | null;
+  forumAgeYears: number | null;
+  forumPosts: number | null;
+  priorApps: number | null;
+  priorApproved: number | null;
+  priorDeclined: number | null;
+  dupCount: number | null;
+  dupUrl: string | null;
+};
+
 /** Serializable shape for the DataTable (no bigint). */
 export type ProposalTableRow = {
   id: string;
@@ -17,7 +30,72 @@ export type ProposalTableRow = {
   source?: "sheet" | "github";
   /** Requested grant amount in whole USD (from the GitHub application), or null. */
   amountUsd?: number | null;
+  /** Diligence signals — only computed for the live under-review set. */
+  diligence?: RowDiligence | null;
 };
+
+const chip =
+  "inline-flex items-center whitespace-nowrap rounded px-1.5 py-px text-[10px] font-medium ring-1 ring-inset";
+
+/**
+ * Compact public-data signals: forum tenure, GitHub tenure, prior ZCG track
+ * record, and a similar-title-elsewhere warning. Signals inform, reviewers
+ * decide — absence of a signal is not a red flag.
+ */
+function DiligenceCell({ d }: { d: RowDiligence }) {
+  const years = (n: number) => (n < 1 ? "<1y" : `${n}y`);
+  const plural = (n: number, word: string) =>
+    `${n} ${word}${n === 1 ? "" : "s"}`;
+  return (
+    <div className="flex flex-wrap items-center justify-end gap-1">
+      {d.forumAgeYears != null ? (
+        <span
+          className={`${chip} bg-amber-500/10 text-amber-800 ring-amber-500/20`}
+          title={`Zcash forum account with the same handle: ${d.forumAgeYears < 1 ? "under a year" : `${d.forumAgeYears} year(s)`} old${d.forumPosts != null ? `, ${d.forumPosts} posts` : ""} (best-effort handle match)`}
+        >
+          forum {years(d.forumAgeYears)}
+          {d.forumPosts != null ? ` · ${plural(d.forumPosts, "post")}` : ""}
+        </span>
+      ) : null}
+      {d.accountAgeYears != null ? (
+        <span
+          className={`${chip} bg-stone-500/10 text-stone-700 ring-stone-500/20`}
+          title={`GitHub account: ${d.accountAgeYears < 1 ? "under a year" : `${d.accountAgeYears} year(s)`} old, ${d.publicRepos ?? 0} public repos`}
+        >
+          GH {years(d.accountAgeYears)} · {plural(d.publicRepos ?? 0, "repo")}
+        </span>
+      ) : null}
+      {d.priorApps != null ? (
+        d.priorApps === 0 ? (
+          <span
+            className={`${chip} bg-sky-500/10 text-sky-800 ring-sky-500/20`}
+            title="No earlier grant applications from this GitHub account in the ZCG repo"
+          >
+            first application
+          </span>
+        ) : (
+          <span
+            className={`${chip} bg-sky-500/10 text-sky-800 ring-sky-500/20`}
+            title={`${d.priorApps} earlier ZCG application(s) from this account: ${d.priorApproved ?? 0} approved, ${d.priorDeclined ?? 0} declined`}
+          >
+            {d.priorApps} prior · {d.priorApproved ?? 0} approved
+          </span>
+        )
+      ) : null}
+      {d.dupCount != null && d.dupCount > 0 && d.dupUrl ? (
+        <a
+          href={d.dupUrl}
+          target="_blank"
+          rel="noreferrer"
+          className={`${chip} bg-rose-500/10 text-rose-800 ring-rose-500/20 hover:bg-rose-500/20`}
+          title="Issues elsewhere on GitHub share this proposal's title — check for the same pitch filed with other ecosystems"
+        >
+          ⚠ similar title elsewhere
+        </a>
+      ) : null}
+    </div>
+  );
+}
 
 function tone(status: string) {
   if (status === "approved") return "emerald" as const;
@@ -118,6 +196,19 @@ const columns: Column<ProposalTableRow>[] = [
   },
 ];
 
+const diligenceColumn: Column<ProposalTableRow> = {
+  key: "diligence",
+  header: "Diligence",
+  align: "right",
+  mobileHidden: true,
+  render: (r) =>
+    r.diligence ? (
+      <DiligenceCell d={r.diligence} />
+    ) : (
+      <span className="text-stone-300">·</span>
+    ),
+};
+
 const manageColumn: Column<ProposalTableRow> = {
   key: "manage",
   header: "Manage",
@@ -131,7 +222,14 @@ interface ProposalsTableProps {
 }
 
 export function ProposalsTable({ rows, isAdmin = false }: ProposalsTableProps) {
-  const cols = isAdmin ? [...columns, manageColumn] : columns;
+  // Diligence signals exist only for the live under-review set; skip the
+  // column entirely when the current view has none (e.g. historical filters).
+  const hasDiligence = rows.some((r) => r.diligence);
+  const cols = [
+    ...columns,
+    ...(hasDiligence ? [diligenceColumn] : []),
+    ...(isAdmin ? [manageColumn] : []),
+  ];
   return (
     <DataTable
       columns={cols}

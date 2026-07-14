@@ -15,6 +15,7 @@ import {
   ZCG_APPLICATIONS_REPO_URL,
 } from "@/lib/zcg/github-applications";
 import { titlesMatch } from "@/lib/zcg/match-titles";
+import { getDiligence } from "@/lib/zcg/diligence";
 import { Synced } from "@/components/synced";
 
 export const dynamic = "force-dynamic";
@@ -70,6 +71,10 @@ export default async function PropostasPage({
   // Live "ready for review" grant applications, read first-hand from GitHub.
   const ghApps = applications.filter((a) => a.status === "review");
 
+  // Public-data diligence signals, computed by the cron for the under-review
+  // set only — this is a cache-only read keyed by issue number, never network.
+  const diligence = getDiligence();
+
   // Each GitHub application is usually already mirrored in the spreadsheet's
   // under-review bucket. Enrich the matching sheet row with a "GitHub live"
   // badge + direct issue link instead of listing it twice; only applications
@@ -89,6 +94,7 @@ export default async function PropostasPage({
         source: "github" as const,
         platformLink: ghApps[idx].url ?? r.platformLink,
         amountUsd: ghApps[idx].amountUsd,
+        diligence: diligence.get(ghApps[idx].number) ?? null,
       };
     });
 
@@ -104,6 +110,7 @@ export default async function PropostasPage({
       statusLabel: "Under review",
       source: "github" as const,
       amountUsd: a.amountUsd,
+      diligence: diligence.get(a.number) ?? null,
     }));
 
   const allRows = [...netNewGhRows, ...enrichedSheet];
@@ -281,6 +288,15 @@ export default async function PropostasPage({
         </a>
         . The rest are mirrored from the spreadsheet.
       </p>
+
+      {shownRows.some((r) => r.diligence) ? (
+        <p className="mt-1.5 text-xs text-stone-500">
+          Diligence signals cover under-review applications only and use public
+          data: GitHub account history, prior ZCG applications, a same-handle
+          forum profile, and a title search across GitHub. Signals inform,
+          reviewers decide.
+        </p>
+      ) : null}
 
       <Synced className="mt-4" />
 

@@ -25,6 +25,18 @@ export async function register() {
         e instanceof Error ? e.message : e,
       );
     }
+    // Diligence signals for the under-review set. Long-running by design
+    // (GitHub search API pacing), so it trails the refresh in the background.
+    try {
+      const { warmDiligence } = await import("@/lib/zcg/diligence");
+      const d = await warmDiligence();
+      console.log(`[cron] diligence ok=${d.ok} proposals=${d.proposals}`);
+    } catch (e) {
+      console.error(
+        "[cron] diligence warm failed:",
+        e instanceof Error ? e.message : e,
+      );
+    }
   };
 
   // A short delay so the DB/migrations are settled before the first run.
