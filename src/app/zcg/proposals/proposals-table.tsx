@@ -34,8 +34,6 @@ export type ProposalTableRow = {
   amountUsd?: number | null;
   /** Diligence signals — only computed for the live under-review set. */
   diligence?: RowDiligence | null;
-  /** The GitHub application this row linked to was deleted (404). */
-  applicationRemoved?: boolean;
 };
 
 const chip =
@@ -146,17 +144,6 @@ const columns: Column<ProposalTableRow>[] = [
           <span className="shrink-0 rounded bg-indigo-500/10 px-1.5 py-px text-[9px] font-semibold uppercase tracking-wide text-indigo-700 ring-1 ring-inset ring-indigo-500/20">
             GitHub live
           </span>
-        ) : null}
-        {r.applicationRemoved ? (
-          <a
-            href={`https://forum.zcashcommunity.com/search?q=${encodeURIComponent(r.title)}`}
-            target="_blank"
-            rel="noreferrer"
-            className="shrink-0 rounded bg-rose-500/10 px-1.5 py-px text-[9px] font-semibold uppercase tracking-wide text-rose-700 ring-1 ring-inset ring-rose-500/20 hover:bg-rose-500/20"
-            title="The GitHub application this row linked to was deleted (returns 404). Opens a forum search for the proposal's remaining public trail."
-          >
-            application removed
-          </a>
         ) : null}
       </div>
     ),

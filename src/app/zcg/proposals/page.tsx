@@ -84,42 +84,43 @@ export default async function PropostasPage({
   const issueAmounts = getIssueAmounts();
   const missingIssues = getMissingIssues();
 
+  // A sheet row still marked under review whose GitHub application was
+  // DELETED upstream (404) is not a real, verifiable proposal anymore — drop
+  // it from the list and the counts (a footnote below keeps this auditable).
+  const isRemovedUpstream = (r: ProposalTableRow) => {
+    if (r.status !== "under_review") return false;
+    const n = issueNumberFromLink(r.platformLink);
+    return n != null && missingIssues.has(n);
+  };
+  const sheetRows = all.slice(0, 400).map(toTableRow);
+  const listedSheetRows = sheetRows.filter((r) => !isRemovedUpstream(r));
+  const removedCount = sheetRows.length - listedSheetRows.length;
+
   // Each GitHub application is usually already mirrored in the spreadsheet's
   // under-review bucket. Enrich the matching sheet row with a "GitHub live"
   // badge + direct issue link instead of listing it twice; only applications
   // with no sheet counterpart become their own new rows.
   const usedGh = new Set<number>();
-  const enrichedSheet = all
-    .slice(0, 400)
-    .map(toTableRow)
-    .map((r) => {
-      const idx = ghApps.findIndex(
-        (g, i) => !usedGh.has(i) && titlesMatch(r.title, g.title),
-      );
-      if (idx < 0) {
-        // No open application matched — the sheet link may still point at a
-        // closed issue whose body carries the requested amount, or at an
-        // application deleted from GitHub (don't render a dead 404 link).
-        const n = issueNumberFromLink(r.platformLink);
-        if (n == null) return r;
-        const amt = issueAmounts.get(n);
-        const removed = missingIssues.has(n);
-        if (amt == null && !removed) return r;
-        return {
-          ...r,
-          ...(amt != null ? { amountUsd: amt } : {}),
-          ...(removed ? { platformLink: null, applicationRemoved: true } : {}),
-        };
-      }
-      usedGh.add(idx);
-      return {
-        ...r,
-        source: "github" as const,
-        platformLink: ghApps[idx].url ?? r.platformLink,
-        amountUsd: ghApps[idx].amountUsd,
-        diligence: diligence.get(ghApps[idx].number) ?? null,
-      };
-    });
+  const enrichedSheet = listedSheetRows.map((r) => {
+    const idx = ghApps.findIndex(
+      (g, i) => !usedGh.has(i) && titlesMatch(r.title, g.title),
+    );
+    if (idx < 0) {
+      // No open application matched — the sheet link may still point at a
+      // closed issue whose body carries the requested amount.
+      const n = issueNumberFromLink(r.platformLink);
+      const amt = n != null ? issueAmounts.get(n) : undefined;
+      return amt != null ? { ...r, amountUsd: amt } : r;
+    }
+    usedGh.add(idx);
+    return {
+      ...r,
+      source: "github" as const,
+      platformLink: ghApps[idx].url ?? r.platformLink,
+      amountUsd: ghApps[idx].amountUsd,
+      diligence: diligence.get(ghApps[idx].number) ?? null,
+    };
+  });
 
   const netNewGhRows: ProposalTableRow[] = ghApps
     .filter((_, i) => !usedGh.has(i))
@@ -138,15 +139,19 @@ export default async function PropostasPage({
 
   const allRows = [...netNewGhRows, ...enrichedSheet];
 
-  // Funnel: only applications with no sheet counterpart are net-new to the counts.
+  // Funnel: applications with no sheet counterpart are net-new to the counts;
+  // sheet rows whose application was deleted upstream leave the counts.
   const netNewCount = netNewGhRows.length;
+  const reviewDelta = netNewCount - removedCount;
   let byStatus = funnel.byStatus.map((b) =>
-    b.status === "under_review" ? { ...b, count: b.count + netNewCount } : b,
+    b.status === "under_review"
+      ? { ...b, count: Math.max(b.count + reviewDelta, 0) }
+      : b,
   );
-  if (netNewCount > 0 && !byStatus.some((b) => b.status === "under_review")) {
-    byStatus = [...byStatus, { status: "under_review", count: netNewCount }];
+  if (reviewDelta > 0 && !byStatus.some((b) => b.status === "under_review")) {
+    byStatus = [...byStatus, { status: "under_review", count: reviewDelta }];
   }
-  const total = funnel.total + netNewCount;
+  const total = funnel.total + reviewDelta;
   const approved = byStatus.find((b) => b.status === "approved")?.count ?? 0;
   const maxStatus = byStatus.reduce((m, b) => Math.max(m, b.count), 0);
   const apprRate = total ? Math.round((approved / total) * 100) : 0;
@@ -318,6 +323,15 @@ export default async function PropostasPage({
           data: GitHub account history, prior ZCG applications, a same-handle
           forum profile, and a title search across GitHub. Signals inform,
           reviewers decide.
+        </p>
+      ) : null}
+
+      {removedCount > 0 ? (
+        <p className="mt-1.5 text-xs text-stone-500">
+          {removedCount} under-review {removedCount === 1 ? "entry" : "entries"}{" "}
+          from the spreadsheet {removedCount === 1 ? "is" : "are"} not listed:
+          the linked GitHub application was deleted, so there is no verifiable
+          proposal behind {removedCount === 1 ? "it" : "them"}.
         </p>
       ) : null}
 
