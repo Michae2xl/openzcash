@@ -16,7 +16,7 @@ import {
 } from "@/lib/zcg/github-applications";
 import { titlesMatch } from "@/lib/zcg/match-titles";
 import { getDiligence } from "@/lib/zcg/diligence";
-import { getIssueAmounts } from "@/lib/zcg/issue-amounts";
+import { getIssueAmounts, getMissingIssues } from "@/lib/zcg/issue-amounts";
 import { issueNumberFromLink } from "@/lib/zcg/issue-link";
 import { Synced } from "@/components/synced";
 
@@ -79,8 +79,10 @@ export default async function PropostasPage({
 
   // Requested amounts recovered from applications OUTSIDE the open review set
   // (e.g. an issue GitHub already closed while the sheet still lists the row
-  // under review). Cache-only read, warmed by the same cron.
+  // under review), plus applications deleted from GitHub (dead links).
+  // Cache-only reads, warmed by the same cron.
   const issueAmounts = getIssueAmounts();
+  const missingIssues = getMissingIssues();
 
   // Each GitHub application is usually already mirrored in the spreadsheet's
   // under-review bucket. Enrich the matching sheet row with a "GitHub live"
@@ -96,10 +98,18 @@ export default async function PropostasPage({
       );
       if (idx < 0) {
         // No open application matched — the sheet link may still point at a
-        // closed issue whose body carries the requested amount.
+        // closed issue whose body carries the requested amount, or at an
+        // application deleted from GitHub (don't render a dead 404 link).
         const n = issueNumberFromLink(r.platformLink);
-        const amt = n != null ? issueAmounts.get(n) : undefined;
-        return amt != null ? { ...r, amountUsd: amt } : r;
+        if (n == null) return r;
+        const amt = issueAmounts.get(n);
+        const removed = missingIssues.has(n);
+        if (amt == null && !removed) return r;
+        return {
+          ...r,
+          ...(amt != null ? { amountUsd: amt } : {}),
+          ...(removed ? { platformLink: null, applicationRemoved: true } : {}),
+        };
       }
       usedGh.add(idx);
       return {

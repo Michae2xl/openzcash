@@ -21,7 +21,7 @@ const GH_ISSUE = (n: number) =>
   `https://api.github.com/repos/ZcashCommunityGrants/zcashcommunitygrants/issues/${n}`;
 const TTL_MS = 24 * 60 * 60 * 1000;
 
-type Entry = { amountUsd: number | null; at: number };
+type Entry = { amountUsd: number | null; missing: boolean; at: number };
 type Store = { byNumber: Map<number, Entry>; warming: boolean };
 
 // globalThis singleton: Next bundles routes/pages as separate module graphs,
@@ -57,9 +57,10 @@ export async function warmIssueAmounts(): Promise<{
       if (n == null || open.has(n)) continue;
       const hit = store.byNumber.get(n);
       if (hit && now - hit.at < TTL_MS) continue;
-      const body = await fetchIssueBody(n);
+      const issue = await fetchIssue(n);
       store.byNumber.set(n, {
-        amountUsd: requestedAmountFromBody(body),
+        amountUsd: requestedAmountFromBody(issue.body),
+        missing: issue.missing,
         at: Date.now(),
       });
       fetched++;
@@ -72,7 +73,9 @@ export async function warmIssueAmounts(): Promise<{
   }
 }
 
-async function fetchIssueBody(n: number): Promise<string | undefined> {
+async function fetchIssue(
+  n: number,
+): Promise<{ body?: string; missing: boolean }> {
   try {
     const res = await fetch(GH_ISSUE(n), {
       headers: {
@@ -82,11 +85,15 @@ async function fetchIssueBody(n: number): Promise<string | undefined> {
       signal: AbortSignal.timeout(9_000),
       cache: "no-store",
     });
-    if (!res.ok) return undefined; // deleted (404) etc. → cached as null
+    // Deleted applications 404 — a fact worth surfacing (the page swaps the
+    // dead link for an "application removed" marker). Other failures are
+    // treated as transient: no amount this round, but not flagged missing.
+    if (res.status === 404) return { missing: true };
+    if (!res.ok) return { missing: false };
     const json = (await res.json()) as { body?: string };
-    return json.body ?? undefined;
+    return { body: json.body ?? undefined, missing: false };
   } catch {
-    return undefined;
+    return { missing: false };
   }
 }
 
@@ -94,5 +101,12 @@ async function fetchIssueBody(n: number): Promise<string | undefined> {
 export function getIssueAmounts(): Map<number, number | null> {
   const out = new Map<number, number | null>();
   for (const [n, e] of store.byNumber) out.set(n, e.amountUsd);
+  return out;
+}
+
+/** Issue numbers whose application was deleted from GitHub (404). */
+export function getMissingIssues(): Set<number> {
+  const out = new Set<number>();
+  for (const [n, e] of store.byNumber) if (e.missing) out.add(n);
   return out;
 }
