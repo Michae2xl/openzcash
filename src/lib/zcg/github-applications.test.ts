@@ -59,9 +59,33 @@ Wallets
 
 $99,000`;
 
+// Applicants sometimes write the currency out — real case: issue #355
+// (TensorZKP) filled the form field with "US$64,430".
+const usPrefixed = `### Requested Grant Amount (USD)
+
+US$64,430
+
+### Hardware/Software Costs (USD)
+
+US$1,750`;
+
+const usdSuffixed = `### Requested Grant Amount (USD)
+
+64,430 USD
+
+### Category`;
+
 describe("requestedAmountFromBody", () => {
   it("parses a clean dollar amount", () => {
     expect(requestedAmountFromBody(clean)).toBe(477658);
+  });
+
+  it("parses a 'US$'-prefixed amount (issue #355)", () => {
+    expect(requestedAmountFromBody(usPrefixed)).toBe(64430);
+  });
+
+  it("parses a 'USD'-suffixed amount", () => {
+    expect(requestedAmountFromBody(usdSuffixed)).toBe(64430);
   });
 
   it("falls back to Total Budget when Requested is prose/blank", () => {

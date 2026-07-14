@@ -3,8 +3,9 @@
  * "server-only" so the logic can be unit-tested directly.
  */
 
-/** A whole trimmed line that is nothing but a dollar amount, e.g. "$477,658" or "24,500". */
-const AMOUNT_LINE = /^\$?\s?\d[\d,]*(\.\d+)?$/;
+/** A whole trimmed line that is nothing but a dollar amount. Applicants write
+ * "$477,658", "24,500", "US$64,430" (issue #355) or "64,430 USD". */
+const AMOUNT_LINE = /^(?:US)?\$?\s?\d[\d,]*(\.\d+)?(?:\s?USD)?$/i;
 
 /** A markdown section header at any of the levels applications use. The issue
  * form renders "###", but hand-written re-applications use "##" (e.g. #341). */
