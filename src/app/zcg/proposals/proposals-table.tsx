@@ -6,6 +6,8 @@ import { ProposalAdminControls } from "./proposal-admin";
 
 /** Public-data diligence signals for an under-review row (see lib/zcg/diligence). */
 export type RowDiligence = {
+  /** GitHub login the signals were computed for — used to link each badge to its source. */
+  applicant: string;
   accountAgeYears: number | null;
   publicRepos: number | null;
   forumAgeYears: number | null;
@@ -39,48 +41,57 @@ const chip =
 
 /**
  * Compact public-data signals: forum tenure, GitHub tenure, prior ZCG track
- * record, and a similar-title-elsewhere warning. Signals inform, reviewers
- * decide — absence of a signal is not a red flag.
+ * record, and a similar-title-elsewhere warning. Every badge links to its
+ * source so reviewers can verify the receipt themselves. Signals inform,
+ * reviewers decide — absence of a signal is not a red flag.
  */
 function DiligenceCell({ d }: { d: RowDiligence }) {
   const years = (n: number) => (n < 1 ? "<1y" : `${n}y`);
   const plural = (n: number, word: string) =>
     `${n} ${word}${n === 1 ? "" : "s"}`;
+  const login = encodeURIComponent(d.applicant);
+  const priorUrl = `https://github.com/ZcashCommunityGrants/zcashcommunitygrants/issues?q=${encodeURIComponent(`is:issue author:${d.applicant}`)}`;
   return (
     <div className="flex flex-wrap items-center justify-end gap-1">
       {d.forumAgeYears != null ? (
-        <span
-          className={`${chip} bg-amber-500/10 text-amber-800 ring-amber-500/20`}
-          title={`Zcash forum account with the same handle: ${d.forumAgeYears < 1 ? "under a year" : `${d.forumAgeYears} year(s)`} old${d.forumPosts != null ? `, ${d.forumPosts} posts` : ""} (best-effort handle match)`}
+        <a
+          href={`https://forum.zcashcommunity.com/u/${login}/summary`}
+          target="_blank"
+          rel="noreferrer"
+          className={`${chip} bg-amber-500/10 text-amber-800 ring-amber-500/20 hover:bg-amber-500/20`}
+          title={`Zcash forum account with the same handle: ${d.forumAgeYears < 1 ? "under a year" : `${d.forumAgeYears} year(s)`} old${d.forumPosts != null ? `, ${d.forumPosts} posts` : ""} (best-effort handle match) — opens the forum profile`}
         >
           forum {years(d.forumAgeYears)}
           {d.forumPosts != null ? ` · ${plural(d.forumPosts, "post")}` : ""}
-        </span>
+        </a>
       ) : null}
       {d.accountAgeYears != null ? (
-        <span
-          className={`${chip} bg-stone-500/10 text-stone-700 ring-stone-500/20`}
-          title={`GitHub account: ${d.accountAgeYears < 1 ? "under a year" : `${d.accountAgeYears} year(s)`} old, ${d.publicRepos ?? 0} public repos`}
+        <a
+          href={`https://github.com/${login}`}
+          target="_blank"
+          rel="noreferrer"
+          className={`${chip} bg-stone-500/10 text-stone-700 ring-stone-500/20 hover:bg-stone-500/20`}
+          title={`GitHub account: ${d.accountAgeYears < 1 ? "under a year" : `${d.accountAgeYears} year(s)`} old, ${d.publicRepos ?? 0} public repos — opens the GitHub profile`}
         >
           GH {years(d.accountAgeYears)} · {plural(d.publicRepos ?? 0, "repo")}
-        </span>
+        </a>
       ) : null}
       {d.priorApps != null ? (
-        d.priorApps === 0 ? (
-          <span
-            className={`${chip} bg-sky-500/10 text-sky-800 ring-sky-500/20`}
-            title="No earlier grant applications from this GitHub account in the ZCG repo"
-          >
-            first application
-          </span>
-        ) : (
-          <span
-            className={`${chip} bg-sky-500/10 text-sky-800 ring-sky-500/20`}
-            title={`${d.priorApps} earlier ZCG application(s) from this account: ${d.priorApproved ?? 0} approved, ${d.priorDeclined ?? 0} declined`}
-          >
-            {d.priorApps} prior · {d.priorApproved ?? 0} approved
-          </span>
-        )
+        <a
+          href={priorUrl}
+          target="_blank"
+          rel="noreferrer"
+          className={`${chip} bg-sky-500/10 text-sky-800 ring-sky-500/20 hover:bg-sky-500/20`}
+          title={
+            d.priorApps === 0
+              ? "No earlier grant applications from this GitHub account in the ZCG repo — opens the author's issue history"
+              : `${d.priorApps} earlier ZCG application(s) from this account: ${d.priorApproved ?? 0} approved, ${d.priorDeclined ?? 0} declined — opens the author's issue history`
+          }
+        >
+          {d.priorApps === 0
+            ? "first application"
+            : `${d.priorApps} prior · ${d.priorApproved ?? 0} approved`}
+        </a>
       ) : null}
       {d.dupCount != null && d.dupCount > 0 && d.dupUrl ? (
         <a
@@ -88,7 +99,7 @@ function DiligenceCell({ d }: { d: RowDiligence }) {
           target="_blank"
           rel="noreferrer"
           className={`${chip} bg-rose-500/10 text-rose-800 ring-rose-500/20 hover:bg-rose-500/20`}
-          title="Issues elsewhere on GitHub share this proposal's title — check for the same pitch filed with other ecosystems"
+          title="Issues elsewhere on GitHub share this proposal's title — opens the GitHub search so you can check for the same pitch filed with other ecosystems"
         >
           ⚠ similar title elsewhere
         </a>
