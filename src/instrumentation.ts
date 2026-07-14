@@ -37,6 +37,18 @@ export async function register() {
         e instanceof Error ? e.message : e,
       );
     }
+    // Requested amounts for sheet rows whose application is no longer in the
+    // open review set (closed/deleted issues).
+    try {
+      const { warmIssueAmounts } = await import("@/lib/zcg/issue-amounts");
+      const a = await warmIssueAmounts();
+      console.log(`[cron] issue amounts ok=${a.ok} fetched=${a.fetched}`);
+    } catch (e) {
+      console.error(
+        "[cron] issue amounts warm failed:",
+        e instanceof Error ? e.message : e,
+      );
+    }
   };
 
   // A short delay so the DB/migrations are settled before the first run.

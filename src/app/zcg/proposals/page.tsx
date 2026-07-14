@@ -16,6 +16,8 @@ import {
 } from "@/lib/zcg/github-applications";
 import { titlesMatch } from "@/lib/zcg/match-titles";
 import { getDiligence } from "@/lib/zcg/diligence";
+import { getIssueAmounts } from "@/lib/zcg/issue-amounts";
+import { issueNumberFromLink } from "@/lib/zcg/issue-link";
 import { Synced } from "@/components/synced";
 
 export const dynamic = "force-dynamic";
@@ -75,6 +77,11 @@ export default async function PropostasPage({
   // set only — this is a cache-only read keyed by issue number, never network.
   const diligence = getDiligence();
 
+  // Requested amounts recovered from applications OUTSIDE the open review set
+  // (e.g. an issue GitHub already closed while the sheet still lists the row
+  // under review). Cache-only read, warmed by the same cron.
+  const issueAmounts = getIssueAmounts();
+
   // Each GitHub application is usually already mirrored in the spreadsheet's
   // under-review bucket. Enrich the matching sheet row with a "GitHub live"
   // badge + direct issue link instead of listing it twice; only applications
@@ -87,7 +94,13 @@ export default async function PropostasPage({
       const idx = ghApps.findIndex(
         (g, i) => !usedGh.has(i) && titlesMatch(r.title, g.title),
       );
-      if (idx < 0) return r;
+      if (idx < 0) {
+        // No open application matched — the sheet link may still point at a
+        // closed issue whose body carries the requested amount.
+        const n = issueNumberFromLink(r.platformLink);
+        const amt = n != null ? issueAmounts.get(n) : undefined;
+        return amt != null ? { ...r, amountUsd: amt } : r;
+      }
       usedGh.add(idx);
       return {
         ...r,
