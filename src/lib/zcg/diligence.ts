@@ -230,14 +230,54 @@ function norm(s: string): string {
     .trim();
 }
 
+/** Title segment before the first separator — the applicant's "brand"
+ * (e.g. "KeepKey" from "KeepKey: Orchard Shielded…") — or null when too
+ * long/generic to be a useful search key. */
+function brandOf(title: string): string | null {
+  const seg = title.split(/[:\-–—]/)[0]?.trim() ?? "";
+  return seg.length >= 4 && seg.split(/\s+/).length <= 4 ? seg : null;
+}
+
+/**
+ * Definitive fallback: search the forum for a short key (brand/applicant)
+ * and accept a candidate topic only if one of its posts links the exact
+ * GitHub issue — proof it is this application's thread even when the thread
+ * title shares no words with the proposal (real case: #341 KeepKey's thread
+ * is titled "Zcash community: Hello from KeepKey!").
+ */
+async function findThreadByIssueLink(
+  issueNumber: number,
+  query: string,
+): Promise<string | null> {
+  const res = await ghJson<{
+    topics?: Array<{ id: number; slug: string; title: string }>;
+  }>(`${FORUM}/search.json?q=${encodeURIComponent(query)}`);
+  const candidates = (res?.topics ?? [])
+    .filter((x) => !/meeting\s+minutes/i.test(x.title))
+    .slice(0, 4);
+  for (const tp of candidates) {
+    await sleep(500);
+    const t = await ghJson<{
+      post_stream?: { posts?: Array<{ cooked?: string }> };
+    }>(`${FORUM}/t/${tp.id}.json`);
+    const posts = t?.post_stream?.posts ?? [];
+    if (posts.some((p) => (p.cooked ?? "").includes(`/issues/${issueNumber}`)))
+      return `${FORUM}/t/${tp.slug}/${tp.id}`;
+  }
+  return null;
+}
+
 /**
  * One forum search per proposal answers two questions: does the application
  * thread required by the ZCG T&C exist, and has a meeting-minutes post
- * mentioned this title? Thread matching is fuzzy (title word overlap), so a
- * "missing" verdict is a signal to verify, not a proven violation.
+ * mentioned this title? Thread matching is fuzzy (title word overlap) with a
+ * link-verified brand fallback, so a "missing" verdict is a signal to
+ * verify, not a proven violation.
  */
 async function fetchForumFacts(
+  issueNumber: number,
   title: string,
+  applicant: string,
   submittedAt: string,
 ): Promise<ForumFacts> {
   const t = searchableTitle(title) ?? title.trim();
@@ -282,9 +322,17 @@ async function fetchForumFacts(
     break;
   }
 
+  let topicUrl = appTopic ? `${FORUM}/t/${appTopic.slug}/${appTopic.id}` : null;
+  if (!topicUrl) {
+    // Fuzzy title match failed — try the link-verified brand/applicant path
+    // before declaring the required thread missing.
+    const key = brandOf(t) ?? applicant;
+    if (key) topicUrl = await findThreadByIssueLink(issueNumber, key);
+  }
+
   return {
-    topicUrl: appTopic ? `${FORUM}/t/${appTopic.slug}/${appTopic.id}` : null,
-    missing: !appTopic,
+    topicUrl,
+    missing: !topicUrl,
     meetingUrl,
     at: Date.now(),
   };
@@ -329,7 +377,7 @@ export async function warmDiligence(): Promise<{
       if (forumStale) {
         store.forumCache.set(
           p.number,
-          await fetchForumFacts(p.title, p.createdAt),
+          await fetchForumFacts(p.number, p.title, p.applicant, p.createdAt),
         );
       }
       if (dupStale) {
