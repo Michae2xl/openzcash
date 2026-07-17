@@ -1,4 +1,5 @@
 import "server-only";
+import { ghHeaders } from "./github-headers";
 import { requestedAmountFromBody } from "./github-applications-parse";
 
 /**
@@ -82,18 +83,26 @@ export async function getGrantApplications(
   const now = Date.now();
   if (cache && now - cache.at < TTL_MS) return cache.items.slice(0, limit);
   try {
-    const res = await fetch(
-      `https://api.github.com/repos/${REPO}/issues?state=open&per_page=100&sort=created&direction=desc`,
-      {
-        headers: {
-          accept: "application/vnd.github+json",
-          "user-agent": "openzcash",
-        },
-        signal: AbortSignal.timeout(9_000),
+    const url = `https://api.github.com/repos/${REPO}/issues?state=open&per_page=100&sort=created&direction=desc`;
+    // One retry: Railway's shared egress can land a request on an IP whose
+    // unauthenticated GitHub budget another tenant already burned.
+    let res = await fetch(url, {
+      headers: ghHeaders(),
+      signal: AbortSignal.timeout(20_000),
+      cache: "no-store",
+    });
+    if (!res.ok) {
+      await new Promise((r) => setTimeout(r, 2_000));
+      res = await fetch(url, {
+        headers: ghHeaders(),
+        signal: AbortSignal.timeout(20_000),
         cache: "no-store",
-      },
-    );
-    if (!res.ok) return cache?.items.slice(0, limit) ?? [];
+      });
+    }
+    if (!res.ok) {
+      console.error(`[gh-apps] issue listing failed: HTTP ${res.status}`);
+      return cache?.items.slice(0, limit) ?? [];
+    }
     const arr = (await res.json()) as GhIssue[];
     if (!Array.isArray(arr)) return cache?.items.slice(0, limit) ?? [];
 
@@ -119,7 +128,11 @@ export async function getGrantApplications(
     if (items.length === 0) return cache?.items.slice(0, limit) ?? [];
     cache = { at: now, items };
     return items.slice(0, limit);
-  } catch {
+  } catch (e) {
+    console.error(
+      "[gh-apps] issue listing failed:",
+      e instanceof Error ? e.message : e,
+    );
     return cache?.items.slice(0, limit) ?? [];
   }
 }

@@ -1,4 +1,5 @@
 import "server-only";
+import { ghHeaders } from "./github-headers";
 import { officeUnderReview } from "./proposals-repo";
 
 /**
@@ -18,7 +19,6 @@ import { officeUnderReview } from "./proposals-repo";
 
 const GH = "https://api.github.com";
 const ZCG_REPO = "ZcashCommunityGrants/zcashcommunitygrants";
-const UA = { accept: "application/vnd.github+json", "user-agent": "openzcash" };
 
 const SIGNAL_TTL_MS = 6 * 60 * 60 * 1000; // applicant profile + prior apps
 const DUP_TTL_MS = 24 * 60 * 60 * 1000; // cross-ecosystem title search
@@ -96,8 +96,13 @@ const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 async function ghJson<T>(url: string): Promise<T | null> {
   try {
+    // The GitHub token must never be sent to non-GitHub hosts (forum calls
+    // also flow through this helper).
+    const headers = url.startsWith(GH)
+      ? ghHeaders()
+      : { accept: "application/json", "user-agent": "openzcash" };
     const res = await fetch(url, {
-      headers: UA,
+      headers,
       signal: AbortSignal.timeout(9_000),
       cache: "no-store",
     });

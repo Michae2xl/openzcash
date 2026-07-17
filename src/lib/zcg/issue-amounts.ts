@@ -2,6 +2,7 @@ import "server-only";
 import { listProposals } from "./proposals-repo";
 import { getGrantApplications } from "./github-applications";
 import { requestedAmountFromBody } from "./github-applications-parse";
+import { ghHeaders } from "./github-headers";
 import { issueNumberFromLink } from "./issue-link";
 
 /**
@@ -78,10 +79,7 @@ async function fetchIssue(
 ): Promise<{ body?: string; missing: boolean }> {
   try {
     const res = await fetch(GH_ISSUE(n), {
-      headers: {
-        accept: "application/vnd.github+json",
-        "user-agent": "openzcash",
-      },
+      headers: ghHeaders(),
       signal: AbortSignal.timeout(9_000),
       cache: "no-store",
     });
