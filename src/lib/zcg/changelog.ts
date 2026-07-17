@@ -13,7 +13,12 @@ import { sha256 } from "./sheets";
  */
 
 export type ChangelogSnapshot = {
-  /** `${program}|${titleKey}` → last seen title + status. */
+  /** `${program}|${titleKey}|${link-or-date}` → last seen title + status.
+   * The discriminator matters: resubmissions share a title (two Coinholder
+   * "Unstoppable Wallet" rows, #7 approved + #25 pending), and collapsing
+   * them into one key made the winner depend on SELECT order — the collapsed
+   * status flapped between imports and produced phantom "status changed"
+   * entries. */
   proposals: Map<string, { title: string; status: string }>;
   disbIds: Set<string>;
 };
@@ -29,16 +34,18 @@ export async function snapshotForChangelog(): Promise<ChangelogSnapshot> {
         titleKey: zcgProposals.titleKey,
         title: zcgProposals.title,
         status: zcgProposals.status,
+        platformLink: zcgProposals.platformLink,
+        submittedDate: zcgProposals.submittedDate,
       })
       .from(zcgProposals),
     db.select({ id: zcgDisbursements.id }).from(zcgDisbursements),
   ]);
   const proposals = new Map<string, { title: string; status: string }>();
   for (const p of props)
-    proposals.set(`${p.program}|${p.titleKey}`, {
-      title: p.title,
-      status: p.status,
-    });
+    proposals.set(
+      `${p.program}|${p.titleKey}|${p.platformLink ?? p.submittedDate ?? ""}`,
+      { title: p.title, status: p.status },
+    );
   return { proposals, disbIds: new Set(disb.map((d) => d.id)) };
 }
 

@@ -168,11 +168,16 @@ export default async function PropostasPage({
 
   // Ageing of the live queue: whole days since submission for every
   // under-review row, flagged when past the committee's historical average.
+  // A submission date in the FUTURE is a spreadsheet data-entry typo (real
+  // cases: 2026-12-19 and a 2027 year slip) — mirror it faithfully but flag
+  // it instead of computing nonsense ageing from it.
   const todayMs = nowMs();
   const withAgeing = allRows.map((r) => {
-    if (r.status !== "under_review" || !r.submitted) return r;
+    if (!r.submitted) return r;
     const t = Date.parse(r.submitted);
     if (Number.isNaN(t)) return r;
+    if (t > todayMs + 86_400_000) return { ...r, dateSuspect: true };
+    if (r.status !== "under_review") return r;
     const days = Math.max(0, Math.floor((todayMs - t) / 86_400_000));
     return {
       ...r,

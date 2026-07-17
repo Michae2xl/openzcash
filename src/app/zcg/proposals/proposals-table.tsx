@@ -42,6 +42,8 @@ export type ProposalTableRow = {
   daysInReview?: number | null;
   /** True when daysInReview exceeds the committee's historical average. */
   reviewOverdue?: boolean;
+  /** Submission date lies in the future — a spreadsheet data-entry typo. */
+  dateSuspect?: boolean;
 };
 
 const chip =
@@ -213,8 +215,19 @@ const columns: Column<ProposalTableRow>[] = [
     filterValue: (r) => r.submitted,
     render: (r) => (
       <span className="flex flex-col items-end gap-0.5">
-        <span className="whitespace-nowrap text-xs text-stone-600 tnum">
+        <span
+          className={cn(
+            "whitespace-nowrap text-xs tnum",
+            r.dateSuspect ? "text-amber-700" : "text-stone-600",
+          )}
+          title={
+            r.dateSuspect
+              ? "This date lies in the future — mirrored exactly as recorded in the official spreadsheet, most likely a data-entry typo"
+              : undefined
+          }
+        >
           {r.submitted || "·"}
+          {r.dateSuspect ? " ⚠" : ""}
         </span>
         {r.daysInReview != null ? (
           <span
