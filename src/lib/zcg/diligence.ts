@@ -238,6 +238,44 @@ function brandOf(title: string): string | null {
   return seg.length >= 4 && seg.split(/\s+/).length <= 4 ? seg : null;
 }
 
+/** Words too common in this ecosystem to be useful search keys. */
+const GENERIC_WORDS = new Set([
+  "zcash",
+  "grant",
+  "application",
+  "wallet",
+  "integration",
+  "conference",
+  "community",
+  "onboarding",
+  "shielded",
+  "privacy",
+  "hardware",
+  "network",
+  "protocol",
+  "program",
+  "events",
+  "event",
+]);
+
+/** Most distinctive title token — digits-in-word beats mid-word capitals
+ * beats plain length ("Web3Lagos" from "Zcash Onboarding @ Web3Lagos
+ * Conference 2026"). Null when every token is generic. */
+function distinctiveToken(title: string): string | null {
+  const score = (w: string) =>
+    (/\d/.test(w) ? 2 : 0) + (/[a-z][A-Z]/.test(w) ? 1 : 0);
+  const tokens = title
+    .split(/[^a-zA-Z0-9]+/)
+    .filter(
+      (w) =>
+        w.length >= 6 &&
+        !/^\d+$/.test(w) &&
+        !GENERIC_WORDS.has(w.toLowerCase()),
+    )
+    .sort((a, b) => score(b) - score(a) || b.length - a.length);
+  return tokens[0] ?? null;
+}
+
 /**
  * Definitive fallback: search the forum for a short key (brand/applicant)
  * and accept a candidate topic only if one of its posts links the exact
@@ -324,10 +362,21 @@ async function fetchForumFacts(
 
   let topicUrl = appTopic ? `${FORUM}/t/${appTopic.slug}/${appTopic.id}` : null;
   if (!topicUrl) {
-    // Fuzzy title match failed — try the link-verified brand/applicant path
-    // before declaring the required thread missing.
-    const key = brandOf(t) ?? applicant;
-    if (key) topicUrl = await findThreadByIssueLink(issueNumber, key);
+    // Fuzzy title match failed — try link-verified searches (brand, then the
+    // most distinctive title token, then the applicant handle) before
+    // declaring the required thread missing.
+    const keys = [
+      ...new Set(
+        [brandOf(t), distinctiveToken(t), applicant].filter(
+          (k): k is string => !!k,
+        ),
+      ),
+    ];
+    for (const key of keys) {
+      topicUrl = await findThreadByIssueLink(issueNumber, key);
+      if (topicUrl) break;
+      await sleep(500);
+    }
   }
 
   return {
