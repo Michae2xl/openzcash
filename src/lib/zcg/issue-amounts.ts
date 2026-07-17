@@ -22,7 +22,15 @@ const GH_ISSUE = (n: number) =>
   `https://api.github.com/repos/ZcashCommunityGrants/zcashcommunitygrants/issues/${n}`;
 const TTL_MS = 24 * 60 * 60 * 1000;
 
-type Entry = { amountUsd: number | null; missing: boolean; at: number };
+/** Committee decision read from the issue itself (closed + decision label). */
+export type IssueDecision = "approved" | "rejected";
+
+type Entry = {
+  amountUsd: number | null;
+  missing: boolean;
+  decision: IssueDecision | null;
+  at: number;
+};
 type Store = { byNumber: Map<number, Entry>; warming: boolean };
 
 // globalThis singleton: Next bundles routes/pages as separate module graphs,
@@ -62,6 +70,7 @@ export async function warmIssueAmounts(): Promise<{
       store.byNumber.set(n, {
         amountUsd: requestedAmountFromBody(issue.body),
         missing: issue.missing,
+        decision: issue.decision,
         at: Date.now(),
       });
       fetched++;
@@ -74,24 +83,41 @@ export async function warmIssueAmounts(): Promise<{
   }
 }
 
-async function fetchIssue(
-  n: number,
-): Promise<{ body?: string; missing: boolean }> {
+async function fetchIssue(n: number): Promise<{
+  body?: string;
+  missing: boolean;
+  decision: IssueDecision | null;
+}> {
   try {
     const res = await fetch(GH_ISSUE(n), {
       headers: ghHeaders(),
       signal: AbortSignal.timeout(9_000),
       cache: "no-store",
     });
-    // Deleted applications 404 — a fact worth surfacing (the page swaps the
-    // dead link for an "application removed" marker). Other failures are
-    // treated as transient: no amount this round, but not flagged missing.
-    if (res.status === 404) return { missing: true };
-    if (!res.ok) return { missing: false };
-    const json = (await res.json()) as { body?: string };
-    return { body: json.body ?? undefined, missing: false };
+    // Deleted applications 404 — a fact worth surfacing (the page delists the
+    // row). Other failures are treated as transient: no amount this round,
+    // but not flagged missing.
+    if (res.status === 404) return { missing: true, decision: null };
+    if (!res.ok) return { missing: false, decision: null };
+    const json = (await res.json()) as {
+      body?: string;
+      state?: string;
+      labels?: Array<{ name?: string }>;
+    };
+    // A decision label on a CLOSED issue is a deliberate committee act (unlike
+    // the review label, which is never removed) — reliable enough to display
+    // while the spreadsheet catches up. Real case: #333 closed as Declined
+    // while the sheet still said under review.
+    const labels = (json.labels ?? []).map((l) => l.name ?? "");
+    const has = (s: string) => labels.some((l) => l.includes(s));
+    let decision: IssueDecision | null = null;
+    if (json.state === "closed") {
+      if (has("Declined") || has("Rejected")) decision = "rejected";
+      else if (has("Grant Approved")) decision = "approved";
+    }
+    return { body: json.body ?? undefined, missing: false, decision };
   } catch {
-    return { missing: false };
+    return { missing: false, decision: null };
   }
 }
 
@@ -106,5 +132,13 @@ export function getIssueAmounts(): Map<number, number | null> {
 export function getMissingIssues(): Set<number> {
   const out = new Set<number>();
   for (const [n, e] of store.byNumber) if (e.missing) out.add(n);
+  return out;
+}
+
+/** Committee decisions already visible on GitHub (closed + decision label)
+ * for issues the spreadsheet still lists as under review. Cache-only. */
+export function getIssueDecisions(): Map<number, IssueDecision> {
+  const out = new Map<number, IssueDecision>();
+  for (const [n, e] of store.byNumber) if (e.decision) out.set(n, e.decision);
   return out;
 }

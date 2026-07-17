@@ -16,7 +16,11 @@ import {
 } from "@/lib/zcg/github-applications";
 import { titlesMatch } from "@/lib/zcg/match-titles";
 import { getDiligence } from "@/lib/zcg/diligence";
-import { getIssueAmounts, getMissingIssues } from "@/lib/zcg/issue-amounts";
+import {
+  getIssueAmounts,
+  getIssueDecisions,
+  getMissingIssues,
+} from "@/lib/zcg/issue-amounts";
 import { issueNumberFromLink } from "@/lib/zcg/issue-link";
 import { Synced } from "@/components/synced";
 
@@ -83,6 +87,7 @@ export default async function PropostasPage({
   // Cache-only reads, warmed by the same cron.
   const issueAmounts = getIssueAmounts();
   const missingIssues = getMissingIssues();
+  const issueDecisions = getIssueDecisions();
 
   // A sheet row still marked under review whose GitHub application was
   // DELETED upstream (404) is not a real, verifiable proposal anymore — drop
@@ -107,10 +112,28 @@ export default async function PropostasPage({
     );
     if (idx < 0) {
       // No open application matched — the sheet link may still point at a
-      // closed issue whose body carries the requested amount.
+      // closed issue whose body carries the requested amount, and possibly a
+      // committee decision the spreadsheet has not recorded yet. Source
+      // hierarchy: a DECIDED source beats an undecided one (the sheet still
+      // wins whenever it has decided), so a closed+labelled issue overrides a
+      // sheet row stuck on "under review" (real case: #333 declined upstream).
       const n = issueNumberFromLink(r.platformLink);
       const amt = n != null ? issueAmounts.get(n) : undefined;
-      return amt != null ? { ...r, amountUsd: amt } : r;
+      const dec =
+        n != null && r.status === "under_review"
+          ? issueDecisions.get(n)
+          : undefined;
+      return {
+        ...r,
+        ...(amt != null ? { amountUsd: amt } : {}),
+        ...(dec
+          ? {
+              status: dec,
+              statusLabel: STATUS_LABEL[dec] ?? dec,
+              source: "github" as const,
+            }
+          : {}),
+      };
     }
     usedGh.add(idx);
     return {
@@ -139,19 +162,32 @@ export default async function PropostasPage({
 
   const allRows = [...netNewGhRows, ...enrichedSheet];
 
+  // Rows whose verdict came from GitHub (sheet still says under review) move
+  // between funnel buckets without changing the total.
+  const ghDecided = enrichedSheet.filter(
+    (r) =>
+      r.source === "github" &&
+      issueDecisions.get(issueNumberFromLink(r.platformLink) ?? -1),
+  );
+  const ghRejected = ghDecided.filter((r) => r.status === "rejected").length;
+  const ghApproved = ghDecided.filter((r) => r.status === "approved").length;
+
   // Funnel: applications with no sheet counterpart are net-new to the counts;
   // sheet rows whose application was deleted upstream leave the counts.
   const netNewCount = netNewGhRows.length;
-  const reviewDelta = netNewCount - removedCount;
-  let byStatus = funnel.byStatus.map((b) =>
-    b.status === "under_review"
-      ? { ...b, count: Math.max(b.count + reviewDelta, 0) }
-      : b,
-  );
+  const reviewDelta = netNewCount - removedCount - ghRejected - ghApproved;
+  let byStatus = funnel.byStatus.map((b) => {
+    if (b.status === "under_review")
+      return { ...b, count: Math.max(b.count + reviewDelta, 0) };
+    if (b.status === "rejected") return { ...b, count: b.count + ghRejected };
+    if (b.status === "approved") return { ...b, count: b.count + ghApproved };
+    return b;
+  });
   if (reviewDelta > 0 && !byStatus.some((b) => b.status === "under_review")) {
     byStatus = [...byStatus, { status: "under_review", count: reviewDelta }];
   }
-  const total = funnel.total + reviewDelta;
+  // GitHub-decided rows move buckets but stay in the total.
+  const total = funnel.total + netNewCount - removedCount;
   const approved = byStatus.find((b) => b.status === "approved")?.count ?? 0;
   const maxStatus = byStatus.reduce((m, b) => Math.max(m, b.count), 0);
   const apprRate = total ? Math.round((approved / total) * 100) : 0;
@@ -352,6 +388,16 @@ export default async function PropostasPage({
           from the spreadsheet {removedCount === 1 ? "is" : "are"} not listed:
           the linked GitHub application was deleted, so there is no verifiable
           proposal behind {removedCount === 1 ? "it" : "them"}.
+        </p>
+      ) : null}
+
+      {ghRejected + ghApproved > 0 ? (
+        <p className="mt-1.5 text-xs text-stone-500">
+          {ghRejected + ghApproved} under-review{" "}
+          {ghRejected + ghApproved === 1 ? "entry" : "entries"} from the
+          spreadsheet already {ghRejected + ghApproved === 1 ? "has" : "have"} a
+          committee decision on GitHub (issue closed and labelled) — shown with
+          the GitHub verdict until the spreadsheet catches up.
         </p>
       ) : null}
 
