@@ -40,6 +40,10 @@ interface Wallet {
   logo?: string;
   flagship?: boolean;
   tag?: "Beta" | "Coming soon";
+  /** Public source repository — set ONLY when the wallet itself (app or
+   * firmware) is fully open source, verified per repo + license. Absent for
+   * closed/unpublished wallets and for Ledger (open app, proprietary OS). */
+  source?: string;
 }
 
 // Curated from official sources + a multi-agent research pass (2026), seeded by
@@ -55,6 +59,7 @@ const SOFTWARE: Wallet[] = [
     shielded: "full",
     flagship: true,
     note: "Formerly Zashi — shielded by default, by the original core team.",
+    source: "https://github.com/zodl-inc",
   },
   {
     name: "Zingo!",
@@ -64,6 +69,7 @@ const SOFTWARE: Wallet[] = [
     platforms: ["iOS", "Android", "Desktop"],
     shielded: "full",
     note: "Open-source, shielded by default, with view-only UFVK import.",
+    source: "https://github.com/zingolabs",
   },
   {
     name: "Ywallet",
@@ -73,6 +79,7 @@ const SOFTWARE: Wallet[] = [
     platforms: ["iOS", "Android", "Desktop"],
     shielded: "full",
     note: "Fast shielded send/receive with an encrypted messenger.",
+    source: "https://github.com/hhanh00/zwallet",
   },
   {
     name: "zkool",
@@ -82,6 +89,7 @@ const SOFTWARE: Wallet[] = [
     platforms: ["iOS", "Android", "Desktop"],
     shielded: "full",
     note: "hanh's successor to Ywallet — full shielded with UFVK import.",
+    source: "https://github.com/hhanh00/zkool2",
   },
   {
     name: "Brave Wallet",
@@ -91,6 +99,7 @@ const SOFTWARE: Wallet[] = [
     platforms: ["Desktop", "iOS", "Android"],
     shielded: "full",
     note: "Shielded ZEC built into the Brave browser, via zk-proofs.",
+    source: "https://github.com/brave/brave-core",
   },
   {
     name: "Noir Wallet",
@@ -109,6 +118,7 @@ const SOFTWARE: Wallet[] = [
     platforms: ["Browser extension"],
     shielded: "full",
     note: "Shielded ZEC inside MetaMask — ZCG-funded, Hacken-audited.",
+    source: "https://github.com/ChainSafe/WebZjs",
   },
   {
     name: "Vizor",
@@ -127,6 +137,7 @@ const SOFTWARE: Wallet[] = [
     platforms: ["iOS", "Android", "Desktop"],
     shielded: "full",
     note: "Multi-coin privacy wallet; auto-shields and always sends shielded.",
+    source: "https://github.com/cake-tech/cake_wallet",
   },
   {
     name: "Edge",
@@ -136,6 +147,7 @@ const SOFTWARE: Wallet[] = [
     platforms: ["iOS", "Android"],
     shielded: "full",
     note: "Mainstream multi-asset wallet defaulting to shielded z-addresses.",
+    source: "https://github.com/EdgeApp/edge-react-gui",
   },
   {
     name: "Unstoppable Wallet",
@@ -145,6 +157,7 @@ const SOFTWARE: Wallet[] = [
     platforms: ["iOS", "Android"],
     shielded: "full",
     note: "Multi-coin wallet with full shielded ZEC and auto-shielding.",
+    source: "https://github.com/horizontalsystems/unstoppable-wallet-android",
   },
   {
     name: "Zipher",
@@ -187,6 +200,7 @@ const HARDWARE: Wallet[] = [
     platforms: ["Hardware"],
     shielded: "full",
     note: "First hardware wallet with native shielded (Orchard) ZEC — air-gapped.",
+    source: "https://github.com/KeystoneHQ/keystone3-firmware",
   },
   {
     name: "Ledger",
@@ -205,6 +219,7 @@ const HARDWARE: Wallet[] = [
     platforms: ["Hardware"],
     shielded: "transparent",
     note: "Transparent (t-address) only — no shielded support.",
+    source: "https://github.com/trezor/trezor-firmware",
   },
 ];
 
@@ -251,13 +266,20 @@ function WalletCard({ w, led }: { w: Wallet; led: string }) {
   const s = SHIELDED[w.shielded];
   const star = w.flagship || STARRED.has(w.name);
   return (
-    <a
-      href={w.url}
-      target="_blank"
-      rel="noreferrer"
+    // Stretched-link pattern: the whole card links to the wallet site via an
+    // absolutely-positioned overlay, so the source badge can be its own real
+    // link (nested <a> is invalid HTML).
+    <div
       style={{ "--led": led } as CSSProperties}
-      className="group block h-full"
+      className="group relative h-full"
     >
+      <a
+        href={w.url}
+        target="_blank"
+        rel="noreferrer"
+        aria-label={`${w.name} website`}
+        className="absolute inset-0 z-10 rounded-2xl"
+      />
       <div className="flex h-full flex-col rounded-2xl bg-white p-4 shadow-[0_0_0_1px_var(--led),0_5px_18px_-9px_var(--led)] transition duration-200 group-hover:-translate-y-0.5 group-hover:shadow-[0_0_0_1.5px_var(--led),0_12px_28px_-7px_var(--led)]">
         <div className="flex items-center gap-3">
           {w.logo ? (
@@ -318,7 +340,7 @@ function WalletCard({ w, led }: { w: Wallet; led: string }) {
         </p>
 
         <div className="mt-auto flex items-center justify-between gap-2 pt-3.5">
-          <div className="flex min-w-0 flex-wrap gap-1">
+          <div className="flex min-w-0 flex-wrap items-center gap-1">
             {w.platforms.map((p) => (
               <span
                 key={p}
@@ -327,6 +349,18 @@ function WalletCard({ w, led }: { w: Wallet; led: string }) {
                 {p}
               </span>
             ))}
+            {w.source ? (
+              // relative + z-20 lifts this link above the stretched overlay.
+              <a
+                href={w.source}
+                target="_blank"
+                rel="noreferrer"
+                title={`Fully open source — code at ${w.source.replace("https://", "")}`}
+                className="relative z-20 rounded-md bg-sky-500/10 px-2 py-0.5 text-[11px] font-medium text-sky-800 ring-1 ring-inset ring-sky-500/20 transition hover:bg-sky-500/20"
+              >
+                Open source
+              </a>
+            ) : null}
           </div>
           <span
             className={cn(
@@ -339,7 +373,7 @@ function WalletCard({ w, led }: { w: Wallet; led: string }) {
           </span>
         </div>
       </div>
-    </a>
+    </div>
   );
 }
 
@@ -390,8 +424,15 @@ export default function WalletsPage() {
 
       <p className="mt-7 text-xs text-stone-500">
         {SOFTWARE.length + HARDWARE.length} wallets · curated from official
-        sources, 2026 · shielded support verified per wallet. Deprecated
-        (Nighthawk) and non-Zcash (Coinbase Wallet) options are omitted.
+        sources, 2026 · shielded support verified per wallet. The{" "}
+        <span className="rounded-md bg-sky-500/10 px-1.5 py-px text-[10px] font-medium text-sky-800 ring-1 ring-inset ring-sky-500/20">
+          Open source
+        </span>{" "}
+        badge links to the public repository and appears only when the wallet
+        itself (app or firmware) is fully open source, verified per repo and
+        license; Ledger is excluded because its device OS is proprietary even
+        though its Zcash app is open. Deprecated (Nighthawk) and non-Zcash
+        (Coinbase Wallet) options are omitted.
       </p>
     </>
   );
