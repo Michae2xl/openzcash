@@ -467,3 +467,21 @@ export const zcgLinks = pgTable("zcg_links", {
     .notNull()
     .defaultNow(),
 });
+
+/**
+ * Audit feed of spreadsheet changes, produced by diffing consecutive imports
+ * in refreshZcg: new proposals, proposal status flips, and freshly recorded
+ * payments. Rows are append-only; the id hashes kind+key+transition+day so a
+ * re-run of the same import inserts nothing new.
+ */
+export const zcgChangelog = pgTable("zcg_changelog", {
+  id: text("id").primaryKey(),
+  at: timestamp("at", { withTimezone: true }).notNull().defaultNow(),
+  /** proposal_new | proposal_status | payments */
+  kind: text("kind").notNull(),
+  title: text("title").notNull(),
+  fromVal: text("from_val"),
+  toVal: text("to_val"),
+  /** Extra context, e.g. "3 payments · $28,400" for a payments entry. */
+  detail: text("detail"),
+});

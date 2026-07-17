@@ -22,6 +22,7 @@ import { currentLockboxZec } from "@/lib/zcash/lockbox-live";
 import { formatUsdCents } from "@/lib/zcg/format";
 import { formatZec, formatZecCompact } from "@/lib/zcash/units";
 import { ElectionsSection } from "./elections-section";
+import { listChangelog } from "@/lib/zcg/changelog";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "ZCG · OpenZcash" };
@@ -122,11 +123,24 @@ const TILES: Tile[] = [
   },
 ];
 
+const CHANGE_LABEL: Record<string, string> = {
+  approved: "Approved",
+  rejected: "Rejected",
+  withdrawn: "Withdrawn",
+  cancelled: "Cancelled",
+  filtered: "Filtered",
+  under_review: "Under review",
+  pending: "Pending",
+  vetoed: "Vetoed",
+};
+const changeLabel = (v: string | null) => (v && CHANGE_LABEL[v]) || v || "·";
+
 export default async function ZcgPage() {
-  const [s, lockbox, zcg] = await Promise.all([
+  const [s, lockbox, zcg, changes] = await Promise.all([
     disbursementsSummary(),
     currentLockboxZec(),
     latestSnapshot("zcg_operating"),
+    listChangelog(7, 12).catch(() => []),
   ]);
 
   return (
@@ -209,6 +223,74 @@ export default async function ZcgPage() {
           sub="orgs and individuals"
         />
       </section>
+
+      {changes.length > 0 ? (
+        <section className="mb-8">
+          <div className="mb-3 flex items-baseline justify-between gap-3">
+            <h2 className="text-sm font-semibold text-stone-700">
+              Changed this week
+            </h2>
+            <a
+              href="/api/feeds/zcg.xml"
+              className="text-xs text-stone-400 hover:text-amber-700"
+              title="Subscribe to changes via RSS"
+            >
+              RSS ↗
+            </a>
+          </div>
+          <div className="rounded-2xl border border-stone-200 bg-white shadow-sm shadow-stone-300/40 ring-1 ring-inset ring-stone-900/5">
+            <ul className="divide-y divide-stone-100">
+              {changes.map((c) => (
+                <li
+                  key={c.id}
+                  className="flex items-center justify-between gap-3 px-4 py-2.5 text-sm"
+                >
+                  <span className="min-w-0">
+                    {c.kind === "proposal_status" ? (
+                      <Link
+                        href={`/zcg/proposals?status=${c.toVal ?? ""}`}
+                        className="text-stone-800 hover:text-amber-700"
+                      >
+                        <span className="font-medium">{c.title}</span>
+                        <span className="text-stone-500">
+                          {" "}
+                          moved {changeLabel(c.fromVal)} →{" "}
+                        </span>
+                        <span className="font-medium">
+                          {changeLabel(c.toVal)}
+                        </span>
+                      </Link>
+                    ) : c.kind === "proposal_new" ? (
+                      <Link
+                        href="/zcg/proposals?status=under_review"
+                        className="text-stone-800 hover:text-amber-700"
+                      >
+                        <span className="text-stone-500">New proposal: </span>
+                        <span className="font-medium">{c.title}</span>
+                      </Link>
+                    ) : (
+                      <Link
+                        href="/zcg/disbursements"
+                        className="text-stone-800 hover:text-amber-700"
+                      >
+                        <span className="font-medium">{c.title}</span>
+                        <span className="text-stone-500"> · {c.detail}</span>
+                      </Link>
+                    )}
+                  </span>
+                  <span className="shrink-0 text-xs text-stone-400 tnum">
+                    {c.at.toISOString().slice(5, 10).replace("-", "/")}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <p className="mt-2 text-xs text-stone-500">
+            Automatic diff between daily imports of the official spreadsheet:
+            new proposals, verdict changes, and newly recorded payments.
+          </p>
+        </section>
+      ) : null}
 
       <ElectionsSection />
 

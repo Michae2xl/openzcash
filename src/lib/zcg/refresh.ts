@@ -1,5 +1,6 @@
 import { getDb } from "@/lib/db/client";
 import { zcgSheetImports } from "@/lib/db/schema";
+import { recordChangelog, snapshotForChangelog } from "./changelog";
 import { importDisbursements } from "./import-disbursements";
 import { importMeetings } from "./import-meetings";
 import { importProposals } from "./import-proposals";
@@ -47,6 +48,8 @@ async function safe<T>(fn: () => Promise<T[]>): Promise<T[]> {
  */
 export async function refreshZcg() {
   const startedAt = Date.now();
+  // Pre-import snapshot for the "what changed" feed; never blocks the import.
+  const changelogBefore = await snapshotForChangelog().catch(() => null);
   const disbursements = await safe(importDisbursements);
   const snapshots = await safe(importSnapshots);
   const proposals = await safe(importProposals);
@@ -62,7 +65,13 @@ export async function refreshZcg() {
 
   if (ok) await markRefreshed();
 
+  let changelogEntries = 0;
+  if (ok && changelogBefore) {
+    changelogEntries = await recordChangelog(changelogBefore).catch(() => 0);
+  }
+
   return {
+    changelogEntries,
     ms: Date.now() - startedAt,
     ok,
     disbursements,

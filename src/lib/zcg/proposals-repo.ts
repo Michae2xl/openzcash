@@ -165,5 +165,6 @@ export async function officeUnderReview(
       title: a.title,
       amount: a.amountUsd,
       applicant: a.applicant,
+      createdAt: (a.createdAt || "").slice(0, 10),
     }));
 }

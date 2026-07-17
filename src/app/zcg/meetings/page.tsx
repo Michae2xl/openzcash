@@ -95,6 +95,13 @@ export default async function MeetingsPage() {
         {latest ? (
           <Badge tone="amber">newest {formatDate(latest.meetingDate)}</Badge>
         ) : null}
+        <a
+          href="/api/feeds/meetings.ics"
+          className="ml-auto text-xs font-normal text-stone-400 hover:text-amber-700"
+          title="Subscribe in your calendar app — updates as new minutes are published"
+        >
+          Calendar (ICS) ↗
+        </a>
       </h2>
 
       <Card className="space-y-1 p-2">

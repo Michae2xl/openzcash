@@ -41,6 +41,12 @@ export type DiligenceSignals = {
   /** Issues elsewhere on GitHub whose title matches this proposal's. */
   dupCount: number | null;
   dupUrl: string | null;
+  /** Application thread on the community forum (required by the ZCG T&C).
+   * Null url + missing=true means the search ran and found none. */
+  forumTopicUrl: string | null;
+  forumTopicMissing: boolean;
+  /** First ZCG meeting-minutes post that mentions this proposal's title. */
+  meetingUrl: string | null;
 };
 
 type ApplicantFacts = {
@@ -54,6 +60,12 @@ type ApplicantFacts = {
   at: number;
 };
 type DupFacts = { dupCount: number | null; dupUrl: string | null; at: number };
+type ForumFacts = {
+  topicUrl: string | null;
+  missing: boolean;
+  meetingUrl: string | null;
+  at: number;
+};
 
 /**
  * Cache store anchored on globalThis: Next bundles routes/pages as separate
@@ -64,6 +76,7 @@ type DupFacts = { dupCount: number | null; dupUrl: string | null; at: number };
 type DiligenceStore = {
   applicantCache: Map<string, ApplicantFacts>;
   dupCache: Map<number, DupFacts>;
+  forumCache: Map<number, ForumFacts>;
   applicantByIssue: Map<number, string>;
   warming: boolean;
 };
@@ -71,9 +84,13 @@ const g = globalThis as unknown as { __zcgDiligence?: DiligenceStore };
 const store: DiligenceStore = (g.__zcgDiligence ??= {
   applicantCache: new Map(),
   dupCache: new Map(),
+  forumCache: new Map(),
   applicantByIssue: new Map(),
   warming: false,
 });
+// Dev HMR keeps an older store instance alive across module reloads; make
+// sure fields added after that instance was created exist.
+store.forumCache ??= new Map();
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
@@ -198,6 +215,76 @@ async function fetchDupFacts(number: number, title: string): Promise<DupFacts> {
   };
 }
 
+const FORUM = "https://forum.zcashcommunity.com";
+
+/** Lowercase, punctuation-free, whitespace-collapsed form for fuzzy compare. */
+function norm(s: string): string {
+  return s
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+}
+
+/**
+ * One forum search per proposal answers two questions: does the application
+ * thread required by the ZCG T&C exist, and has a meeting-minutes post
+ * mentioned this title? Thread matching is fuzzy (title word overlap), so a
+ * "missing" verdict is a signal to verify, not a proven violation.
+ */
+async function fetchForumFacts(
+  title: string,
+  submittedAt: string,
+): Promise<ForumFacts> {
+  const t = searchableTitle(title) ?? title.trim();
+  const res = await ghJson<{
+    topics?: Array<{
+      id: number;
+      slug: string;
+      title: string;
+      created_at?: string;
+    }>;
+    posts?: Array<{ topic_id: number; post_number: number }>;
+  }>(`${FORUM}/search.json?q=${encodeURIComponent(t)}`);
+  if (res == null)
+    return { topicUrl: null, missing: false, meetingUrl: null, at: Date.now() };
+
+  const topics = res.topics ?? [];
+  const byId = new Map(topics.map((x) => [x.id, x]));
+  const nTitle = norm(t);
+  const words = nTitle.split(" ").filter((w) => w.length > 2);
+
+  const isMatch = (topicTitle: string) => {
+    const nt = norm(topicTitle);
+    if (nt.includes(nTitle)) return true;
+    if (!words.length) return false;
+    const hit = words.filter((w) => nt.includes(w)).length;
+    return hit / words.length >= 0.8;
+  };
+
+  const appTopic = topics.find(
+    (x) => !/meeting\s+minutes/i.test(x.title) && isMatch(x.title),
+  );
+
+  // A proposal can only appear in minutes AFTER it was submitted — older
+  // matches are similarly-titled proposals from past cycles (the Zenith trap).
+  let meetingUrl: string | null = null;
+  for (const p of res.posts ?? []) {
+    const topic = byId.get(p.topic_id);
+    if (!topic || !/meeting\s+minutes/i.test(topic.title)) continue;
+    const topicDay = (topic.created_at ?? "").slice(0, 10);
+    if (submittedAt && topicDay && topicDay < submittedAt) continue;
+    meetingUrl = `${FORUM}/t/${topic.slug}/${topic.id}/${p.post_number}`;
+    break;
+  }
+
+  return {
+    topicUrl: appTopic ? `${FORUM}/t/${appTopic.slug}/${appTopic.id}` : null,
+    missing: !appTopic,
+    meetingUrl,
+    at: Date.now(),
+  };
+}
+
 /**
  * Computes/refreshes the signals for everything currently under review.
  * Long-running by design (search API pacing) — call it fire-and-forget from
@@ -230,10 +317,22 @@ export async function warmDiligence(): Promise<{
     }
 
     for (const p of proposals) {
-      const hit = store.dupCache.get(p.number);
-      if (hit && now - hit.at < DUP_TTL_MS) continue;
-      store.dupCache.set(p.number, await fetchDupFacts(p.number, p.title));
-      await sleep(SEARCH_SPACING_MS); // search API: 10 req/min unauthenticated
+      const dupHit = store.dupCache.get(p.number);
+      const forumHit = store.forumCache.get(p.number);
+      const dupStale = !dupHit || now - dupHit.at >= DUP_TTL_MS;
+      const forumStale = !forumHit || now - forumHit.at >= DUP_TTL_MS;
+      if (forumStale) {
+        store.forumCache.set(
+          p.number,
+          await fetchForumFacts(p.title, p.createdAt),
+        );
+      }
+      if (dupStale) {
+        store.dupCache.set(p.number, await fetchDupFacts(p.number, p.title));
+        await sleep(SEARCH_SPACING_MS); // GitHub search: 10 req/min unauthenticated
+      } else if (forumStale) {
+        await sleep(1_000); // forum search is lenient; still be polite
+      }
     }
 
     return { ok: true, proposals: proposals.length };
@@ -250,7 +349,8 @@ export function getDiligence(): Map<number, DiligenceSignals> {
   for (const [number, applicant] of store.applicantByIssue) {
     const a = store.applicantCache.get(applicant);
     const d = store.dupCache.get(number);
-    if (!a && !d) continue;
+    const f = store.forumCache.get(number);
+    if (!a && !d && !f) continue;
     out.set(number, {
       applicant,
       accountAgeYears: a?.accountAgeYears ?? null,
@@ -262,6 +362,9 @@ export function getDiligence(): Map<number, DiligenceSignals> {
       priorDeclined: a?.priorDeclined ?? null,
       dupCount: d?.dupCount ?? null,
       dupUrl: d?.dupUrl ?? null,
+      forumTopicUrl: f?.topicUrl ?? null,
+      forumTopicMissing: f?.missing ?? false,
+      meetingUrl: f?.meetingUrl ?? null,
     });
   }
   return out;

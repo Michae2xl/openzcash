@@ -1,6 +1,7 @@
 "use client";
 
 import { Badge } from "@/components/ui";
+import { cn } from "@/lib/utils";
 import { DataTable, type Column } from "@/components/data-table";
 import { ProposalAdminControls } from "./proposal-admin";
 
@@ -17,6 +18,9 @@ export type RowDiligence = {
   priorDeclined: number | null;
   dupCount: number | null;
   dupUrl: string | null;
+  forumTopicUrl: string | null;
+  forumTopicMissing: boolean;
+  meetingUrl: string | null;
 };
 
 /** Serializable shape for the DataTable (no bigint). */
@@ -34,6 +38,10 @@ export type ProposalTableRow = {
   amountUsd?: number | null;
   /** Diligence signals — only computed for the live under-review set. */
   diligence?: RowDiligence | null;
+  /** Whole days since submission, set only while under review. */
+  daysInReview?: number | null;
+  /** True when daysInReview exceeds the committee's historical average. */
+  reviewOverdue?: boolean;
 };
 
 const chip =
@@ -91,6 +99,38 @@ function DiligenceCell({ d }: { d: RowDiligence }) {
           {d.priorApps === 0
             ? "first application"
             : `${d.priorApps} prior · ${d.priorApproved ?? 0} approved`}
+        </a>
+      ) : null}
+      {d.forumTopicUrl ? (
+        <a
+          href={d.forumTopicUrl}
+          target="_blank"
+          rel="noreferrer"
+          className={`${chip} bg-emerald-500/10 text-emerald-800 ring-emerald-500/20 hover:bg-emerald-500/20`}
+          title="The application thread required by the ZCG terms exists on the community forum — opens it"
+        >
+          forum thread
+        </a>
+      ) : d.forumTopicMissing ? (
+        <a
+          href={`https://forum.zcashcommunity.com/search?q=${encodeURIComponent(d.applicant)}`}
+          target="_blank"
+          rel="noreferrer"
+          className={`${chip} bg-rose-500/10 text-rose-800 ring-rose-500/20 hover:bg-rose-500/20`}
+          title="The ZCG terms require posting the application on the community forum, and a title search found no thread — opens a forum search to verify (fuzzy match, may miss renamed threads)"
+        >
+          no forum thread
+        </a>
+      ) : null}
+      {d.meetingUrl ? (
+        <a
+          href={d.meetingUrl}
+          target="_blank"
+          rel="noreferrer"
+          className={`${chip} bg-violet-500/10 text-violet-800 ring-violet-500/20 hover:bg-violet-500/20`}
+          title="A ZCG meeting-minutes post mentions this proposal — opens the exact post"
+        >
+          in meeting minutes
         </a>
       ) : null}
       {d.dupCount != null && d.dupCount > 0 && d.dupUrl ? (
@@ -172,8 +212,25 @@ const columns: Column<ProposalTableRow>[] = [
     sortValue: (r) => r.submitted,
     filterValue: (r) => r.submitted,
     render: (r) => (
-      <span className="whitespace-nowrap text-xs text-stone-600 tnum">
-        {r.submitted || "·"}
+      <span className="flex flex-col items-end gap-0.5">
+        <span className="whitespace-nowrap text-xs text-stone-600 tnum">
+          {r.submitted || "·"}
+        </span>
+        {r.daysInReview != null ? (
+          <span
+            className={cn(
+              "whitespace-nowrap text-[10px] font-medium tnum",
+              r.reviewOverdue ? "text-amber-700" : "text-stone-400",
+            )}
+            title={
+              r.reviewOverdue
+                ? "In review longer than the committee's historical average decision time"
+                : "Days since submission"
+            }
+          >
+            {r.daysInReview}d in review{r.reviewOverdue ? " ⚠" : ""}
+          </span>
+        ) : null}
       </span>
     ),
   },

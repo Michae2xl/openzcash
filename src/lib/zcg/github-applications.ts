@@ -134,6 +134,8 @@ export interface OfficeProposalDTO {
   title: string;
   amount: number | null;
   applicant: string;
+  /** Submission date (YYYY-MM-DD) — bounds time-sensitive signal matching. */
+  createdAt: string;
 }
 
 export const ZCG_APPLICATIONS_REPO_URL = `https://github.com/${REPO}/issues`;

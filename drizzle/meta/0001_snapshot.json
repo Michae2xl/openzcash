@@ -1,0 +1,1845 @@
+{
+  "id": "4e69912f-5a28-40d5-b267-6210daee0f56",
+  "prevId": "218a4503-1b55-45f9-ad93-12b8257ac30d",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.chain_outputs": {
+      "name": "chain_outputs",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "treasury_id": {
+          "name": "treasury_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'default'"
+        },
+        "txid": {
+          "name": "txid",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "idx": {
+          "name": "idx",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "pool": {
+          "name": "pool",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "direction": {
+          "name": "direction",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "value_zat": {
+          "name": "value_zat",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "address": {
+          "name": "address",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "memo_b64": {
+          "name": "memo_b64",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "decrypted_via": {
+          "name": "decrypted_via",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.chain_txs": {
+      "name": "chain_txs",
+      "schema": "",
+      "columns": {
+        "txid": {
+          "name": "txid",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "block_height": {
+          "name": "block_height",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "block_time": {
+          "name": "block_time",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "pool": {
+          "name": "pool",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "fee_zat": {
+          "name": "fee_zat",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "treasury_id": {
+          "name": "treasury_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'default'"
+        },
+        "scanned_at": {
+          "name": "scanned_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "chain_txs_treasury_id_txid_pk": {
+          "name": "chain_txs_treasury_id_txid_pk",
+          "columns": [
+            "treasury_id",
+            "txid"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.classification_overrides": {
+      "name": "classification_overrides",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "treasury_id": {
+          "name": "treasury_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "txid": {
+          "name": "txid",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "classification": {
+          "name": "classification",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "reason": {
+          "name": "reason",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "classification_overrides_treasury_id_txid_unique": {
+          "name": "classification_overrides_treasury_id_txid_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "treasury_id",
+            "txid"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.derived_addresses": {
+      "name": "derived_addresses",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "project_id": {
+          "name": "project_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "address": {
+          "name": "address",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "diversifier_index": {
+          "name": "diversifier_index",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "issued_month": {
+          "name": "issued_month",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "derived_addresses_project_id_project_recipients_id_fk": {
+          "name": "derived_addresses_project_id_project_recipients_id_fk",
+          "tableFrom": "derived_addresses",
+          "tableTo": "project_recipients",
+          "columnsFrom": [
+            "project_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "derived_addresses_address_unique": {
+          "name": "derived_addresses_address_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "address"
+          ]
+        },
+        "derived_addresses_project_id_issued_month_unique": {
+          "name": "derived_addresses_project_id_issued_month_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "project_id",
+            "issued_month"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.onboarding_invites": {
+      "name": "onboarding_invites",
+      "schema": "",
+      "columns": {
+        "token": {
+          "name": "token",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "label": {
+          "name": "label",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'pending'"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "expires_at": {
+          "name": "expires_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "used_at": {
+          "name": "used_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "treasury_id": {
+          "name": "treasury_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.paychecks": {
+      "name": "paychecks",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "payslip_id": {
+          "name": "payslip_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "employee_label": {
+          "name": "employee_label",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "period": {
+          "name": "period",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "amount_zat": {
+          "name": "amount_zat",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "expected_txid": {
+          "name": "expected_txid",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "account_code": {
+          "name": "account_code",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.project_recipients": {
+      "name": "project_recipients",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "project_name": {
+          "name": "project_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "payment_kind": {
+          "name": "payment_kind",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'grant'"
+        },
+        "zkool_account_id": {
+          "name": "zkool_account_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "scan_ref": {
+          "name": "scan_ref",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ufvk_fingerprint": {
+          "name": "ufvk_fingerprint",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'active'"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.scan_state": {
+      "name": "scan_state",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "last_scanned_height": {
+          "name": "last_scanned_height",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.viewing_keys": {
+      "name": "viewing_keys",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "account_label": {
+          "name": "account_label",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "kind": {
+          "name": "kind",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "pools": {
+          "name": "pools",
+          "type": "text[]",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ufvk_masked": {
+          "name": "ufvk_masked",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ufvk_encrypted": {
+          "name": "ufvk_encrypted",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "scope": {
+          "name": "scope",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'active'"
+        },
+        "treasury_type": {
+          "name": "treasury_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'outro'"
+        },
+        "is_public": {
+          "name": "is_public",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "balance_zat": {
+          "name": "balance_zat",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "address": {
+          "name": "address",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "birth_height": {
+          "name": "birth_height",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "imported_at": {
+          "name": "imported_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.vk_access_log": {
+      "name": "vk_access_log",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "viewing_key_id": {
+          "name": "viewing_key_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "principal": {
+          "name": "principal",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "granted_at": {
+          "name": "granted_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "scope": {
+          "name": "scope",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "reason": {
+          "name": "reason",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "vk_access_log_viewing_key_id_viewing_keys_id_fk": {
+          "name": "vk_access_log_viewing_key_id_viewing_keys_id_fk",
+          "tableFrom": "vk_access_log",
+          "tableTo": "viewing_keys",
+          "columnsFrom": [
+            "viewing_key_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.zcg_balance_snapshots": {
+      "name": "zcg_balance_snapshots",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "scope": {
+          "name": "scope",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "captured_at": {
+          "name": "captured_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "block_height": {
+          "name": "block_height",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "block_time": {
+          "name": "block_time",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "zec_balance_zat": {
+          "name": "zec_balance_zat",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "usd_cash_balance_cents": {
+          "name": "usd_cash_balance_cents",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "zecusd_price_cents": {
+          "name": "zecusd_price_cents",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "usd_value_of_zec_cents": {
+          "name": "usd_value_of_zec_cents",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "usd_total_holdings_cents": {
+          "name": "usd_total_holdings_cents",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "usd_grants_approved_cents": {
+          "name": "usd_grants_approved_cents",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "usd_milestones_paid_cents": {
+          "name": "usd_milestones_paid_cents",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "future_grant_liabilities_cents": {
+          "name": "future_grant_liabilities_cents",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "zec_receivables_zat": {
+          "name": "zec_receivables_zat",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "source_sheet_gid": {
+          "name": "source_sheet_gid",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "imported_at": {
+          "name": "imported_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "zcg_balance_snapshots_scope_captured_at_unique": {
+          "name": "zcg_balance_snapshots_scope_captured_at_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "scope",
+            "captured_at"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.zcg_budget_snapshots": {
+      "name": "zcg_budget_snapshots",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "source_sheet": {
+          "name": "source_sheet",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "label": {
+          "name": "label",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "usd_cents": {
+          "name": "usd_cents",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "zec_zat": {
+          "name": "zec_zat",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "captured_at": {
+          "name": "captured_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "zcg_budget_snapshots_label_captured_at_unique": {
+          "name": "zcg_budget_snapshots_label_captured_at_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "label",
+            "captured_at"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.zcg_changelog": {
+      "name": "zcg_changelog",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "at": {
+          "name": "at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "kind": {
+          "name": "kind",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "title": {
+          "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "from_val": {
+          "name": "from_val",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "to_val": {
+          "name": "to_val",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "detail": {
+          "name": "detail",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.zcg_disbursement_overrides": {
+      "name": "zcg_disbursement_overrides",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "disbursement_id": {
+          "name": "disbursement_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "patch": {
+          "name": "patch",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "original": {
+          "name": "original",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "reason": {
+          "name": "reason",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "zcg_disbursement_overrides_disbursement_id_unique": {
+          "name": "zcg_disbursement_overrides_disbursement_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "disbursement_id"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.zcg_disbursements": {
+      "name": "zcg_disbursements",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "source_sheet": {
+          "name": "source_sheet",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "disbursement_type": {
+          "name": "disbursement_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "project": {
+          "name": "project",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "recipient_name_raw": {
+          "name": "recipient_name_raw",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "recipient_key": {
+          "name": "recipient_key",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "recipient_id": {
+          "name": "recipient_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "deliverable": {
+          "name": "deliverable",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "category": {
+          "name": "category",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "reporting_frequency": {
+          "name": "reporting_frequency",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "milestone_label": {
+          "name": "milestone_label",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "milestone_seq": {
+          "name": "milestone_seq",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "settlement_asset": {
+          "name": "settlement_asset",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'ZEC'"
+        },
+        "amount_usd_cents": {
+          "name": "amount_usd_cents",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "usd_disbursed_cents": {
+          "name": "usd_disbursed_cents",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "zec_disbursed_zat": {
+          "name": "zec_disbursed_zat",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "usd_disbursed_zec_rate_cents": {
+          "name": "usd_disbursed_zec_rate_cents",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "paid_out_date": {
+          "name": "paid_out_date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "paid_out_raw": {
+          "name": "paid_out_raw",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "''"
+        },
+        "estimated_payout_date": {
+          "name": "estimated_payout_date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "for_month": {
+          "name": "for_month",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "grant_status": {
+          "name": "grant_status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "is_test": {
+          "name": "is_test",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "is_paid": {
+          "name": "is_paid",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "is_internal": {
+          "name": "is_internal",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "source_sheet_gid": {
+          "name": "source_sheet_gid",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "source_row_index": {
+          "name": "source_row_index",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "origin": {
+          "name": "origin",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'sheet'"
+        },
+        "locked": {
+          "name": "locked",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "imported_at": {
+          "name": "imported_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "zcg_disbursements_recipient_id_project_recipients_id_fk": {
+          "name": "zcg_disbursements_recipient_id_project_recipients_id_fk",
+          "tableFrom": "zcg_disbursements",
+          "tableTo": "project_recipients",
+          "columnsFrom": [
+            "recipient_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.zcg_elections": {
+      "name": "zcg_elections",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "title": {
+          "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "seats": {
+          "name": "seats",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 1
+        },
+        "url": {
+          "name": "url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "nominations_close": {
+          "name": "nominations_close",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "community_call": {
+          "name": "community_call",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "voting_closes": {
+          "name": "voting_closes",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "results_by": {
+          "name": "results_by",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "elected": {
+          "name": "elected",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "note": {
+          "name": "note",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "sort_order": {
+          "name": "sort_order",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.zcg_links": {
+      "name": "zcg_links",
+      "schema": "",
+      "columns": {
+        "key": {
+          "name": "key",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "label": {
+          "name": "label",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "url": {
+          "name": "url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.zcg_maya_transfers": {
+      "name": "zcg_maya_transfers",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "project": {
+          "name": "project",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "amount_usd_cents": {
+          "name": "amount_usd_cents",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "transferred_at": {
+          "name": "transferred_at",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "zec_transferred_zat": {
+          "name": "zec_transferred_zat",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "zec_usd_price_cents": {
+          "name": "zec_usd_price_cents",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.zcg_meetings": {
+      "name": "zcg_meetings",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "title": {
+          "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "meeting_date": {
+          "name": "meeting_date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "url": {
+          "name": "url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.zcg_proposals": {
+      "name": "zcg_proposals",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "program": {
+          "name": "program",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "proposal_ext_id": {
+          "name": "proposal_ext_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "title": {
+          "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "title_key": {
+          "name": "title_key",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "applicants_raw": {
+          "name": "applicants_raw",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "submitted_date": {
+          "name": "submitted_date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status_raw": {
+          "name": "status_raw",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "decision_date": {
+          "name": "decision_date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "decision_turnaround_days": {
+          "name": "decision_turnaround_days",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "requested_usd_cents": {
+          "name": "requested_usd_cents",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "platform_link": {
+          "name": "platform_link",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "forum_link": {
+          "name": "forum_link",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "condition_notes": {
+          "name": "condition_notes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "country": {
+          "name": "country",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "org_or_individual": {
+          "name": "org_or_individual",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "source_sheet_gid": {
+          "name": "source_sheet_gid",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "source_row_index": {
+          "name": "source_row_index",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "origin": {
+          "name": "origin",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'sheet'"
+        },
+        "locked": {
+          "name": "locked",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "imported_at": {
+          "name": "imported_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "zcg_proposals_program_source_sheet_gid_source_row_index_unique": {
+          "name": "zcg_proposals_program_source_sheet_gid_source_row_index_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "program",
+            "source_sheet_gid",
+            "source_row_index"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.zcg_reconciliation_links": {
+      "name": "zcg_reconciliation_links",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "treasury_id": {
+          "name": "treasury_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "txid": {
+          "name": "txid",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "output_idx": {
+          "name": "output_idx",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "disbursement_id": {
+          "name": "disbursement_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "match_kind": {
+          "name": "match_kind",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "confidence_bps": {
+          "name": "confidence_bps",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "zec_matched_zat": {
+          "name": "zec_matched_zat",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'auto'"
+        },
+        "reviewed_by": {
+          "name": "reviewed_by",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "reviewed_at": {
+          "name": "reviewed_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "note": {
+          "name": "note",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "zcg_reconciliation_links_disbursement_id_zcg_disbursements_id_fk": {
+          "name": "zcg_reconciliation_links_disbursement_id_zcg_disbursements_id_fk",
+          "tableFrom": "zcg_reconciliation_links",
+          "tableTo": "zcg_disbursements",
+          "columnsFrom": [
+            "disbursement_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "zcg_reconciliation_links_treasury_id_txid_disbursement_id_unique": {
+          "name": "zcg_reconciliation_links_treasury_id_txid_disbursement_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "treasury_id",
+            "txid",
+            "disbursement_id"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.zcg_sheet_imports": {
+      "name": "zcg_sheet_imports",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "sheet_gid": {
+          "name": "sheet_gid",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sheet_group": {
+          "name": "sheet_group",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "content_sha256": {
+          "name": "content_sha256",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "row_count": {
+          "name": "row_count",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sheet_status": {
+          "name": "sheet_status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "parsed_ok": {
+          "name": "parsed_ok",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "error": {
+          "name": "error",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "fetched_at": {
+          "name": "fetched_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "zcg_sheet_imports_sheet_gid_content_sha256_unique": {
+          "name": "zcg_sheet_imports_sheet_gid_content_sha256_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "sheet_gid",
+            "content_sha256"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.zcg_totals": {
+      "name": "zcg_totals",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "pool": {
+          "name": "pool",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "row_kind": {
+          "name": "row_kind",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "label": {
+          "name": "label",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "category": {
+          "name": "category",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "usd_paid_to_date_cents": {
+          "name": "usd_paid_to_date_cents",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "usd_future_pipeline_cents": {
+          "name": "usd_future_pipeline_cents",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "is_internal_bucket": {
+          "name": "is_internal_bucket",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "captured_at": {
+          "name": "captured_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "source_sheet_gid": {
+          "name": "source_sheet_gid",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "zcg_totals_pool_row_kind_label_captured_at_unique": {
+          "name": "zcg_totals_pool_row_kind_label_captured_at_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "pool",
+            "row_kind",
+            "label",
+            "captured_at"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {},
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

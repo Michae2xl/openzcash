@@ -5,7 +5,7 @@ import {
   proposalsFunnel,
   type ProposalRow,
 } from "@/lib/zcg/proposals-repo";
-import { cn } from "@/lib/utils";
+import { cn, nowMs } from "@/lib/utils";
 import { getIsAdmin } from "@/lib/auth/admin";
 import { getLinks } from "@/lib/zcg/governance-repo";
 import { ProposalsTable, type ProposalTableRow } from "./proposals-table";
@@ -166,12 +166,27 @@ export default async function PropostasPage({
       )
     : null;
 
+  // Ageing of the live queue: whole days since submission for every
+  // under-review row, flagged when past the committee's historical average.
+  const todayMs = nowMs();
+  const withAgeing = allRows.map((r) => {
+    if (r.status !== "under_review" || !r.submitted) return r;
+    const t = Date.parse(r.submitted);
+    if (Number.isNaN(t)) return r;
+    const days = Math.max(0, Math.floor((todayMs - t) / 86_400_000));
+    return {
+      ...r,
+      daysInReview: days,
+      reviewOverdue: avgDecisionDays != null && days > avgDecisionDays,
+    };
+  });
+
   // Filter the table by the clicked funnel verdict.
   const active =
     filterRaw && STATUS_LABEL[filterRaw] ? (filterRaw as string) : null;
   const shownRows = active
-    ? allRows.filter((r) => r.status === active)
-    : allRows;
+    ? withAgeing.filter((r) => r.status === active)
+    : withAgeing;
 
   return (
     <>
