@@ -2,8 +2,14 @@ import { getMeetings } from "@/lib/zcg/governance-repo";
 
 export const dynamic = "force-dynamic";
 
+// Escapes ICS text AND strips CR/LF: a newline smuggled into a title would
+// otherwise inject arbitrary calendar properties (property injection).
 const esc = (s: string) =>
-  s.replace(/\\/g, "\\\\").replace(/;/g, "\\;").replace(/,/g, "\\,");
+  s
+    .replace(/[\r\n]+/g, " ")
+    .replace(/\\/g, "\\\\")
+    .replace(/;/g, "\\;")
+    .replace(/,/g, "\\,");
 
 /**
  * iCalendar feed of recorded ZCG meetings (all-day events linking each set of
@@ -24,7 +30,7 @@ export async function GET() {
         `DTSTAMP:${d}T000000Z`,
         `DTSTART;VALUE=DATE:${d}`,
         `SUMMARY:${esc(m.title)}`,
-        `URL:${m.url}`,
+        `URL:${m.url.replace(/[\r\n]+/g, "")}`,
         `DESCRIPTION:${esc(`Minutes: ${m.url}`)}`,
         "END:VEVENT",
       ].join("\r\n");
