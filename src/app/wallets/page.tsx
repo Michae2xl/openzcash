@@ -128,6 +128,7 @@ const SOFTWARE: Wallet[] = [
     platforms: ["iOS", "Android", "Desktop"],
     shielded: "full",
     note: "Shielded by default with Keystone support, from the Keplr team.",
+    source: "https://github.com/chainapsis/vizor-wallet",
   },
   {
     name: "Cake Wallet",
@@ -168,6 +169,7 @@ const SOFTWARE: Wallet[] = [
     shielded: "full",
     tag: "Beta",
     note: "Shielded-by-default Orchard wallet with a CLI for AI agents.",
+    source: "https://github.com/atmospherelabs-dev/zipher-app",
   },
   {
     name: "zSTASH",
