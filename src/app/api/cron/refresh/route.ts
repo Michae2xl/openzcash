@@ -30,13 +30,15 @@ export async function GET(req: Request) {
 
   try {
     const r = await refreshZcg();
-    // Trail the refresh with the signal warm-ups, fire-and-forget: diligence
-    // paces itself against GitHub's search rate limit (can take minutes), and
-    // the long-lived server keeps both running after this response returns.
-    import("@/lib/zcg/diligence")
-      .then(({ warmDiligence }) => warmDiligence())
-      .then(() => import("@/lib/zcg/issue-amounts"))
+    // Trail the refresh with the signal warm-ups, fire-and-forget. Issue
+    // verdicts/amounts go first (cheap, they decide the under-review list);
+    // diligence paces itself against GitHub's search rate limit (can take
+    // minutes), and the long-lived server keeps both running after this
+    // response returns.
+    import("@/lib/zcg/issue-amounts")
       .then(({ warmIssueAmounts }) => warmIssueAmounts())
+      .then(() => import("@/lib/zcg/diligence"))
+      .then(({ warmDiligence }) => warmDiligence())
       .catch(() => {});
     // Surface a real ok + per-tab results so cron monitoring catches a broken
     // import instead of seeing a blanket 200 even when every tab failed.

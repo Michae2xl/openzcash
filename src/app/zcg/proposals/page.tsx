@@ -171,16 +171,19 @@ export default async function PropostasPage({
   );
   const ghRejected = ghDecided.filter((r) => r.status === "rejected").length;
   const ghApproved = ghDecided.filter((r) => r.status === "approved").length;
+  const ghWithdrawn = ghDecided.filter((r) => r.status === "withdrawn").length;
 
   // Funnel: applications with no sheet counterpart are net-new to the counts;
   // sheet rows whose application was deleted upstream leave the counts.
   const netNewCount = netNewGhRows.length;
-  const reviewDelta = netNewCount - removedCount - ghRejected - ghApproved;
+  const reviewDelta =
+    netNewCount - removedCount - ghRejected - ghApproved - ghWithdrawn;
   let byStatus = funnel.byStatus.map((b) => {
     if (b.status === "under_review")
       return { ...b, count: Math.max(b.count + reviewDelta, 0) };
     if (b.status === "rejected") return { ...b, count: b.count + ghRejected };
     if (b.status === "approved") return { ...b, count: b.count + ghApproved };
+    if (b.status === "withdrawn") return { ...b, count: b.count + ghWithdrawn };
     return b;
   });
   if (reviewDelta > 0 && !byStatus.some((b) => b.status === "under_review")) {

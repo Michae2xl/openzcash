@@ -22,8 +22,9 @@ const GH_ISSUE = (n: number) =>
   `https://api.github.com/repos/ZcashCommunityGrants/zcashcommunitygrants/issues/${n}`;
 const TTL_MS = 24 * 60 * 60 * 1000;
 
-/** Committee decision read from the issue itself (closed + decision label). */
-export type IssueDecision = "approved" | "rejected";
+/** Outcome read from the issue itself: a decision label on a closed issue,
+ * or — closed with NO decision label — withdrawn by the applicant. */
+export type IssueDecision = "approved" | "rejected" | "withdrawn";
 
 type Entry = {
   amountUsd: number | null;
@@ -104,16 +105,18 @@ async function fetchIssue(n: number): Promise<{
       state?: string;
       labels?: Array<{ name?: string }>;
     };
-    // A decision label on a CLOSED issue is a deliberate committee act (unlike
-    // the review label, which is never removed) — reliable enough to display
-    // while the spreadsheet catches up. Real case: #333 closed as Declined
-    // while the sheet still said under review.
+    // "Under review" means an OPEN issue. On a closed one, a decision label is
+    // a deliberate committee act (unlike the review label, which is never
+    // removed) — and closed with NO decision label means the applicant
+    // withdrew it. Real case: #333 closed as Declined while the sheet still
+    // said under review.
     const labels = (json.labels ?? []).map((l) => l.name ?? "");
     const has = (s: string) => labels.some((l) => l.includes(s));
     let decision: IssueDecision | null = null;
     if (json.state === "closed") {
       if (has("Declined") || has("Rejected")) decision = "rejected";
       else if (has("Grant Approved")) decision = "approved";
+      else decision = "withdrawn";
     }
     return { body: json.body ?? undefined, missing: false, decision };
   } catch {
