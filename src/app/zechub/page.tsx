@@ -12,6 +12,7 @@ import {
   type TreasuryPayoutRow,
 } from "@/lib/zechub/treasury-repo";
 import { titlesMatch } from "@/lib/zcg/match-titles";
+import { PayoutsTable } from "./payouts-table";
 import { formatUsdCents } from "@/lib/zcg/format";
 import { formatZec } from "@/lib/zcash/units";
 
@@ -190,43 +191,6 @@ function SplitBar({ segments }: { segments: Segment[] }) {
   );
 }
 
-function MilestoneDots({ p }: { p: TreasuryPayoutRow }) {
-  const dots = [p.m1, p.m2, p.m3].filter((m) => m != null);
-  if (!dots.length) return <span className="text-stone-300">·</span>;
-  return (
-    <span className="flex items-center gap-1" title="Milestones M1 · M2 · M3">
-      {dots.map((m, i) => (
-        <span
-          key={i}
-          className={
-            /complete/i.test(m ?? "")
-              ? "h-2 w-2 rounded-full bg-emerald-500"
-              : "h-2 w-2 rounded-full bg-stone-200 ring-1 ring-inset ring-stone-300"
-          }
-          title={`M${i + 1}: ${m || "pending"}`}
-        />
-      ))}
-    </span>
-  );
-}
-
-/** Thin paid-vs-committed progress under each grant title. */
-function PayoutProgress({ p }: { p: TreasuryPayoutRow }) {
-  const paid = Number(p.paidUsdCents ?? 0n);
-  const pending = Number(p.pendingUsdCents ?? 0n);
-  const total = paid + pending;
-  if (total <= 0) return null;
-  return (
-    <div className="mt-1 h-1 w-28 overflow-hidden rounded-full bg-stone-100">
-      <div
-        className="h-full rounded-full bg-emerald-500"
-        style={{ width: `${(paid / total) * 100}%` }}
-        title={`${Math.round((paid / total) * 100)}% paid`}
-      />
-    </div>
-  );
-}
-
 function TreasuryCard({
   label,
   zat,
@@ -376,6 +340,18 @@ export default async function ZechubDaoPage() {
 
   const fundedFor = (p: ZechubProposal): TreasuryPayoutRow | null =>
     payouts.find((x) => titlesMatch(x.title, p.title)) ?? null;
+
+  // Rows for the sortable payout table: each grant links to its DAO proposal
+  // when the title matches, else to the treasury sheet itself.
+  const payoutRows = payouts.map((x) => ({
+    id: x.id,
+    title: x.title,
+    url: proposals.find((p) => titlesMatch(x.title, p.title))?.url ?? SHEET_URL,
+    paidUsd: x.paidUsdCents != null ? Number(x.paidUsdCents) / 100 : null,
+    pendingUsd:
+      x.pendingUsdCents != null ? Number(x.pendingUsdCents) / 100 : null,
+    milestones: [x.m1, x.m2, x.m3].filter((m): m is string => m != null),
+  }));
 
   return (
     <>
@@ -538,50 +514,8 @@ export default async function ZechubDaoPage() {
                 <h2 className="mb-3 text-sm font-semibold text-stone-700">
                   Grants: paid vs committed
                 </h2>
-                <Card className="p-0">
-                  <div className="max-h-[21rem] overflow-y-auto">
-                    <table className="w-full text-sm">
-                      <thead className="sticky top-0 bg-white text-left text-[11px] uppercase tracking-wider text-stone-500">
-                        <tr>
-                          <th className="px-4 py-2 font-medium">Grant</th>
-                          <th className="px-4 py-2 text-right font-medium">
-                            Paid
-                          </th>
-                          <th className="px-4 py-2 text-right font-medium">
-                            Committed
-                          </th>
-                          <th className="px-4 py-2 text-right font-medium">
-                            M1·M2·M3
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-stone-100">
-                        {payouts.map((x) => (
-                          <tr key={x.id}>
-                            <td className="max-w-[15rem] px-4 py-2 text-stone-800">
-                              <span className="block truncate">{x.title}</span>
-                              <PayoutProgress p={x} />
-                            </td>
-                            <td className="px-4 py-2 text-right text-emerald-700 tnum">
-                              {x.paidUsdCents
-                                ? formatUsdCents(x.paidUsdCents)
-                                : "·"}
-                            </td>
-                            <td className="px-4 py-2 text-right text-amber-700/90 tnum">
-                              {x.pendingUsdCents
-                                ? formatUsdCents(x.pendingUsdCents)
-                                : "·"}
-                            </td>
-                            <td className="px-4 py-2">
-                              <span className="flex justify-end">
-                                <MilestoneDots p={x} />
-                              </span>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
+                <Card className="overflow-hidden">
+                  <PayoutsTable rows={payoutRows} />
                 </Card>
               </div>
             </section>

@@ -193,22 +193,57 @@ export function parseTreasury(rows: string[][]): ParsedTreasury {
     }
   }
 
-  // Merge paid + committed + milestones by (trimmed) title.
-  const titles = new Set([
-    ...paid.keys(),
-    ...committed.keys(),
-    ...milestones.keys(),
-  ]);
-  for (const t of titles) {
-    const m = milestones.get(t);
+  // Merge paid + committed + milestones. The dashboard writes the SAME grant
+  // with different dollar suffixes per block ("Zcash India - $3750 (Mar-May)"
+  // in Paid Out vs "Zcash India - $2500 (Mar-May)" in the milestone block),
+  // so the merge key strips $amounts; the period suffix keeps distinct
+  // phases of a program apart.
+  const mergeKey = (t: string) =>
+    t
+      .toLowerCase()
+      .replace(/\$\s?[\d,.]+k?/g, "")
+      .replace(/[^a-z0-9()]+/g, " ")
+      .trim();
+  const byKey = new Map<
+    string,
+    {
+      title: string;
+      paid: bigint | null;
+      pending: bigint | null;
+      m: {
+        m1: string | null;
+        m2: string | null;
+        m3: string | null;
+        zec: bigint | null;
+      } | null;
+    }
+  >();
+  const upsert = (title: string) => {
+    const k = mergeKey(title);
+    const cur = byKey.get(k) ?? {
+      title,
+      paid: null,
+      pending: null,
+      m: null,
+    };
+    // Prefer the longest title variant (usually the most informative).
+    if (title.length > cur.title.length) cur.title = title;
+    byKey.set(k, cur);
+    return cur;
+  };
+  for (const [t, v] of paid) upsert(t).paid = v;
+  for (const [t, v] of committed) upsert(t).pending = v;
+  for (const [t, v] of milestones) upsert(t).m = v;
+
+  for (const e of byKey.values()) {
     out.payouts.push({
-      title: t,
-      paidUsdCents: paid.get(t) ?? null,
-      pendingUsdCents: committed.get(t) ?? null,
-      m1: m?.m1 ?? null,
-      m2: m?.m2 ?? null,
-      m3: m?.m3 ?? null,
-      zecPaidZat: m?.zec ?? null,
+      title: e.title,
+      paidUsdCents: e.paid,
+      pendingUsdCents: e.pending,
+      m1: e.m?.m1 ?? null,
+      m2: e.m?.m2 ?? null,
+      m3: e.m?.m3 ?? null,
+      zecPaidZat: e.m?.zec ?? null,
     });
   }
 

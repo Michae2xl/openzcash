@@ -38,6 +38,7 @@ const FIXTURE: string[][] = [
   ["", ""],
   ["Total Paid Out USD | ZEC", "$13,720.00"],
   ["Zcash Global Ambassador Elzz - $3000 (Nov-Jan)", "$1,000.00"],
+  ["Zcash India - $3750 (Mar-May)", "$3,750.00"],
   ["Zcash India June-August 2026 ", "$1,600.00"],
   ["", ""],
   ["To Be Paid Out USD | ZEC", "$18,400"],
@@ -54,6 +55,10 @@ const FIXTURE: string[][] = [
   ],
   ["USD Paid to date", "$3,000.00"],
   ["ZEC Paid to date", "2.78"],
+  ["", "M1 Status", "M2 Status", "M3 Status"],
+  ["Zcash India - $2500 (Mar-May)", "Complete", "Complete", "Pending"],
+  ["USD Paid to date", "$2,500.00"],
+  ["ZEC Paid to date", "1.9"],
 ];
 
 describe("parseTreasury", () => {
@@ -89,12 +94,24 @@ describe("parseTreasury", () => {
   it("reads paid/committed totals and merges per-grant rows", () => {
     expect(p.totalPaidOutUsdCents).toBe(1372000n);
     expect(p.toBePaidOutUsdCents).toBe(1840000n);
-    const india = p.payouts.find((x) => x.title.includes("India"));
+    const india = p.payouts.find((x) => x.title.includes("June-August"));
     expect(india?.paidUsdCents).toBe(160000n);
     expect(india?.pendingUsdCents).toBe(320000n);
     const elzz = p.payouts.find((x) => x.title.includes("Nov-Jan"));
     expect(elzz?.m1).toBe("Complete");
     expect(elzz?.zecPaidZat).toBe(278000000n);
+  });
+
+  it("merges paid and milestone blocks whose titles differ by $ amount", () => {
+    // Real dashboard quirk: "Zcash India - $3750 (Mar-May)" in Paid Out vs
+    // "Zcash India - $2500 (Mar-May)" in the milestone block are ONE grant.
+    const india = p.payouts.filter((x) => x.title.includes("(Mar-May)"));
+    expect(india).toHaveLength(1);
+    expect(india[0].paidUsdCents).toBe(375000n);
+    expect(india[0].m3).toBe("Pending");
+    expect(india[0].zecPaidZat).toBe(190000000n);
+    // Different periods of the same program must NOT merge.
+    expect(p.payouts.some((x) => x.title.includes("June-August"))).toBe(true);
   });
 
   it("money helpers reject prose and blanks", () => {
