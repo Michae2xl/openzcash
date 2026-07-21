@@ -1,5 +1,4 @@
 import { Badge, Card, PageHeader, Stat } from "@/components/ui";
-import { BarList } from "@/components/bar-list";
 import {
   getZechubProposals,
   ZECHUB_DAO_URL,
@@ -21,6 +20,9 @@ export const metadata = { title: "ZecHub DAO · OpenZcash" };
 
 const SHEET_URL =
   "https://docs.google.com/spreadsheets/d/19Zy5hp3dMix8pyP8_PxMF32vkl-OyNWU07jrlCTFfso/edit";
+
+/** Segment palette shared by the donut and the composition bar — site-toned. */
+const PALETTE = ["#f59e0b", "#10b981", "#0ea5e9", "#8b5cf6", "#f43f5e"];
 
 function statusTone(status: string): "emerald" | "rose" | "amber" | "zinc" {
   if (status === "executed" || status === "passed") return "emerald";
@@ -77,6 +79,117 @@ function zatToUsdCents(zat: bigint | null, priceCents: bigint | null): bigint {
   return (zat * priceCents) / 100_000_000n;
 }
 
+type Segment = { label: string; value: number; color: string };
+
+/**
+ * Server-rendered SVG donut (no client JS): each segment is a stroked circle
+ * with C=100, advanced clockwise from 12 o'clock via dashoffset.
+ */
+function Donut({
+  segments,
+  centerValue,
+  centerLabel,
+}: {
+  segments: Segment[];
+  centerValue: string;
+  centerLabel: string;
+}) {
+  const total = segments.reduce((s, x) => s + x.value, 0) || 1;
+  const R = 15.9155; // circumference = 100 for percent-friendly dash math
+  // Precompute each arc's start offset immutably: 25 puts the first segment's
+  // start at 12 o'clock, and each next one advances clockwise.
+  const arcs = segments.map((s, i) => ({
+    ...s,
+    frac: (s.value / total) * 100,
+    offset:
+      25 -
+      segments.slice(0, i).reduce((acc, x) => acc + (x.value / total) * 100, 0),
+  }));
+  return (
+    <svg viewBox="0 0 42 42" className="h-44 w-44 shrink-0" role="img">
+      <circle
+        cx="21"
+        cy="21"
+        r={R}
+        fill="none"
+        stroke="#f5f5f4"
+        strokeWidth="5.4"
+      />
+      {arcs.map((s) => (
+        <circle
+          key={s.label}
+          cx="21"
+          cy="21"
+          r={R}
+          fill="none"
+          stroke={s.color}
+          strokeWidth="5.4"
+          strokeDasharray={`${Math.max(s.frac - 0.6, 0.1)} ${100 - Math.max(s.frac - 0.6, 0.1)}`}
+          strokeDashoffset={s.offset}
+          strokeLinecap="round"
+        />
+      ))}
+      <text
+        x="21"
+        y="20"
+        textAnchor="middle"
+        className="fill-stone-900"
+        style={{ fontSize: "5px", fontWeight: 700 }}
+      >
+        {centerValue}
+      </text>
+      <text
+        x="21"
+        y="25.5"
+        textAnchor="middle"
+        className="fill-stone-500"
+        style={{ fontSize: "2.6px", letterSpacing: "0.08em" }}
+      >
+        {centerLabel}
+      </text>
+    </svg>
+  );
+}
+
+/** Stacked composition bar with rounded shell — the "divisions" strip. */
+function SplitBar({ segments }: { segments: Segment[] }) {
+  const total = segments.reduce((s, x) => s + x.value, 0) || 1;
+  return (
+    <div>
+      <div className="flex h-3.5 overflow-hidden rounded-full ring-1 ring-inset ring-stone-900/10">
+        {segments.map((s) => (
+          <div
+            key={s.label}
+            className="h-full"
+            style={{
+              width: `${(s.value / total) * 100}%`,
+              backgroundColor: s.color,
+            }}
+            title={`${s.label}: ${((s.value / total) * 100).toFixed(1)}%`}
+          />
+        ))}
+      </div>
+      <div className="mt-2.5 flex flex-wrap gap-x-4 gap-y-1">
+        {segments.map((s) => (
+          <span
+            key={s.label}
+            className="flex items-center gap-1.5 text-[11px] text-stone-600"
+          >
+            <span
+              className="h-2 w-2 rounded-full"
+              style={{ backgroundColor: s.color }}
+            />
+            {s.label}
+            <span className="font-semibold text-stone-800 tnum">
+              {((s.value / total) * 100).toFixed(1)}%
+            </span>
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function MilestoneDots({ p }: { p: TreasuryPayoutRow }) {
   const dots = [p.m1, p.m2, p.m3].filter((m) => m != null);
   if (!dots.length) return <span className="text-stone-300">·</span>;
@@ -94,6 +207,64 @@ function MilestoneDots({ p }: { p: TreasuryPayoutRow }) {
         />
       ))}
     </span>
+  );
+}
+
+/** Thin paid-vs-committed progress under each grant title. */
+function PayoutProgress({ p }: { p: TreasuryPayoutRow }) {
+  const paid = Number(p.paidUsdCents ?? 0n);
+  const pending = Number(p.pendingUsdCents ?? 0n);
+  const total = paid + pending;
+  if (total <= 0) return null;
+  return (
+    <div className="mt-1 h-1 w-28 overflow-hidden rounded-full bg-stone-100">
+      <div
+        className="h-full rounded-full bg-emerald-500"
+        style={{ width: `${(paid / total) * 100}%` }}
+        title={`${Math.round((paid / total) * 100)}% paid`}
+      />
+    </div>
+  );
+}
+
+function TreasuryCard({
+  label,
+  zat,
+  sub,
+  accent,
+}: {
+  label: string;
+  zat: bigint;
+  sub: string;
+  accent: "amber" | "emerald" | "indigo";
+}) {
+  const orb = {
+    amber: "bg-amber-500/15",
+    emerald: "bg-emerald-500/15",
+    indigo: "bg-indigo-500/15",
+  }[accent];
+  const tag = {
+    amber: "text-amber-700/80",
+    emerald: "text-emerald-700/80",
+    indigo: "text-indigo-700/80",
+  }[accent];
+  return (
+    <div className="relative overflow-hidden rounded-2xl border border-stone-200 bg-gradient-to-br from-white via-stone-50 to-stone-100/60 p-5 shadow-lg shadow-stone-300/40 ring-1 ring-inset ring-stone-900/5">
+      <div
+        className={`pointer-events-none absolute -right-10 -top-10 h-36 w-36 rounded-full ${orb} blur-3xl`}
+      />
+      <div className="relative">
+        <p
+          className={`text-[11px] font-semibold uppercase tracking-wider ${tag}`}
+        >
+          {label}
+        </p>
+        <p className="mt-1.5 text-2xl font-bold leading-none tracking-tight text-stone-900 tnum sm:text-3xl">
+          {formatZec(zat)}
+        </p>
+        <p className="mt-2 text-xs text-stone-600 tnum">{sub}</p>
+      </div>
+    </div>
   );
 }
 
@@ -173,15 +344,35 @@ export default async function ZechubDaoPage() {
     snapshot?.zecPriceCents ?? null,
   );
 
-  const maxAlloc = allocations.reduce(
-    (m, a) => (a.zecZat != null && a.zecZat > m ? a.zecZat : m),
+  const compositionSegments: Segment[] = snapshot
+    ? [
+        {
+          label: "Donations",
+          value: Number(snapshot.donationsZat ?? 0n) / 1e8,
+          color: PALETTE[0],
+        },
+        {
+          label: "FPF program fund",
+          value: Number(snapshot.fpfZat ?? 0n) / 1e8,
+          color: PALETTE[1],
+        },
+        {
+          label: "ZecHub Inc",
+          value: Number(snapshot.incZat ?? 0n) / 1e8,
+          color: PALETTE[2],
+        },
+      ]
+    : [];
+
+  const allocationSegments: Segment[] = allocations.map((a, i) => ({
+    label: a.category,
+    value: Number(a.zecZat ?? 0n) / 1e8,
+    color: PALETTE[i % PALETTE.length],
+  }));
+  const allocationTotalZat = allocations.reduce(
+    (s, a) => s + (a.zecZat ?? 0n),
     0n,
   );
-  const allocBars = allocations.map((a) => ({
-    label: a.category,
-    value: maxAlloc > 0n ? Number(((a.zecZat ?? 0n) * 1000n) / maxAlloc) : 0,
-    display: `${formatZec(a.zecZat ?? 0n)}${a.sharePct != null ? ` · ${a.sharePct}%` : ""}`,
-  }));
 
   const fundedFor = (p: ZechubProposal): TreasuryPayoutRow | null =>
     payouts.find((x) => titlesMatch(x.title, p.title)) ?? null;
@@ -216,47 +407,38 @@ export default async function ZechubDaoPage() {
       {snapshot ? (
         <>
           <section className="mb-6 grid gap-4 lg:grid-cols-3">
-            <div className="relative overflow-hidden rounded-2xl border border-amber-500/15 bg-gradient-to-br from-amber-500/[0.07] via-stone-50 to-stone-50 p-5 shadow-lg shadow-stone-300/40 ring-1 ring-inset ring-stone-900/5">
-              <p className="text-[11px] font-medium uppercase tracking-wider text-amber-700/70">
-                Donations treasury
-              </p>
-              <p className="mt-1.5 text-2xl font-bold leading-none tracking-tight text-stone-900 tnum sm:text-3xl">
-                {formatZec(snapshot.donationsZat ?? 0n)}
-              </p>
-              <p className="mt-2 text-xs text-stone-600 tnum">
-                {formatUsdCents(snapshot.donationsUsdCents ?? 0n)}
-              </p>
-            </div>
-            <div className="rounded-2xl border border-stone-200 bg-gradient-to-b from-white to-stone-50 p-5 shadow-sm shadow-stone-300/40 ring-1 ring-inset ring-stone-900/5">
-              <p className="text-[11px] font-medium uppercase tracking-wider text-stone-600">
-                FPF program fund
-              </p>
-              <p className="mt-1.5 text-2xl font-bold leading-none tracking-tight text-stone-900 tnum sm:text-3xl">
-                {formatZec(snapshot.fpfZat ?? 0n)}
-              </p>
-              <p className="mt-2 text-xs text-stone-600 tnum">
-                {formatUsdCents(snapshot.fpfUsdCents ?? 0n)} ·{" "}
-                {formatZec(snapshot.fpfUnreservedZat ?? 0n)} spendable
-              </p>
-            </div>
-            <div className="rounded-2xl border border-stone-200 bg-gradient-to-b from-white to-stone-50 p-5 shadow-sm shadow-stone-300/40 ring-1 ring-inset ring-stone-900/5">
-              <p className="text-[11px] font-medium uppercase tracking-wider text-stone-600">
-                ZecHub Inc
-              </p>
-              <p className="mt-1.5 text-2xl font-bold leading-none tracking-tight text-stone-900 tnum sm:text-3xl">
-                {formatZec(snapshot.incZat ?? 0n)}
-              </p>
-              <p className="mt-2 text-xs text-stone-600 tnum">
-                {formatUsdCents(snapshot.incUsdCents ?? 0n)}
-                {snapshot.penumbraUm
-                  ? ` · ${Math.round(snapshot.penumbraUm)} UM`
-                  : ""}
-                {snapshot.namadaNam
-                  ? ` · ${Math.round(snapshot.namadaNam).toLocaleString("en-US")} NAM`
-                  : ""}
-              </p>
-            </div>
+            <TreasuryCard
+              label="Donations treasury"
+              zat={snapshot.donationsZat ?? 0n}
+              sub={formatUsdCents(snapshot.donationsUsdCents ?? 0n)}
+              accent="amber"
+            />
+            <TreasuryCard
+              label="FPF program fund"
+              zat={snapshot.fpfZat ?? 0n}
+              sub={`${formatUsdCents(snapshot.fpfUsdCents ?? 0n)} · ${formatZec(snapshot.fpfUnreservedZat ?? 0n)} spendable`}
+              accent="emerald"
+            />
+            <TreasuryCard
+              label="ZecHub Inc"
+              zat={snapshot.incZat ?? 0n}
+              sub={`${formatUsdCents(snapshot.incUsdCents ?? 0n)}${snapshot.penumbraUm ? ` · ${Math.round(snapshot.penumbraUm)} UM` : ""}${snapshot.namadaNam ? ` · ${Math.round(snapshot.namadaNam).toLocaleString("en-US")} NAM` : ""}`}
+              accent="indigo"
+            />
           </section>
+
+          <Card className="mb-6">
+            <div className="mb-3 flex items-baseline justify-between gap-3">
+              <h2 className="text-sm font-semibold text-stone-700">
+                Treasury composition
+              </h2>
+              <span className="text-xs text-stone-500 tnum">
+                {formatZecCompact(totalZat)} ·{" "}
+                {formatUsdCents(totalUsdCents, { compact: true })}
+              </span>
+            </div>
+            <SplitBar segments={compositionSegments} />
+          </Card>
 
           <section className="mb-8 grid grid-cols-2 gap-4 lg:grid-cols-4">
             <Stat
@@ -284,18 +466,53 @@ export default async function ZechubDaoPage() {
             />
           </section>
 
-          {allocBars.length > 0 ? (
+          {allocationSegments.length > 0 ? (
             <section className="mb-8 grid gap-6 lg:grid-cols-2">
               <div>
                 <h2 className="mb-3 text-sm font-semibold text-stone-700">
                   FPF allocation by category
                 </h2>
                 <Card>
-                  <BarList items={allocBars} />
+                  <div className="flex flex-col items-center gap-5 sm:flex-row">
+                    <Donut
+                      segments={allocationSegments}
+                      centerValue={formatZec(allocationTotalZat, {
+                        symbol: false,
+                      })}
+                      centerLabel="ZEC EARMARKED"
+                    />
+                    <ul className="w-full space-y-2.5">
+                      {allocationSegments.map((s, i) => (
+                        <li
+                          key={s.label}
+                          className="flex items-center justify-between gap-3 text-sm"
+                        >
+                          <span className="flex min-w-0 items-center gap-2 text-stone-700">
+                            <span
+                              className="h-2.5 w-2.5 shrink-0 rounded-full"
+                              style={{ backgroundColor: s.color }}
+                            />
+                            <span className="truncate">{s.label}</span>
+                          </span>
+                          <span className="shrink-0 text-stone-800 tnum">
+                            <span className="font-semibold">
+                              {formatZec(allocations[i]?.zecZat ?? 0n)}
+                            </span>
+                            {allocations[i]?.sharePct != null ? (
+                              <span className="text-stone-500">
+                                {" "}
+                                · {allocations[i].sharePct}%
+                              </span>
+                            ) : null}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                   {previous ? (
                     // Balance deltas only: the dashboard's paid-out list
                     // resets per period, so cross-snapshot paid deltas lie.
-                    <p className="mt-3 border-t border-stone-100 pt-3 text-xs text-stone-500 tnum">
+                    <p className="mt-4 border-t border-stone-100 pt-3 text-xs text-stone-500 tnum">
                       Since {fmtDate(previous.capturedOn)}: FPF{" "}
                       {formatZec(
                         (snapshot.fpfZat ?? 0n) - (previous.fpfZat ?? 0n),
@@ -317,7 +534,7 @@ export default async function ZechubDaoPage() {
                   Grants: paid vs committed
                 </h2>
                 <Card className="p-0">
-                  <div className="max-h-[19rem] overflow-y-auto">
+                  <div className="max-h-[21rem] overflow-y-auto">
                     <table className="w-full text-sm">
                       <thead className="sticky top-0 bg-white text-left text-[11px] uppercase tracking-wider text-stone-500">
                         <tr>
@@ -336,10 +553,11 @@ export default async function ZechubDaoPage() {
                       <tbody className="divide-y divide-stone-100">
                         {payouts.map((x) => (
                           <tr key={x.id}>
-                            <td className="max-w-[16rem] truncate px-4 py-2 text-stone-800">
-                              {x.title}
+                            <td className="max-w-[15rem] px-4 py-2 text-stone-800">
+                              <span className="block truncate">{x.title}</span>
+                              <PayoutProgress p={x} />
                             </td>
-                            <td className="px-4 py-2 text-right text-stone-700 tnum">
+                            <td className="px-4 py-2 text-right text-emerald-700 tnum">
                               {x.paidUsdCents
                                 ? formatUsdCents(x.paidUsdCents)
                                 : "·"}
