@@ -28,6 +28,20 @@ export async function register() {
         e instanceof Error ? e.message : e,
       );
     }
+    // ZecHub treasury dashboard mirror — cheap (2 CSV tabs), same cycle.
+    try {
+      const { importZechubTreasury } =
+        await import("@/lib/zechub/import-treasury");
+      const z = await importZechubTreasury();
+      console.log(
+        `[cron] zechub treasury: ${z.map((r) => `${r.gid}=${r.status}`).join(" ")}`,
+      );
+    } catch (e) {
+      console.error(
+        "[cron] zechub treasury failed:",
+        e instanceof Error ? e.message : e,
+      );
+    }
     // Verdicts/amounts for sheet rows whose application left the open review
     // set (closed/deleted issues) run FIRST: they are cheap and they decide
     // what the under-review list shows, so the post-boot window in which a

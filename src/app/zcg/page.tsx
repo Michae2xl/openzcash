@@ -270,9 +270,16 @@ export default async function ZcgPage() {
                       </Link>
                     ) : (
                       <Link
-                        href="/zcg/disbursements"
+                        href={
+                          c.kind === "zechub_payment"
+                            ? "/zechub"
+                            : "/zcg/disbursements"
+                        }
                         className="text-stone-800 hover:text-amber-700"
                       >
+                        {c.kind === "zechub_payment" ? (
+                          <span className="text-stone-500">ZecHub: </span>
+                        ) : null}
                         <span className="font-medium">{c.title}</span>
                         <span className="text-stone-500"> · {c.detail}</span>
                       </Link>

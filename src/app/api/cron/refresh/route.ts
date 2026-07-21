@@ -35,7 +35,9 @@ export async function GET(req: Request) {
     // diligence paces itself against GitHub's search rate limit (can take
     // minutes), and the long-lived server keeps both running after this
     // response returns.
-    import("@/lib/zcg/issue-amounts")
+    import("@/lib/zechub/import-treasury")
+      .then(({ importZechubTreasury }) => importZechubTreasury())
+      .then(() => import("@/lib/zcg/issue-amounts"))
       .then(({ warmIssueAmounts }) => warmIssueAmounts())
       .then(() => import("@/lib/zcg/diligence"))
       .then(({ warmDiligence }) => warmDiligence())

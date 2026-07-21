@@ -25,11 +25,15 @@ export async function GET() {
           ? `${c.title}: ${c.fromVal ?? "?"} → ${c.toVal ?? "?"}`
           : c.kind === "proposal_new"
             ? `New proposal: ${c.title}`
-            : `Payment recorded: ${c.title}${c.detail ? ` (${c.detail})` : ""}`;
+            : c.kind === "zechub_payment"
+              ? `ZecHub payout: ${c.title}${c.detail ? ` (${c.detail})` : ""}`
+              : `Payment recorded: ${c.title}${c.detail ? ` (${c.detail})` : ""}`;
       const link =
-        c.kind === "payment"
-          ? `${SITE}/zcg/disbursements`
-          : `${SITE}/zcg/proposals`;
+        c.kind === "zechub_payment"
+          ? `${SITE}/zechub`
+          : c.kind === "payment"
+            ? `${SITE}/zcg/disbursements`
+            : `${SITE}/zcg/proposals`;
       return `    <item>
       <title>${esc(title)}</title>
       <link>${link}</link>

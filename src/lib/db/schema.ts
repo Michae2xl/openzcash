@@ -10,6 +10,7 @@ import {
   bigint,
   boolean,
   date,
+  doublePrecision,
   integer,
   jsonb,
   pgTable,
@@ -484,4 +485,66 @@ export const zcgChangelog = pgTable("zcg_changelog", {
   toVal: text("to_val"),
   /** Extra context, e.g. "3 payments · $28,400" for a payments entry. */
   detail: text("detail"),
+});
+
+// ── ZecHub DAO treasury (mirror of their public dashboard spreadsheet). ──
+
+/**
+ * One row per "Last Updated" date on the ZecHub treasury dashboard — the
+ * sheet is a point-in-time snapshot, so daily imports accumulate a time
+ * series. Amounts: zat/cents as bigint; UM/NAM informational as double.
+ */
+export const zechubTreasurySnapshots = pgTable("zechub_treasury_snapshots", {
+  /** ISO capture date (from "Last Updated"), e.g. "2026-07-21". */
+  id: text("id").primaryKey(),
+  capturedOn: date("captured_on").notNull(),
+  zecPriceCents: bigint("zec_price_cents", { mode: "bigint" }),
+  donationsZat: bigint("donations_zat", { mode: "bigint" }),
+  donationsUsdCents: bigint("donations_usd_cents", { mode: "bigint" }),
+  fpfZat: bigint("fpf_zat", { mode: "bigint" }),
+  fpfUsdCents: bigint("fpf_usd_cents", { mode: "bigint" }),
+  fpfUnreservedZat: bigint("fpf_unreserved_zat", { mode: "bigint" }),
+  fpfReservedUsdCents: bigint("fpf_reserved_usd_cents", { mode: "bigint" }),
+  incZat: bigint("inc_zat", { mode: "bigint" }),
+  incUsdCents: bigint("inc_usd_cents", { mode: "bigint" }),
+  penumbraUm: doublePrecision("penumbra_um"),
+  namadaNam: doublePrecision("namada_nam"),
+  totalPaidOutUsdCents: bigint("total_paid_out_usd_cents", { mode: "bigint" }),
+  toBePaidOutUsdCents: bigint("to_be_paid_out_usd_cents", { mode: "bigint" }),
+  contentSha256: text("content_sha256").notNull(),
+  importedAt: timestamp("imported_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});
+
+/** FPF category allocations within a snapshot (Ambassador, Hackathon, …). */
+export const zechubAllocations = pgTable("zechub_allocations", {
+  /** `${snapshotId}|${category}` */
+  id: text("id").primaryKey(),
+  snapshotId: text("snapshot_id")
+    .notNull()
+    .references(() => zechubTreasurySnapshots.id, { onDelete: "cascade" }),
+  category: text("category").notNull(),
+  zecZat: bigint("zec_zat", { mode: "bigint" }),
+  sharePct: doublePrecision("share_pct"),
+});
+
+/**
+ * Per-grant payout state from the LATEST snapshot: paid to date, still
+ * committed, and milestone statuses. Replaced wholesale on each import.
+ */
+export const zechubPayouts = pgTable("zechub_payouts", {
+  /** Hash of the normalized grant title. */
+  id: text("id").primaryKey(),
+  title: text("title").notNull(),
+  paidUsdCents: bigint("paid_usd_cents", { mode: "bigint" }),
+  pendingUsdCents: bigint("pending_usd_cents", { mode: "bigint" }),
+  m1: text("m1"),
+  m2: text("m2"),
+  m3: text("m3"),
+  zecPaidZat: bigint("zec_paid_zat", { mode: "bigint" }),
+  capturedOn: date("captured_on"),
+  importedAt: timestamp("imported_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
 });
