@@ -13,7 +13,7 @@ import {
 } from "@/lib/zechub/treasury-repo";
 import { titlesMatch } from "@/lib/zcg/match-titles";
 import { formatUsdCents } from "@/lib/zcg/format";
-import { formatZec, formatZecCompact } from "@/lib/zcash/units";
+import { formatZec } from "@/lib/zcash/units";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "ZecHub DAO · OpenZcash" };
@@ -406,6 +406,29 @@ export default async function ZechubDaoPage() {
 
       {snapshot ? (
         <>
+          <section className="relative mb-6 overflow-hidden rounded-2xl border border-amber-500/20 bg-gradient-to-br from-amber-500/[0.08] via-stone-50 to-stone-50 p-6 shadow-lg shadow-stone-300/50 ring-1 ring-inset ring-stone-900/5">
+            <div className="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full bg-amber-500/15 blur-3xl" />
+            <div className="pointer-events-none absolute -bottom-20 -left-10 h-44 w-44 rounded-full bg-emerald-500/10 blur-3xl" />
+            <div className="relative">
+              <div className="flex flex-wrap items-end justify-between gap-4">
+                <div>
+                  <p className="text-[11px] font-semibold uppercase tracking-wider text-amber-700/80">
+                    Total treasury · 3 funds
+                  </p>
+                  <p className="mt-2 text-3xl font-bold leading-none tracking-tight text-stone-900 tnum sm:text-4xl">
+                    {formatZec(totalZat)}
+                  </p>
+                </div>
+                <p className="text-lg font-semibold text-stone-700 tnum sm:text-xl">
+                  ≈ {formatUsdCents(totalUsdCents)}
+                </p>
+              </div>
+              <div className="mt-5">
+                <SplitBar segments={compositionSegments} />
+              </div>
+            </div>
+          </section>
+
           <section className="mb-6 grid gap-4 lg:grid-cols-3">
             <TreasuryCard
               label="Donations treasury"
@@ -427,25 +450,7 @@ export default async function ZechubDaoPage() {
             />
           </section>
 
-          <Card className="mb-6">
-            <div className="mb-3 flex items-baseline justify-between gap-3">
-              <h2 className="text-sm font-semibold text-stone-700">
-                Treasury composition
-              </h2>
-              <span className="text-xs text-stone-500 tnum">
-                {formatZecCompact(totalZat)} ·{" "}
-                {formatUsdCents(totalUsdCents, { compact: true })}
-              </span>
-            </div>
-            <SplitBar segments={compositionSegments} />
-          </Card>
-
-          <section className="mb-8 grid grid-cols-2 gap-4 lg:grid-cols-4">
-            <Stat
-              label="Total treasury"
-              value={formatZecCompact(totalZat)}
-              sub={formatUsdCents(totalUsdCents, { compact: true })}
-            />
+          <section className="mb-8 grid grid-cols-2 gap-4 lg:grid-cols-3">
             <Stat
               label="Available for new proposals"
               value={formatUsdCents(spendableUsdCents, { compact: true })}
