@@ -107,48 +107,42 @@ function Donut({
       segments.slice(0, i).reduce((acc, x) => acc + (x.value / total) * 100, 0),
   }));
   return (
-    <svg viewBox="0 0 42 42" className="h-44 w-44 shrink-0" role="img">
-      <circle
-        cx="21"
-        cy="21"
-        r={R}
-        fill="none"
-        stroke="#f5f5f4"
-        strokeWidth="5.4"
-      />
-      {arcs.map((s) => (
+    // Center text lives in the DOM (not the SVG): text inside a scaled SVG
+    // renders soft, while an overlaid HTML label stays crisp at any zoom.
+    <div className="relative h-56 w-56 shrink-0">
+      <svg viewBox="0 0 42 42" className="h-full w-full" role="img">
         <circle
-          key={s.label}
           cx="21"
           cy="21"
           r={R}
           fill="none"
-          stroke={s.color}
+          stroke="#f5f5f4"
           strokeWidth="5.4"
-          strokeDasharray={`${Math.max(s.frac - 0.6, 0.1)} ${100 - Math.max(s.frac - 0.6, 0.1)}`}
-          strokeDashoffset={s.offset}
-          strokeLinecap="round"
         />
-      ))}
-      <text
-        x="21"
-        y="20"
-        textAnchor="middle"
-        className="fill-stone-900"
-        style={{ fontSize: "5px", fontWeight: 700 }}
-      >
-        {centerValue}
-      </text>
-      <text
-        x="21"
-        y="25.5"
-        textAnchor="middle"
-        className="fill-stone-500"
-        style={{ fontSize: "2.6px", letterSpacing: "0.08em" }}
-      >
-        {centerLabel}
-      </text>
-    </svg>
+        {arcs.map((s) => (
+          <circle
+            key={s.label}
+            cx="21"
+            cy="21"
+            r={R}
+            fill="none"
+            stroke={s.color}
+            strokeWidth="5.4"
+            strokeDasharray={`${Math.max(s.frac - 0.6, 0.1)} ${100 - Math.max(s.frac - 0.6, 0.1)}`}
+            strokeDashoffset={s.offset}
+            strokeLinecap="round"
+          />
+        ))}
+      </svg>
+      <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
+        <span className="text-3xl font-bold leading-none tracking-tight text-stone-900 tnum">
+          {centerValue}
+        </span>
+        <span className="mt-1.5 text-[10px] font-medium uppercase tracking-[0.14em] text-stone-500">
+          {centerLabel}
+        </span>
+      </div>
+    </div>
   );
 }
 
@@ -448,13 +442,13 @@ export default async function ZechubDaoPage() {
           </section>
 
           {allocationSegments.length > 0 ? (
-            <section className="mb-8 grid gap-6 lg:grid-cols-2">
-              <div>
+            <section className="mb-8 grid items-stretch gap-6 lg:grid-cols-2">
+              <div className="flex flex-col">
                 <h2 className="mb-3 text-sm font-semibold text-stone-700">
                   FPF allocation by category
                 </h2>
-                <Card>
-                  <div className="flex flex-col items-center gap-5 sm:flex-row">
+                <Card className="flex flex-1 flex-col justify-center">
+                  <div className="flex flex-col items-center gap-6 sm:flex-row">
                     <Donut
                       segments={allocationSegments}
                       centerValue={formatZec(allocationTotalZat, {
@@ -510,11 +504,11 @@ export default async function ZechubDaoPage() {
                   ) : null}
                 </Card>
               </div>
-              <div>
+              <div className="flex flex-col">
                 <h2 className="mb-3 text-sm font-semibold text-stone-700">
                   Grants: paid vs committed
                 </h2>
-                <Card className="overflow-hidden">
+                <Card className="flex-1 overflow-hidden">
                   <PayoutsTable rows={payoutRows} />
                 </Card>
               </div>
