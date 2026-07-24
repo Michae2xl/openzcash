@@ -12,6 +12,7 @@ import {
   type TreasuryPayoutRow,
 } from "@/lib/zechub/treasury-repo";
 import { titlesMatch } from "@/lib/zcg/match-titles";
+import { listChangelog } from "@/lib/zcg/changelog";
 import { PayoutsTable } from "./payouts-table";
 import { formatUsdCents } from "@/lib/zcg/format";
 import { formatZec } from "@/lib/zcash/units";
@@ -275,11 +276,12 @@ function ProposalRow({
 }
 
 export default async function ZechubDaoPage() {
-  const [proposals, snapshot, payouts, series] = await Promise.all([
+  const [proposals, snapshot, payouts, series, changes] = await Promise.all([
     getZechubProposals(40),
     latestTreasurySnapshot(),
     treasuryPayouts(),
     treasurySeries(),
+    listChangelog(7, 10, "zechub").catch(() => []),
   ]);
   const allocations = snapshot ? await treasuryAllocations(snapshot.id) : [];
   const previous = series.length >= 2 ? series[series.length - 2] : null;
@@ -505,18 +507,9 @@ export default async function ZechubDaoPage() {
                 </Card>
               </div>
               <div className="flex flex-col">
-                <div className="mb-3 flex items-baseline justify-between gap-3">
-                  <h2 className="text-sm font-semibold text-stone-700">
-                    Grants: paid vs committed
-                  </h2>
-                  <a
-                    href="/api/feeds/zechub.xml"
-                    className="text-xs text-stone-400 hover:text-amber-700"
-                    title="Subscribe to new ZecHub treasury payouts via RSS"
-                  >
-                    RSS ↗
-                  </a>
-                </div>
+                <h2 className="mb-3 text-sm font-semibold text-stone-700">
+                  Grants: paid vs committed
+                </h2>
                 <Card className="flex-1 overflow-hidden">
                   <PayoutsTable rows={payoutRows} />
                 </Card>
@@ -524,6 +517,54 @@ export default async function ZechubDaoPage() {
             </section>
           ) : null}
         </>
+      ) : null}
+
+      {changes.length > 0 ? (
+        <section className="mb-8">
+          <div className="mb-3 flex items-baseline justify-between gap-3">
+            <h2 className="text-sm font-semibold text-stone-700">
+              Changed this week
+            </h2>
+            <a
+              href="/api/feeds/zechub.xml"
+              className="text-xs text-stone-400 hover:text-amber-700"
+              title="Subscribe to new ZecHub treasury payouts via RSS"
+            >
+              RSS ↗
+            </a>
+          </div>
+          <div className="rounded-2xl border border-stone-200 bg-white shadow-sm shadow-stone-300/40 ring-1 ring-inset ring-stone-900/5">
+            <ul className="divide-y divide-stone-100">
+              {changes.map((c) => {
+                const url =
+                  proposals.find((p) => titlesMatch(c.title, p.title))?.url ??
+                  SHEET_URL;
+                return (
+                  <li
+                    key={c.id}
+                    className="flex items-center justify-between gap-3 px-4 py-2.5 text-sm"
+                  >
+                    <a
+                      href={url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="min-w-0 truncate text-stone-800 hover:text-amber-700"
+                    >
+                      <span className="font-medium">{c.title}</span>
+                      <span className="text-stone-500"> · {c.detail}</span>
+                    </a>
+                    <span className="shrink-0 text-xs text-stone-400 tnum">
+                      {c.at.toISOString().slice(5, 10).replace("-", "/")}
+                    </span>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+          <p className="mt-2 text-xs text-stone-500">
+            New payouts recorded on the treasury dashboard between imports.
+          </p>
+        </section>
       ) : null}
 
       <section className="mb-8 grid grid-cols-2 gap-4 lg:grid-cols-3">
