@@ -1,5 +1,5 @@
 import "server-only";
-import { desc, gte } from "drizzle-orm";
+import { and, desc, eq, gte, ne } from "drizzle-orm";
 import { getDb } from "@/lib/db/client";
 import { zcgChangelog, zcgDisbursements, zcgProposals } from "@/lib/db/schema";
 import { sha256 } from "./sheets";
@@ -142,17 +142,32 @@ export async function recordChangelog(
   return entries.length;
 }
 
-/** Recent entries for the home digest and the RSS feed. */
+/**
+ * Recent entries for the digests and RSS feeds. `source` splits the shared
+ * table by origin: "zcg" (spreadsheet diffs) vs "zechub" (DAO treasury
+ * payouts) — each surface subscribes to its own stream.
+ */
 export async function listChangelog(
   days = 7,
   limit = 30,
+  source: "zcg" | "zechub" | "all" = "all",
 ): Promise<ChangelogEntry[]> {
   const db = getDb();
   const since = new Date(Date.now() - days * 86_400_000);
+  const bySource =
+    source === "zechub"
+      ? eq(zcgChangelog.kind, "zechub_payment")
+      : source === "zcg"
+        ? ne(zcgChangelog.kind, "zechub_payment")
+        : undefined;
   return db
     .select()
     .from(zcgChangelog)
-    .where(gte(zcgChangelog.at, since))
+    .where(
+      bySource
+        ? and(gte(zcgChangelog.at, since), bySource)
+        : gte(zcgChangelog.at, since),
+    )
     .orderBy(desc(zcgChangelog.at))
     .limit(limit);
 }

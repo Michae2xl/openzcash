@@ -505,9 +505,18 @@ export default async function ZechubDaoPage() {
                 </Card>
               </div>
               <div className="flex flex-col">
-                <h2 className="mb-3 text-sm font-semibold text-stone-700">
-                  Grants: paid vs committed
-                </h2>
+                <div className="mb-3 flex items-baseline justify-between gap-3">
+                  <h2 className="text-sm font-semibold text-stone-700">
+                    Grants: paid vs committed
+                  </h2>
+                  <a
+                    href="/api/feeds/zechub.xml"
+                    className="text-xs text-stone-400 hover:text-amber-700"
+                    title="Subscribe to new ZecHub treasury payouts via RSS"
+                  >
+                    RSS ↗
+                  </a>
+                </div>
                 <Card className="flex-1 overflow-hidden">
                   <PayoutsTable rows={payoutRows} />
                 </Card>

@@ -16,7 +16,7 @@ const esc = (s: string) =>
  * and newly recorded payments, diffed daily from the official spreadsheet.
  */
 export async function GET() {
-  const entries = await listChangelog(30, 50).catch(() => []);
+  const entries = await listChangelog(30, 50, "zcg").catch(() => []);
 
   const items = entries
     .map((c) => {
@@ -25,15 +25,11 @@ export async function GET() {
           ? `${c.title}: ${c.fromVal ?? "?"} → ${c.toVal ?? "?"}`
           : c.kind === "proposal_new"
             ? `New proposal: ${c.title}`
-            : c.kind === "zechub_payment"
-              ? `ZecHub payout: ${c.title}${c.detail ? ` (${c.detail})` : ""}`
-              : `Payment recorded: ${c.title}${c.detail ? ` (${c.detail})` : ""}`;
+            : `Payment recorded: ${c.title}${c.detail ? ` (${c.detail})` : ""}`;
       const link =
-        c.kind === "zechub_payment"
-          ? `${SITE}/zechub`
-          : c.kind === "payment"
-            ? `${SITE}/zcg/disbursements`
-            : `${SITE}/zcg/proposals`;
+        c.kind === "payment"
+          ? `${SITE}/zcg/disbursements`
+          : `${SITE}/zcg/proposals`;
       return `    <item>
       <title>${esc(title)}</title>
       <link>${link}</link>
