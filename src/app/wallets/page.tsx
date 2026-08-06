@@ -196,6 +196,21 @@ const SOFTWARE: Wallet[] = [
     tag: "Beta",
     note: "P2P messenger with a shielded Zodl-based wallet and PIX/UPI offramp.",
   },
+  {
+    name: "Gem Wallet",
+    maker: "Gem Wallet",
+    url: "https://gemwallet.com",
+    logo: "/wallet-logos/gem.png",
+    platforms: ["iOS", "Android"],
+    // Verified in the source: Zcash lives in the gem_bitcoin UTXO crate, only
+    // t1/t3 address scripts are parsed, and the v5 sighash passes EMPTY
+    // sapling/orchard digests — transparent send and receive, no shielded.
+    shielded: "transparent",
+    note: "Multi-chain self-custodial wallet; transparent (t-address) ZEC only.",
+    source: "https://github.com/gemwalletcom/wallet",
+    audit:
+      "https://static.gemwallet.com/audits/Gem-Wallet-CertiK-Security-Audit-April-2026.pdf",
+  },
 ];
 
 const HARDWARE: Wallet[] = [
