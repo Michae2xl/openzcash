@@ -68,6 +68,14 @@ export type RecipientTotal = {
   lineCount: number;
   isInternal: boolean;
   lastPaid: string | null;
+  /** Totais SOMENTE das linhas de ecossistema (exclui stipend/ops internos).
+   * Quem acumula os dois papéis — membro do comitê que também mantém um
+   * projeto financiado, como hanh — precisa aparecer nos rankings públicos
+   * pelo valor de grant, sem que o stipend mensal o esconda por inteiro. */
+  externalUsdCents: bigint;
+  externalZecZat: bigint;
+  /** Linhas internas existem para este recebedor (stipend, ops). */
+  hasInternal: boolean;
 };
 
 export async function recipientTotals(): Promise<RecipientTotal[]> {
@@ -81,7 +89,10 @@ export async function recipientTotals(): Promise<RecipientTotal[]> {
       grantCount: sql<number>`count(distinct ${zcgDisbursements.project}) filter (where ${zcgDisbursements.sourceSheet} in ('grants_disbursed','coinholder_grants'))::int`,
       paymentCount: sql<number>`count(*) filter (where ${zcgDisbursements.isPaid})::int`,
       lineCount: sql<number>`count(*)::int`,
-      isInternal: sql<boolean>`bool_or(${zcgDisbursements.isInternal})`,
+      isInternal: sql<boolean>`bool_and(${zcgDisbursements.isInternal})`,
+      hasInternal: sql<boolean>`bool_or(${zcgDisbursements.isInternal})`,
+      externalUsdCents: sql<string>`coalesce(sum(${zcgDisbursements.amountUsdCents}) filter (where not ${zcgDisbursements.isInternal}),0)`,
+      externalZecZat: sql<string>`coalesce(sum(${zcgDisbursements.zecDisbursedZat}) filter (where not ${zcgDisbursements.isInternal}),0)`,
       lastPaid: sql<string | null>`max(${zcgDisbursements.paidOutDate})`,
     })
     .from(zcgDisbursements)
@@ -98,6 +109,9 @@ export async function recipientTotals(): Promise<RecipientTotal[]> {
     lineCount: r.lineCount,
     isInternal: r.isInternal,
     lastPaid: r.lastPaid,
+    externalUsdCents: BigInt(r.externalUsdCents),
+    externalZecZat: BigInt(r.externalZecZat),
+    hasInternal: r.hasInternal,
   }));
 }
 
