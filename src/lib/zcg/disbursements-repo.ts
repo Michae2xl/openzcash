@@ -1,6 +1,7 @@
 import { and, desc, eq, ilike, or, sql } from "drizzle-orm";
 import { getDb } from "@/lib/db/client";
 import { zcgDisbursementOverrides, zcgDisbursements } from "@/lib/db/schema";
+import { canonicalRecipient, isAliasName } from "./recipient-aliases";
 
 export type DisbRow = typeof zcgDisbursements.$inferSelect;
 
@@ -99,7 +100,7 @@ export async function recipientTotals(): Promise<RecipientTotal[]> {
     .groupBy(zcgDisbursements.recipientKey)
     .orderBy(sql`sum(${zcgDisbursements.amountUsdCents}) desc nulls last`);
 
-  return rows.map((r) => ({
+  const mapped = rows.map((r) => ({
     recipientKey: r.recipientKey,
     recipientName: r.recipientName,
     usdCents: BigInt(r.usdCents),
@@ -113,6 +114,43 @@ export async function recipientTotals(): Promise<RecipientTotal[]> {
     externalZecZat: BigInt(r.externalZecZat),
     hasInternal: r.hasInternal,
   }));
+
+  // Fold curated aliases: the sheet spells the same grantee differently
+  // across years and tabs (NightHawk/Nighthawk, RedDev/RED.DEV INC), which
+  // would otherwise split one grantee into two half-sized rows.
+  const merged = new Map<string, RecipientTotal>();
+  for (const r of mapped) {
+    const name = canonicalRecipient(r.recipientName);
+    const prev = merged.get(name);
+    if (!prev) {
+      merged.set(name, { ...r, recipientName: name });
+      continue;
+    }
+    merged.set(name, {
+      ...prev,
+      // Keep the canonical row's key so existing detail links stay valid.
+      recipientKey: isAliasName(r.recipientName)
+        ? prev.recipientKey
+        : r.recipientKey,
+      usdCents: prev.usdCents + r.usdCents,
+      zecZat: prev.zecZat + r.zecZat,
+      externalUsdCents: prev.externalUsdCents + r.externalUsdCents,
+      externalZecZat: prev.externalZecZat + r.externalZecZat,
+      grantCount: prev.grantCount + r.grantCount,
+      paymentCount: prev.paymentCount + r.paymentCount,
+      lineCount: prev.lineCount + r.lineCount,
+      isInternal: prev.isInternal && r.isInternal,
+      hasInternal: prev.hasInternal || r.hasInternal,
+      lastPaid:
+        (prev.lastPaid ?? "") >= (r.lastPaid ?? "")
+          ? prev.lastPaid
+          : r.lastPaid,
+    });
+  }
+
+  return [...merged.values()].sort((a, b) =>
+    b.usdCents > a.usdCents ? 1 : b.usdCents < a.usdCents ? -1 : 0,
+  );
 }
 
 export type CategoryTotal = {
