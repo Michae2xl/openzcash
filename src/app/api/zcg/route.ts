@@ -12,6 +12,8 @@ export async function GET() {
         "Per-recipient totals (USD + ZEC). ?format=csv for CSV.",
       "/api/zcg/data/grants":
         "Per-grant aggregation (milestones, paid, status). ?format=csv for CSV.",
+      "/api/zcg/coinholder/round":
+        "Open Coinholder-Directed Retroactive Grants review round: proposals, requested amounts, key dates, ballot options.",
     },
     notes:
       "Amounts are in USD (dollars) and ZEC. Mirrored from the ZCG public spreadsheet; see /zcg/methodology.",

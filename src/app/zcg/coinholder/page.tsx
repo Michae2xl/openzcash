@@ -15,6 +15,8 @@ import {
   type CategoryRow,
   type RecipientRow,
 } from "../totals/totals-tables";
+import { COINHOLDER_ROUND, ROUND_BANDS } from "@/lib/zcg/coinholder-round";
+import { RoundProposalsTable } from "./round-table";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Coinholder Grants · OpenZcash" };
@@ -105,6 +107,138 @@ export default async function CoinholderPage() {
           value={formatZec(receivables, { symbol: false })}
           sub="pending to the pool"
         />
+      </section>
+
+      {/* Open review round — curated from the FPF announcement, which runs
+          ahead of the public sheet while submissions are still being logged. */}
+      <section className="mb-8">
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+          <h2 className="flex items-center gap-2 text-sm font-semibold text-stone-700">
+            {COINHOLDER_ROUND.label} review round
+            <Badge tone="amber">In review</Badge>
+          </h2>
+          <a
+            href={COINHOLDER_ROUND.sourceThreadUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="text-xs font-medium text-amber-700 hover:text-amber-600"
+          >
+            FPF announcement ↗
+          </a>
+        </div>
+
+        <Card className="mb-4 border-amber-500/25 bg-amber-500/[0.04]">
+          <div className="flex flex-wrap items-baseline justify-between gap-2">
+            <p className="text-sm text-stone-800">
+              <span className="font-semibold tnum">
+                {COINHOLDER_ROUND.proposalCount} proposals
+              </span>{" "}
+              ·{" "}
+              <span className="font-semibold text-amber-800 tnum">
+                {formatUsdCents(COINHOLDER_ROUND.totalRequestedUsdCents)}
+              </span>{" "}
+              requested in total
+            </p>
+            <p className="text-xs text-stone-600">
+              Review closes{" "}
+              <span className="font-medium text-stone-800">
+                {COINHOLDER_ROUND.reviewCloses}
+              </span>{" "}
+              · Coinholder poll opens{" "}
+              <span className="font-medium text-stone-800">
+                {COINHOLDER_ROUND.pollOpens}
+              </span>
+            </p>
+          </div>
+
+          <div className="mt-3 grid gap-2 sm:grid-cols-3">
+            {ROUND_BANDS.map((b) => (
+              <div
+                key={b.key}
+                className="rounded-lg border border-stone-200 bg-white/70 px-3 py-2"
+              >
+                <p className="text-[11px] font-semibold uppercase tracking-wider text-stone-500">
+                  {b.label}
+                </p>
+                <p className="mt-0.5 text-sm text-stone-800 tnum">
+                  {b.count} proposals ·{" "}
+                  {formatUsdCents(b.totalUsdCents, { compact: true })}{" "}
+                  <span className="text-stone-500">({b.sharePct}%)</span>
+                </p>
+              </div>
+            ))}
+          </div>
+
+          <p className="mt-3 text-xs leading-relaxed text-stone-600">
+            Ballot options:{" "}
+            <span className="text-stone-700">
+              {COINHOLDER_ROUND.ballotOptions.join(" · ")}
+            </span>
+            . Both reject options tally as “no” votes — the lower-amount option
+            only signals that the requested amount was the blocker.
+          </p>
+
+          <p className="mt-2 text-xs text-stone-500">
+            Review evidence in each proposal&apos;s{" "}
+            <a
+              href={COINHOLDER_ROUND.githubRepoUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="underline decoration-stone-300 underline-offset-2 hover:text-amber-700"
+            >
+              GitHub submission ↗
+            </a>{" "}
+            or grab the{" "}
+            <a
+              href={COINHOLDER_ROUND.dataDocUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="underline decoration-stone-300 underline-offset-2 hover:text-amber-700"
+            >
+              full data doc ↗
+            </a>{" "}
+            to feed your preferred LLM.
+          </p>
+        </Card>
+
+        <Card className="p-4">
+          <RoundProposalsTable />
+        </Card>
+        <p className="mt-3 text-xs text-stone-500">
+          {COINHOLDER_ROUND.proposalCount} proposals · announced by FPF on{" "}
+          {COINHOLDER_ROUND.announcedOn} · the totals below only include grants
+          already paid, not this round.
+        </p>
+
+        {/* Pre-vote diligence copilot — the coinholder counterpart of /zcg/copilot. */}
+        <Link href="/zcg/coinholder/copilot" className="group mt-4 block">
+          <div className="relative overflow-hidden rounded-2xl border border-stone-800/60 bg-gradient-to-br from-stone-900 via-stone-900 to-amber-950 p-6 shadow-lg shadow-stone-400/30 transition duration-200 group-hover:-translate-y-0.5 group-hover:shadow-xl">
+            <div className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-amber-400/20 blur-3xl" />
+            <div className="pointer-events-none absolute -bottom-12 left-1/3 h-40 w-40 rounded-full bg-emerald-400/10 blur-3xl" />
+            <div className="relative flex items-center justify-between gap-4">
+              <div className="min-w-0">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-2.5 py-0.5 text-[11px] font-medium text-white/80 ring-1 ring-inset ring-white/15">
+                  New · agent skill
+                </span>
+                <h2 className="mt-2 text-xl font-semibold tracking-tight text-white sm:text-2xl">
+                  Coinholder Copilot
+                </h2>
+                <p className="mt-1 max-w-xl text-sm text-stone-300">
+                  Run diligence with your own agent before you vote: every
+                  applicant cross-referenced against the payment ledger, prior
+                  round verdicts, and their submitted evidence — with a citation
+                  on every figure.
+                </p>
+              </div>
+              <span className="hidden shrink-0 items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm font-medium text-white ring-1 ring-inset ring-white/15 transition group-hover:bg-white/15 sm:inline-flex">
+                Get the skill{" "}
+                <span className="transition group-hover:translate-x-0.5">
+                  →
+                </span>
+              </span>
+            </div>
+          </div>
+        </Link>
       </section>
 
       <TotalsTables categoryRows={categoryRows} recipientRows={recipientRows} />

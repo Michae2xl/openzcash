@@ -11,8 +11,8 @@ import { useState, type ReactNode } from "react";
 
 type Agent = { name: string; flag: string; bg: string; logo: ReactNode };
 
-const REPO_SKILL = "npx skills add Michae2xl/openzcash --skill zcg-copilot";
-const cmdFor = (flag: string) => `${REPO_SKILL} -a ${flag}`;
+const cmdFor = (skill: string, flag: string) =>
+  `npx skills add Michae2xl/openzcash --skill ${skill} -a ${flag}`;
 
 const Spark = () => (
   <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
@@ -91,11 +91,11 @@ const AGENTS: Agent[] = [
   },
 ];
 
-export function AddToAgent() {
+export function AddToAgent({ skill = "zcg-copilot" }: { skill?: string }) {
   const [copied, setCopied] = useState<string | null>(null);
 
   const copy = async (flag: string) => {
-    const text = cmdFor(flag);
+    const text = cmdFor(skill, flag);
     let ok = false;
     try {
       await navigator.clipboard.writeText(text);
