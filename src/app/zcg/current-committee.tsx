@@ -7,9 +7,12 @@ import { cn } from "@/lib/utils";
  * member links to their own social / forum, shown with their real forum
  * avatar (mirrored locally under /committee) ringed by their cohort colour.
  *
- * The three tags per member are distilled from ~18 months of public ZCG
- * committee meeting minutes (Jan 2025 – Jun 2026) — observed behaviour, not
- * self-description. Paul Brigner joined in July 2026, so he has no record yet.
+ * The three tags per member are distilled from public ZCG committee meeting
+ * minutes — observed behaviour, not self-description. Most members have ~18
+ * months of record (Jan 2025 – Jun 2026); Paul Brigner joined in July 2026,
+ * so his tags come from the minutes he has attended (7/6, 7/20, 8/3/2026):
+ * long-term viability/maintenance concerns, applicant track-record checks,
+ * and pushing reach beyond the existing crypto audience.
  */
 
 type Platform = "forum" | "x" | "linkedin" | "youtube";
@@ -41,6 +44,11 @@ const MEMBERS: Member[] = [
     platform: "linkedin",
     cohort: "june-2026",
     term: "to Jun 2027",
+    tags: [
+      "Long-Term Viability",
+      "Track-Record Scrutiny",
+      "Mainstream Outreach",
+    ],
   },
   {
     name: "hanh",
