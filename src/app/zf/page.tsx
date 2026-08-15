@@ -14,6 +14,12 @@ type Report = { title: string; date: string; url: string; kind: string };
 // Zcash Foundation transparency reports, straight from the community forum.
 const REPORTS: Report[] = [
   {
+    title: "Q2 2026 Report",
+    date: "2026-08-06",
+    kind: "Quarterly report",
+    url: "https://forum.zcashcommunity.com/t/zcash-foundation-q2-2026-report/56917",
+  },
+  {
     title: "Q1 2026 Report",
     date: "2026-05-19",
     kind: "Quarterly report",
