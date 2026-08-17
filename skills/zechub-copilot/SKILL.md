@@ -162,10 +162,11 @@ still failed. Cite these when explaining a loss:
     an empty result and report "no votes".
 14. **`listVotes` takes `proposalId`, not `id`.** Passing `id` returns the string
     `missing 'proposalId'`, which is not JSON and will crash a naive parser.
-15. **Same title ≠ same proposal.** ZecHub resubmits rejected proposals, sometimes
-    within days, sometimes unchanged. A169 and A172 carry the same title, the same
-    $5,000 ask and the same period: the first was rejected, the second executed. When
-    a user names a proposal by title, check for siblings and report which one you mean.
+15. **Same title ≠ same proposal.** A rejected proposal can come back under the same
+    title, and outcomes differ between siblings: A169 and A172 share a title, a $5,000
+    ask and a period, but one was rejected and the other executed. When a user names a
+    proposal by title rather than id, list the siblings and say which id you answered
+    for — never assume the newest is the one they meant.
 16. **Not every member votes.** Turnout averages ~13 of 23. A proposal's fate usually
     turns on who showed up, so quote turnout alongside the tally when explaining an
     outcome.
