@@ -13,6 +13,12 @@ const usd = (cents: bigint | null) =>
 /**
  * Public read-only mirror of the ZecHub DAO treasury dashboard, refreshed on
  * the 6h cycle. Amounts are plain numbers: ZEC and USD.
+ *
+ * `totals.paidOutUsd` is summed from the payout rows, not taken from the
+ * sheet's "Total Paid Out" cell: that cell's SUM range covers only the first
+ * eight of ten payment rows, understating the total by the two most recently
+ * appended grants. The sheet's own figure stays available as
+ * `totals.paidOutUsdSheet` so the two can be compared.
  */
 export async function GET() {
   const snapshot = await latestTreasurySnapshot();
@@ -58,7 +64,10 @@ export async function GET() {
             (snapshot.fpfZat ?? 0n) +
             (snapshot.incZat ?? 0n),
         ),
-        paidOutUsd: usd(snapshot.totalPaidOutUsdCents),
+        paidOutUsd: usd(
+          payouts.reduce((sum, p) => sum + (p.paidUsdCents ?? 0n), 0n),
+        ),
+        paidOutUsdSheet: usd(snapshot.totalPaidOutUsdCents),
         committedUsd: usd(snapshot.toBePaidOutUsdCents),
       },
       allocations: allocations.map((a) => ({

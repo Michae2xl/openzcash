@@ -338,6 +338,15 @@ export default async function ZechubDaoPage() {
   const fundedFor = (p: ZechubProposal): TreasuryPayoutRow | null =>
     payouts.find((x) => titlesMatch(x.title, p.title)) ?? null;
 
+  // Sum the payout rows rather than the sheet's "Total Paid Out" cell: that cell
+  // has a stale SUM range and covers only the first eight of ten payment rows,
+  // understating the total by the two most recently appended grants.
+  const paidOutUsdCents = payouts.reduce(
+    (sum, x) => sum + (x.paidUsdCents ?? 0n),
+    0n,
+  );
+  const paidGrantCount = payouts.filter((x) => x.paidUsdCents).length;
+
   // Rows for the sortable payout table: each grant links to its DAO proposal
   // when the title matches, else to the treasury sheet itself.
   const payoutRows = payouts.map((x) => ({
@@ -432,10 +441,8 @@ export default async function ZechubDaoPage() {
             />
             <Stat
               label="Paid out to date"
-              value={formatUsdCents(snapshot.totalPaidOutUsdCents ?? 0n, {
-                compact: true,
-              })}
-              sub={`across ${payouts.filter((x) => x.paidUsdCents).length} grants`}
+              value={formatUsdCents(paidOutUsdCents, { compact: true })}
+              sub={`across ${paidGrantCount} grants`}
             />
             <Stat
               label="ZEC price used"
