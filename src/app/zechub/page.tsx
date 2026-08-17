@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Badge, Card, PageHeader, Stat } from "@/components/ui";
 import {
   getZechubProposals,
@@ -614,6 +615,34 @@ export default async function ZechubDaoPage() {
           </p>
         </Card>
       )}
+
+      {/* Governance copilot — the ZecHub counterpart of /zcg/copilot. */}
+      <Link href="/zechub/copilot" className="group mt-6 block">
+        <div className="relative overflow-hidden rounded-2xl border border-stone-800/60 bg-gradient-to-br from-stone-900 via-stone-900 to-amber-950 p-6 shadow-lg shadow-stone-400/30 transition duration-200 group-hover:-translate-y-0.5 group-hover:shadow-xl">
+          <div className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-amber-400/20 blur-3xl" />
+          <div className="pointer-events-none absolute -bottom-12 left-1/3 h-40 w-40 rounded-full bg-emerald-400/10 blur-3xl" />
+          <div className="relative flex items-center justify-between gap-4">
+            <div className="min-w-0">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-2.5 py-0.5 text-[11px] font-medium text-white/80 ring-1 ring-inset ring-white/15">
+                New · agent skill
+              </span>
+              <h2 className="mt-2 text-xl font-semibold tracking-tight text-white sm:text-2xl">
+                ZecHub Copilot
+              </h2>
+              <p className="mt-1 max-w-xl text-sm text-stone-300">
+                Ask your own agent why a vote passed or failed. It computes both
+                tests a proposal has to clear — 67% of yes+no and 40% turnout —
+                names every voter, and reads the treasury without mistaking the
+                headline total for spendable money.
+              </p>
+            </div>
+            <span className="hidden shrink-0 items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm font-medium text-white ring-1 ring-inset ring-white/15 transition group-hover:bg-white/15 sm:inline-flex">
+              Get the skill{" "}
+              <span className="transition group-hover:translate-x-0.5">→</span>
+            </span>
+          </div>
+        </div>
+      </Link>
 
       <p className="mt-4 text-xs text-stone-500">
         Treasury figures mirror the{" "}
