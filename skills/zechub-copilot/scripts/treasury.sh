@@ -51,11 +51,13 @@ for p in payouts:
 print()
 
 print("## reconciliation (read this before quoting a 'total paid')")
-print(f"  sum of payouts[].paidUsd     ${paid:,.2f}   <- cumulative, all periods")
-print(f"  totals.paidOutUsd            ${tot['paidOutUsd']:,.2f}   <- the dashboard's current reporting period")
+print(f"  sum of payouts[].paidUsd     ${paid:,.2f}   <- what the API actually exposes")
+print(f"  totals.paidOutUsd            ${tot['paidOutUsd']:,.2f}   <- understated: stale SUM range in the sheet")
 if abs(paid - tot["paidOutUsd"]) > 0.01:
-    print(f"  they differ by               ${abs(paid - tot['paidOutUsd']):,.2f} — this is expected, not an error.")
-    print("  Say which one you mean; never present them as the same number.")
+    print(f"  they differ by               ${abs(paid - tot['paidOutUsd']):,.2f}")
+    print("  The sheet's header cell sums only the first 8 of 10 payment rows; the two")
+    print("  most recently appended rows fall outside the range. Prefer the payout sum,")
+    print("  and say so. (totals.committedUsd, by contrast, does sum every row.)")
 print()
 print(f"  sum of payouts[].pendingUsd  ${pending:,.2f}")
 print(f"  totals.committedUsd          ${tot['committedUsd']:,.2f}")

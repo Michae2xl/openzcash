@@ -131,10 +131,21 @@ still failed. Cite these when explaining a loss:
    pending state. Approved = `passed` (approved, not yet executed) or `executed`
    (approved and the on-chain message ran). Current split: 91 executed, 3 passed,
    22 rejected, 57 closed.
-6. **`totals.paidOutUsd` is not the sum of `payouts[].paidUsd`.** Verified Aug 2026:
-   the total reports **$16,550** while the payout rows sum to **$21,750**. The
-   dashboard's "Paid Out" figure covers the _current reporting period_, while the
-   payout list is cumulative. Report the one you mean and say which.
+6. **"How much has ZecHub paid?" has three defensible answers — say which you used.**
+   Traced to the source spreadsheet (Aug 2026):
+   - **$16,550** — `totals.paidOutUsd`. This is a **stale SUM range** in the sheet: the
+     header cell adds only the first 8 of 10 payment rows. The two most recently
+     appended rows (Korean Q3 $2,000 + India Jun–Aug $3,200) sit outside the range and
+     total exactly the $5,200 gap. It is a spreadsheet bug, not a reporting period.
+   - **$21,750** — the sum of `payouts[].paidUsd`. The correct total of what the API
+     exposes.
+   - **$26,025** — the sheet's per-grant "USD Paid to date" blocks, which also cover the
+     two grants the API reports as `paidUsd: null`.
+
+   Prefer $21,750 for "what the API says was paid", and flag the headline figure as
+   understated. Note the asymmetry: **`totals.committedUsd` ($8,470) IS correct** — it
+   sums all ten rows. One total is trustworthy, the other is not.
+
 7. **Milestones marked `Complete` are not money paid.** The Global Ambassador Elzz row
    shows three `Complete` milestones with `paidUsd: 3000` and `pendingUsd: 5000`.
    Read the amounts, not the milestone labels.
@@ -153,24 +164,28 @@ still failed. Cite these when explaining a loss:
 11. **USD figures are snapshot-priced.** `zecPriceUsd` is the price used on
     `capturedOn`. Do not re-price with today's ZEC and present the result as the
     dashboard's number; if you re-price, label it as your own conversion.
-12. **The indexer returns `msgs: []`.** To see what a proposal actually executes
+12. **`capturedOn` can be weeks old, and the "6h refresh" does not fix that.** The 6h
+    cycle re-reads the spreadsheet; `capturedOn` only moves when the DAO edits it
+    (measured 12 days stale in Aug 2026). Always state the snapshot date; never call a
+    treasury figure current without it.
+13. **The indexer returns `msgs: []`.** To see what a proposal actually executes
     (especially `update_members` for membership changes), query the **LCD** instead:
     `{"proposal":{"proposal_id":N}}` base64-encoded. Membership adds/removes are
     invisible from the indexer alone.
-13. **Indexer and LCD have different shapes.** The indexer returns a bare JSON array or
+14. **Indexer and LCD have different shapes.** The indexer returns a bare JSON array or
     object; the LCD wraps everything in `{"data":{…}}`. Handle both, or you will parse
     an empty result and report "no votes".
-14. **`listVotes` takes `proposalId`, not `id`.** Passing `id` returns the string
+15. **`listVotes` takes `proposalId`, not `id`.** Passing `id` returns the string
     `missing 'proposalId'`, which is not JSON and will crash a naive parser.
-15. **Same title ≠ same proposal.** A rejected proposal can come back under the same
+16. **Same title ≠ same proposal.** A rejected proposal can come back under the same
     title, and outcomes differ between siblings: A169 and A172 share a title, a $5,000
     ask and a period, but one was rejected and the other executed. When a user names a
     proposal by title rather than id, list the siblings and say which id you answered
     for — never assume the newest is the one they meant.
-16. **Not every member votes.** Turnout averages ~13 of 23. A proposal's fate usually
+17. **Not every member votes.** Turnout averages ~13 of 23. A proposal's fate usually
     turns on who showed up, so quote turnout alongside the tally when explaining an
     outcome.
-17. **ZecHub is both funder and grantee.** Money flowing _out_ to contributors lives in
+18. **ZecHub is both funder and grantee.** Money flowing _out_ to contributors lives in
     the treasury API; money flowing _in_ from ZCG lives in the ZCG ledger
     (`data/disbursements?search=ZecHub`). Never mix the two into a single "ZecHub
     spending" figure.
