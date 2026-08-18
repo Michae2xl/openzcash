@@ -193,8 +193,11 @@ const SOFTWARE: Wallet[] = [
     logo: "/wallet-logos/zappit.png",
     platforms: ["Android"],
     shielded: "full",
+    // Public Play listing (production track, updated Aug 16 2026), but the
+    // maker's own site still labels the app "OPEN BETA ON ANDROID" and the
+    // Play description calls the offramp beta — so the tag stays.
     tag: "Beta",
-    note: "P2P messenger with a shielded Zodl-based wallet and PIX/UPI offramp.",
+    note: "P2P messenger with a shielded Zodl-based wallet; no-KYC offramp over UPI, PIX and QRIS.",
   },
   {
     name: "Gem Wallet",
