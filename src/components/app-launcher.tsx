@@ -218,6 +218,14 @@ const APPS: AppDef[] = [
     Icon: IconWallet,
     grad: GRAD.emerald,
   },
+  {
+    id: "zcash10",
+    label: "Zcash at 10",
+    sub: "1982 to genesis to now",
+    href: "/zcash10years",
+    Icon: IconCoins,
+    grad: GRAD.amber,
+  },
 ];
 
 // Bumped (v3) so the default order takes effect for everyone: News first,
