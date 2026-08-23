@@ -18,6 +18,59 @@ const RAW = `https://raw.githubusercontent.com/${OWNER}/${REPO}/main/${DIR}`;
 const TTL_MS = 60 * 60_000; // notes change at most a couple of times a month
 
 export const ARBORIST_REPO_URL = `https://github.com/${OWNER}/${REPO}`;
+export const ARBORIST_FORUM_URL =
+  "https://forum.zcashcommunity.com/c/ecosystem-updates/foundation/21";
+
+/**
+ * Scheduling announcements from the Zcash Foundation forum category.
+ *
+ * The notes repository only gets a file once a call has happened, so the
+ * forum runs ahead of it: "no call this week", "next call on the 23rd",
+ * holiday schedules. Those live here, above the archive. (Arborist news also
+ * goes out on X, which has no free read API, so the forum is the source.)
+ */
+export interface ArboristAnnouncement {
+  id: number;
+  title: string;
+  url: string;
+  date: string;
+}
+
+let annCache: { at: number; items: ArboristAnnouncement[] } | null = null;
+
+export async function getArboristAnnouncements(): Promise<
+  ArboristAnnouncement[]
+> {
+  const now = Date.now();
+  if (annCache && now - annCache.at < 30 * 60_000) return annCache.items;
+  try {
+    const res = await fetch(
+      "https://forum.zcashcommunity.com/search.json?q=arborist%20in%3Atitle%20order%3Alatest_topic",
+      {
+        headers: { accept: "application/json" },
+        signal: AbortSignal.timeout(8_000),
+        cache: "no-store",
+      },
+    );
+    if (!res.ok) return annCache?.items ?? [];
+    const j = (await res.json()) as {
+      topics?: Array<{ id: number; title: string; slug: string; created_at: string }>;
+    };
+    const items = (j.topics ?? [])
+      .filter((t) => /arborist/i.test(t.title))
+      .slice(0, 5)
+      .map((t) => ({
+        id: t.id,
+        title: t.title,
+        url: `https://forum.zcashcommunity.com/t/${t.slug}/${t.id}`,
+        date: t.created_at.slice(0, 10),
+      }));
+    if (items.length > 0) annCache = { at: now, items };
+    return items;
+  } catch {
+    return annCache?.items ?? [];
+  }
+}
 
 export interface ArboristCall {
   /** Call number, e.g. 129. */
