@@ -182,7 +182,6 @@ const APPS: AppDef[] = [
     href: "/zcg/coinholder",
     Icon: IconCoins,
     grad: GRAD.amber,
-    defaultHidden: true,
   },
   {
     id: "defi",
@@ -248,10 +247,10 @@ const APPS: AppDef[] = [
   },
 ];
 
-// Bumped (v4) for the leaner default home: the everyday apps are shown and
-// the deeper data views ship hidden, one tap away under Edit. Saved layouts
-// from earlier versions are superseded.
-const STORAGE_KEY = "zbo-launcher-v4";
+// Bumped (v5): Coinholder joins the default home. The six deeper data views
+// (Lockbox, Disbursements, Recipients, Totals, DeFi, Z3) still ship hidden,
+// one tap away under Edit. Saved layouts from earlier versions are superseded.
+const STORAGE_KEY = "zbo-launcher-v5";
 const APP_BY_ID = new Map(APPS.map((a) => [a.id, a]));
 const PUBLIC_APPS = APPS.filter((a) => !a.admin);
 const ADMIN_APPS = APPS.filter((a) => a.admin);
