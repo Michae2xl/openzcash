@@ -10,8 +10,8 @@ import { cn } from "@/lib/utils";
  * Client view for /communities, designed as an assessment surface for the
  * ZCG committee: a single dense ledger-style list, ordered by most recent
  * forum activity, with a recency signal per row (green ≤7d, amber ≤30d,
- * grey = quiet). The live activity strip stays at the top of the page;
- * totals sit at the bottom.
+ * grey = quiet). Filters and the list are the whole page; totals sit at
+ * the bottom.
  */
 
 const REGIONS: Region[] = [
@@ -120,11 +120,6 @@ export function CommunitiesView({
     return [...filtered].sort((a, b) => key(b).localeCompare(key(a)));
   }, [communities, region, funding, sort, lastByCommunity]);
 
-  const shownIds = useMemo(() => new Set(shown.map((c) => c.id)), [shown]);
-  const strip = useMemo(
-    () => activity.filter((a) => shownIds.has(a.communityId)).slice(0, 24),
-    [activity, shownIds],
-  );
 
   const funded = communities.filter((c) => c.zcg.funded);
   const totalBudgeted = funded.reduce(
@@ -141,49 +136,6 @@ export function CommunitiesView({
 
   return (
     <>
-      {/* ---- Live forum activity: top of the page ---- */}
-      <section className="mb-6 overflow-hidden rounded-2xl border border-stone-200 bg-gradient-to-b from-white to-stone-50 shadow-sm ring-1 ring-inset ring-stone-900/5">
-        <div className="flex items-baseline justify-between gap-3 border-b border-stone-200 px-5 py-3">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-stone-600">
-            Latest forum activity
-          </p>
-          <p className="text-[11px] text-stone-400">
-            live from the community forum
-          </p>
-        </div>
-        <div className="flex snap-x gap-0 divide-x divide-stone-100 overflow-x-auto">
-          {strip.map((a) => {
-            const c = byId.get(a.communityId);
-            return (
-              <a
-                key={a.topicId}
-                href={a.url}
-                target="_blank"
-                rel="noreferrer"
-                className="w-60 shrink-0 snap-start px-4 py-3.5 transition hover:bg-amber-500/[0.06]"
-              >
-                <div className="flex items-baseline justify-between gap-2">
-                  <p className="truncate text-xs font-semibold text-stone-900">
-                    {c?.flag} {c?.name}
-                  </p>
-                  <span className="shrink-0 text-[10px] font-medium text-emerald-700 tnum">
-                    {timeAgo(a.lastPostedAt)}
-                  </span>
-                </div>
-                <p className="mt-1 line-clamp-2 text-[11px] leading-snug text-stone-500">
-                  {a.title}
-                </p>
-              </a>
-            );
-          })}
-          {strip.length === 0 ? (
-            <p className="w-full py-5 text-center text-xs text-stone-400">
-              Forum activity unavailable right now.
-            </p>
-          ) : null}
-        </div>
-      </section>
-
       {/* ---- Filters + sort ---- */}
       <div className="mb-4 flex flex-wrap items-center gap-2">
         <button
