@@ -14,7 +14,8 @@ const csp = [
   "default-src 'self'",
   "script-src 'self' 'unsafe-inline'",
   "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data: blob:",
+  // i.ytimg.com: recording thumbnails on /arborist (YouTube's public CDN).
+  "img-src 'self' data: blob: https://i.ytimg.com",
   "font-src 'self'",
   "connect-src 'self' blob:",
   "frame-ancestors 'none'",

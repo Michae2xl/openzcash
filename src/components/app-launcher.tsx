@@ -221,6 +221,15 @@ const APPS: AppDef[] = [
     logo: "/logos/zechub.png",
   },
   {
+    id: "arborist",
+    label: "Arborist Calls",
+    sub: "Protocol call archive",
+    href: "/arborist",
+    Icon: IconVote,
+    grad: GRAD.emerald,
+    logo: "/logos/arborist.png",
+  },
+  {
     id: "communities",
     label: "Communities",
     sub: "Global groups · live",
