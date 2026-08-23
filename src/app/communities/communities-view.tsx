@@ -200,7 +200,7 @@ export function CommunitiesView({
           {[
             "Community",
             "Latest forum activity",
-            "ZCG funding",
+            "Funding",
             "Channels",
           ].map((h) => (
             <p
@@ -277,6 +277,13 @@ export function CommunitiesView({
                       title={c.zcg.note ?? c.zcg.recipient}
                     >
                       ZCG-funded
+                    </span>
+                  ) : c.zcg.zechubDao ? (
+                    <span
+                      className="rounded-md bg-emerald-500/10 px-2 py-0.5 text-[11px] font-semibold text-emerald-700 ring-1 ring-inset ring-emerald-500/25"
+                      title={c.zcg.note}
+                    >
+                      ZecHub DAO
                     </span>
                   ) : (
                     <span

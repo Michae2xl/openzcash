@@ -37,6 +37,8 @@ export interface CommunityZcg {
   grants?: number;
   /** ISO date of the most recent paid disbursement. */
   lastPaid?: string;
+  /** True when funded by the ZecHub DAO treasury (ambassador programs). */
+  zechubDao?: boolean;
   /** Funding nuance: other channels (ZecHub DAO, Global Ambassador), etc. */
   note?: string;
 }
@@ -106,13 +108,13 @@ export const COMMUNITIES: Community[] = [
     id: "zcash-en-espanol",
     name: "Zcash en Español",
     country: "Hispanic America & Spain",
-    flag: "🌎",
+    flag: "🇪🇸",
     region: "Latin America",
     language: "Spanish",
     links: {"site": "https://zcashesp.com", "forumUser": "yoditar"},
     zcg: {"funded": true, "recipient": "Zcash Español", "budgetedUsd": 195600, "grants": 4, "lastPaid": "2026-08-06"},
-    forumTopics: [{ id: 53815, title: "Zcash Global en Español 2026", kind: "report" }, { id: 55685, title: "Zcash en Español X account suspended", kind: "announcement" }, { id: 55530, title: "The Spanish-speaking Zcash community now has its own node!", kind: "announcement" }],
-    about: "The Spanish-speaking hub (now on Bluesky after an X suspension): news, education, its own node, and a family of local clubs.",
+    forumTopics: [{ id: 56445, title: "Zcash for Venezuela!", kind: "thread" }, { id: 53815, title: "Zcash Global en Español 2026", kind: "report" }, { id: 55685, title: "Zcash en Español X account suspended", kind: "announcement" }, { id: 55530, title: "The Spanish-speaking Zcash community now has its own node!", kind: "announcement" }],
+    about: "The Spanish-speaking hub, managed by yoditar: news, education, its own node, Venezuela outreach and a family of local clubs. Now on Bluesky after an X suspension.",
   },
   {
     id: "zcash-turkiye",
@@ -172,7 +174,7 @@ export const COMMUNITIES: Community[] = [
     links: {"forumUser": "gordonesTV"},
     zcg: {"funded": false},
     forumTopics: [{ id: 51247, title: "Club Zcash Barcelona, the journey begins!", kind: "thread" }],
-    about: "Local club in the Zcash en Español orbit, running Barcelona meetups.",
+    about: "Barcelona meetups under the Zcash en Español umbrella (managed by yoditar).",
   },
   {
     id: "coderaiz-mexico",
@@ -247,18 +249,6 @@ export const COMMUNITIES: Community[] = [
     about: "Grassroots education in Uganda and Kenya, with event appearances backed by one-off ZecHub DAO proposals.",
   },
   {
-    id: "zcash-for-venezuela",
-    name: "Zcash for Venezuela",
-    country: "Venezuela",
-    flag: "🇻🇪",
-    region: "Latin America",
-    language: "Spanish",
-    links: {"forumUser": "gordonesTV"},
-    zcg: {"funded": true, "note": "Funded through the Zcash en Español ZCG grant — part of its ecosystem (no separate ledger recipient)."},
-    forumTopics: [{ id: 56445, title: "Zcash for Venezuela!", kind: "thread" }],
-    about: "Adoption advocacy where financial privacy is a daily necessity.",
-  },
-  {
     id: "zcash-france",
     name: "Zcash France",
     country: "France",
@@ -290,7 +280,7 @@ export const COMMUNITIES: Community[] = [
     region: "Asia",
     language: "Hindi/English",
     links: {"forumUser": "jatinsahijwani"},
-    zcg: {"funded": false, "note": "Funded via the ZecHub DAO treasury, not the ZCG ledger."},
+    zcg: {"funded": false, "zechubDao": true, "note": "Ambassador program funded by the ZecHub DAO treasury, not the ZCG ledger."},
     forumTopics: [{ id: 54762, title: "Zcash India 2026", kind: "announcement" }, { id: 56847, title: "Open Light Nodes: Independent Zcash Light Client Infrastructure for Asia", kind: "application" }, { id: 54544, title: "Zcash India 2026 Grant Application", kind: "application" }],
     about: "Education and meetups in India, funded as a ZecHub DAO ambassador program.",
   },
@@ -326,9 +316,21 @@ export const COMMUNITIES: Community[] = [
     region: "Asia",
     language: "Korean",
     links: {"forumUser": "AidenZ"},
-    zcg: {"funded": false, "note": "Funded via the ZecHub DAO treasury, not the ZCG ledger."},
+    zcg: {"funded": false, "zechubDao": true, "note": "Ambassador program funded by the ZecHub DAO treasury, not the ZCG ledger."},
     forumTopics: [{ id: 56458, title: "Zechub DAO - 2026 Zcash Korea Ambassador Proposal (Approved)", kind: "application" }, { id: 50498, title: "Zechub DAO - Zcash Korea Ambassador Proposal (Approved) — edição 2025", kind: "application" }],
     about: "Korean community, funded as a ZecHub DAO Global Ambassador program.",
+  },
+  {
+    id: "elzz-global-ambassador",
+    name: "Elzz — Global Ambassador",
+    country: "Global",
+    flag: "🌐",
+    region: "Global",
+    language: "English",
+    links: {"forumUser": "elzz-ux"},
+    zcg: {"funded": false, "zechubDao": true, "note": "Global Ambassador program funded by the ZecHub DAO treasury (three consecutive terms through Dec 2026)."},
+    forumTopics: [{ id: 56859, title: "Global Ambassador Elzz July 2026 Report", kind: "report" }],
+    about: "ZecHub DAO Global Ambassador: educational content, X Spaces and ecosystem awareness, with monthly public reports.",
   },
   {
     id: "zcash-ukraine",
@@ -338,7 +340,7 @@ export const COMMUNITIES: Community[] = [
     region: "Europe",
     language: "Ukrainian",
     links: {"x": "https://x.com/Zcash_ua", "telegram": "https://t.me/zcash_ua", "forumUser": "beyond"},
-    zcg: {"funded": false, "note": "Funded via the ZecHub DAO treasury, not the ZCG ledger."},
+    zcg: {"funded": false, "zechubDao": true, "note": "Ambassador program funded by the ZecHub DAO treasury, not the ZCG ledger."},
     forumTopics: [{ id: 54059, title: "Zcash Ukraine – Monthly Report (December 1–31, 2025) — último da série mensal iniciada em jun/2025", kind: "report" }, { id: 52330, title: "Zcash Ukraine Regional Community Initiative", kind: "application" }],
     about: "Ukrainian community and education under wartime conditions.",
   },
