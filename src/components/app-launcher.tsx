@@ -9,6 +9,7 @@ import {
   IconCheck,
   IconClose,
   IconCoins,
+  IconGlobe,
   IconGrant,
   IconGrid,
   IconKey,
@@ -209,6 +210,14 @@ const APPS: AppDef[] = [
     Icon: IconVote,
     grad: GRAD.emerald,
     logo: "/logos/zechub.png",
+  },
+  {
+    id: "communities",
+    label: "Communities",
+    sub: "Global groups · live",
+    href: "/communities",
+    Icon: IconGlobe,
+    grad: GRAD.violet,
   },
   {
     id: "wallets",
