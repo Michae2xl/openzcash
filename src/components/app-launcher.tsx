@@ -38,6 +38,8 @@ type AppDef = {
   logo?: string;
   /** Admin-only app (data management); shown only to a signed-in admin. */
   admin?: boolean;
+  /** Available but not on the default home: the visitor adds it via Edit. */
+  defaultHidden?: boolean;
 };
 
 // All gold/stone — the brand reserves color for genuine status/flows only.
@@ -66,6 +68,7 @@ const APPS: AppDef[] = [
     href: "/lockbox",
     Icon: IconShield,
     grad: GRAD.amber,
+    defaultHidden: true,
   },
   {
     id: "tesouros",
@@ -118,6 +121,7 @@ const APPS: AppDef[] = [
     href: "/zcg/disbursements",
     Icon: IconReceipt,
     grad: GRAD.sky,
+    defaultHidden: true,
   },
   {
     id: "recipients",
@@ -126,6 +130,7 @@ const APPS: AppDef[] = [
     href: "/zcg/recipients",
     Icon: IconUsers,
     grad: GRAD.emerald,
+    defaultHidden: true,
   },
   {
     id: "proposals",
@@ -142,6 +147,7 @@ const APPS: AppDef[] = [
     href: "/zcg/totals",
     Icon: IconSigma,
     grad: GRAD.amber,
+    defaultHidden: true,
   },
   {
     id: "meetings",
@@ -176,6 +182,7 @@ const APPS: AppDef[] = [
     href: "/zcg/coinholder",
     Icon: IconCoins,
     grad: GRAD.amber,
+    defaultHidden: true,
   },
   {
     id: "defi",
@@ -184,6 +191,7 @@ const APPS: AppDef[] = [
     href: "/defi",
     Icon: IconChart,
     grad: GRAD.emerald,
+    defaultHidden: true,
   },
   {
     id: "z3",
@@ -192,6 +200,7 @@ const APPS: AppDef[] = [
     href: "/z3",
     Icon: IconGrid,
     grad: GRAD.violet,
+    defaultHidden: true,
   },
   {
     id: "shielded-labs",
@@ -230,17 +239,23 @@ const APPS: AppDef[] = [
   },
 ];
 
-// Bumped (v3) so the default order takes effect for everyone: News first,
-// Zcash Wallets last (saved layouts are superseded).
-const STORAGE_KEY = "zbo-launcher-v3";
+// Bumped (v4) for the leaner default home: the everyday apps are shown and
+// the deeper data views ship hidden, one tap away under Edit. Saved layouts
+// from earlier versions are superseded.
+const STORAGE_KEY = "zbo-launcher-v4";
 const APP_BY_ID = new Map(APPS.map((a) => [a.id, a]));
 const PUBLIC_APPS = APPS.filter((a) => !a.admin);
 const ADMIN_APPS = APPS.filter((a) => a.admin);
+const DEFAULT_VISIBLE = PUBLIC_APPS.filter((a) => !a.defaultHidden);
+const DEFAULT_HIDDEN = PUBLIC_APPS.filter((a) => a.defaultHidden);
 
 type State = { order: string[]; hidden: string[] };
 
 function loadState(): State {
-  const def = { order: PUBLIC_APPS.map((a) => a.id), hidden: [] as string[] };
+  const def = {
+    order: DEFAULT_VISIBLE.map((a) => a.id),
+    hidden: DEFAULT_HIDDEN.map((a) => a.id),
+  };
   if (typeof window === "undefined") return def;
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
@@ -250,7 +265,8 @@ function loadState(): State {
     const order = s.order.filter((id) => known.has(id));
     const hidden = (s.hidden ?? []).filter((id) => known.has(id));
     for (const a of PUBLIC_APPS)
-      if (!order.includes(a.id) && !hidden.includes(a.id)) order.push(a.id);
+      if (!order.includes(a.id) && !hidden.includes(a.id))
+        (a.defaultHidden ? hidden : order).push(a.id);
     return { order, hidden };
   } catch {
     return def;
@@ -259,8 +275,8 @@ function loadState(): State {
 
 export function AppLauncher({ isAdmin = false }: { isAdmin?: boolean }) {
   const [state, setState] = useState<State>({
-    order: PUBLIC_APPS.map((a) => a.id),
-    hidden: [],
+    order: DEFAULT_VISIBLE.map((a) => a.id),
+    hidden: DEFAULT_HIDDEN.map((a) => a.id),
   });
   const [editing, setEditing] = useState(false);
   const [dragId, setDragId] = useState<string | null>(null);
@@ -391,10 +407,24 @@ export function AppLauncher({ isAdmin = false }: { isAdmin?: boolean }) {
         ))}
       </div>
 
+      {mounted && !editing && hiddenApps.length > 0 ? (
+        <p className="mt-6 text-center text-xs text-stone-500">
+          {hiddenApps.length} more app{hiddenApps.length > 1 ? "s" : ""}{" "}
+          available.{" "}
+          <button
+            onClick={() => setEditing(true)}
+            className="font-medium text-amber-700 underline decoration-amber-500/40 underline-offset-2 hover:text-amber-800"
+          >
+            Edit
+          </button>{" "}
+          to add or remove apps.
+        </p>
+      ) : null}
+
       {mounted && editing && hiddenApps.length > 0 ? (
         <div className="mt-10 border-t border-stone-200 pt-6">
           <p className="mb-4 text-[11px] font-medium uppercase tracking-wider text-stone-600">
-            Hidden · tap to restore
+            Available · tap to add
           </p>
           <div className="flex flex-wrap gap-4">
             {hiddenApps.map((app) => (
