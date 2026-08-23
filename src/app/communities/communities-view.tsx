@@ -234,6 +234,9 @@ export function CommunitiesView({
                     </p>
                     <p className="truncate text-[11px] text-stone-500">
                       {c.country} · {c.language}
+                      {c.since ? (
+                        <span className="text-stone-400"> · since {c.since}</span>
+                      ) : null}
                     </p>
                   </div>
                 </div>
