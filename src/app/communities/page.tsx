@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { PageHeader, Stat } from "@/components/ui";
+import { PageHeader } from "@/components/ui";
 import { COMMUNITIES } from "@/lib/communities/data";
 import { getCommunityActivity } from "@/lib/communities/forum-activity";
 import { CommunitiesView } from "./communities-view";
@@ -17,36 +17,12 @@ async function LiveDirectory() {
 }
 
 export default function CommunitiesPage() {
-  const funded = COMMUNITIES.filter((c) => c.zcg.funded);
-  const totalBudgeted = funded.reduce(
-    (s, c) => s + (c.zcg.budgetedUsd ?? 0),
-    0,
-  );
-  const countries = new Set(
-    COMMUNITIES.filter((c) => c.country !== "Global").map((c) => c.country),
-  ).size;
-
-  return (
+    return (
     <>
       <PageHeader
         title="Global Communities"
         subtitle="The regional groups building Zcash adoption around the world: where to find each one, which ones the ZCG ledger shows as funded, and their latest forum activity. X profiles are linked; activity comes from the community forum, where groups post their monthly reports."
       />
-
-      <section className="mb-8 grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <Stat label="Communities" value={String(COMMUNITIES.length)} />
-        <Stat label="Countries" value={String(countries)} />
-        <Stat
-          label="ZCG-funded"
-          value={`${funded.length} of ${COMMUNITIES.length}`}
-          tone="warn"
-        />
-        <Stat
-          label="Budgeted to communities"
-          value={`$${(totalBudgeted / 1_000_000).toFixed(2)}M`}
-          sub="per the audited ledger"
-        />
-      </section>
 
       <Suspense
         fallback={
