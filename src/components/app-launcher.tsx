@@ -218,6 +218,7 @@ const APPS: AppDef[] = [
     href: "/communities",
     Icon: IconGlobe,
     grad: GRAD.violet,
+    logo: "/logos/communities.png",
   },
   {
     id: "wallets",
