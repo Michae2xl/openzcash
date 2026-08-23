@@ -1,3 +1,6 @@
+import { Suspense } from "react";
+import { OrgUpdates } from "@/components/org-updates";
+import { getFoundationUpdates } from "@/lib/org-updates/forum";
 import { Badge, Card, PageHeader } from "@/components/ui";
 import { IconNews, IconUsers } from "@/components/icons";
 import { ZcapTable } from "@/components/zcap-table";
@@ -166,6 +169,20 @@ const ZCONS: Zcon[] = [
   },
 ];
 
+
+async function LiveUpdates() {
+  const updates = await getFoundationUpdates(24);
+  return (
+    <OrgUpdates
+      updates={updates}
+      title="Latest from the Foundation"
+      sourceUrl="https://forum.zcashcommunity.com/c/ecosystem-updates/foundation/21"
+      sourceLabel="Foundation forum"
+      empty="The forum did not respond. Try again shortly."
+    />
+  );
+}
+
 export default async function ZfPage() {
   const reports = [...REPORTS].sort((a, b) => b.date.localeCompare(a.date));
   const latest = reports[0];
@@ -175,7 +192,7 @@ export default async function ZfPage() {
     <>
       <PageHeader
         title="Zcash Foundation"
-        subtitle="The Zcash Foundation's quarterly transparency reports, covering engineering, finances, activities and community, plus the Zcon conference series."
+        subtitle="Live engineering updates, Zebra releases and announcements from the Foundation forum, plus every quarterly transparency report and the Zcon conference series."
         actions={
           <a
             href={FORUM_CATEGORY}
@@ -187,6 +204,18 @@ export default async function ZfPage() {
           </a>
         }
       />
+
+      <Suspense
+        fallback={
+          <div className="mb-6 rounded-2xl border border-stone-200 bg-white p-8 text-center text-sm text-stone-600 shadow-sm">
+            Loading the latest Foundation updates...
+          </div>
+        }
+      >
+        <div className="mb-6">
+          <LiveUpdates />
+        </div>
+      </Suspense>
 
       <a
         href={FORUM_CATEGORY}

@@ -65,6 +65,9 @@ async function Archive() {
           <div className="flex items-baseline justify-between gap-3 border-b border-stone-200 px-5 py-3">
             <p className="text-[11px] font-semibold uppercase tracking-wider text-stone-600">
               Scheduling news
+              <span className="ml-2 font-normal normal-case tracking-normal text-stone-500">
+                last six weeks
+              </span>
             </p>
             <a
               href={ARBORIST_FORUM_URL}

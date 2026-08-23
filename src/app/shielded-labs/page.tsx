@@ -1,5 +1,8 @@
 import { Badge, Card, PageHeader } from "@/components/ui";
 import { IconShield } from "@/components/icons";
+import { Suspense } from "react";
+import { OrgUpdates } from "@/components/org-updates";
+import { getShieldedLabsUpdates } from "@/lib/org-updates/forum";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Shielded Labs · OpenZcash" };
@@ -34,6 +37,19 @@ const ZIPS: Zip[] = [
   },
 ];
 
+async function LiveUpdates() {
+  const updates = await getShieldedLabsUpdates(12);
+  return (
+    <OrgUpdates
+      updates={updates}
+      title="Latest from Shielded Labs"
+      sourceUrl="https://forum.zcashcommunity.com/search?q=%22Shielded%20Labs%22%20in%3Atitle"
+      sourceLabel="Community forum"
+      empty="No recent posts found on the forum."
+    />
+  );
+}
+
 export default function ShieldedLabsPage() {
   return (
     <>
@@ -51,6 +67,18 @@ export default function ShieldedLabsPage() {
           </a>
         }
       />
+
+      <Suspense
+        fallback={
+          <div className="mb-6 rounded-2xl border border-stone-200 bg-white p-8 text-center text-sm text-stone-600 shadow-sm">
+            Loading the latest posts...
+          </div>
+        }
+      >
+        <div className="mb-6">
+          <LiveUpdates />
+        </div>
+      </Suspense>
 
       <a href={CROSSLINK} target="_blank" rel="noreferrer" className="block">
         <Card

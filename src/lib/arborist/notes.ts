@@ -56,9 +56,15 @@ export async function getArboristAnnouncements(): Promise<
     const j = (await res.json()) as {
       topics?: Array<{ id: number; title: string; slug: string; created_at: string }>;
     };
+    // Scheduling news is only useful while it is still true: a "next call on
+    // the 23rd" notice from seven weeks ago is archive, not news. Anything
+    // older than six weeks is dropped, and the section hides when empty.
+    const FRESH_MS = 42 * 86_400_000;
+    const cutoff = Date.now() - FRESH_MS;
     const items = (j.topics ?? [])
       .filter((t) => /arborist/i.test(t.title))
-      .slice(0, 5)
+      .filter((t) => Date.parse(t.created_at) > cutoff)
+      .slice(0, 4)
       .map((t) => ({
         id: t.id,
         title: t.title,
