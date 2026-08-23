@@ -537,7 +537,7 @@ function ProposalZebra({
     }
   });
   const amount =
-    p.amount != null ? `$${p.amount.toLocaleString("en-US")}` : "—";
+    p.amount != null ? `$${p.amount.toLocaleString("en-US")}` : "·";
   return (
     <group ref={ref}>
       {/* inner group isolates the model's scale + floor offset from any root motion */}

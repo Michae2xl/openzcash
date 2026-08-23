@@ -33,7 +33,7 @@ export default async function DefiPage() {
     <>
       <PageHeader
         title="ZEC DeFi liquidity"
-        subtitle="Where native ZEC trades cross-chain. Live pool depth, value locked and yield from public Midgard APIs (Maya Protocol, THORChain), refreshed every few minutes."
+        subtitle="Native ZEC pool depth, value locked and yield from public Midgard APIs (Maya Protocol, THORChain), refreshed every few minutes."
       />
 
       <section className="mb-8 grid grid-cols-2 gap-4 lg:grid-cols-3">
@@ -57,8 +57,8 @@ export default async function DefiPage() {
       {pools.length === 0 ? (
         <Card>
           <p className="text-sm text-stone-600">
-            No pool data available right now — the venues&rsquo; APIs may be
-            momentarily unreachable. This refreshes automatically.
+            No pool data right now. The venues&rsquo; APIs may be briefly
+            unreachable. This refreshes automatically.
           </p>
         </Card>
       ) : (

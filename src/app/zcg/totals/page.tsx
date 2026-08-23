@@ -126,7 +126,7 @@ export default async function TotaisPage() {
     <>
       <PageHeader
         title="Totals & integrity check"
-        subtitle="Official aggregates from the ZCG spreadsheet (paid amounts by recipient and by classification), tagged by what each line actually is. They cross-check the ledger: the spreadsheet sums the payments that were actually settled."
+        subtitle="Official aggregates from the ZCG spreadsheet (paid amounts by recipient and by classification), tagged by what each line is. They cross-check the ledger, since the spreadsheet only sums payments that actually settled."
       />
 
       {/* Two separate funding pools — make it obvious which one this is. */}
@@ -202,7 +202,7 @@ export default async function TotaisPage() {
             Bounties also appear as milestones inside individual grants, and
             ZCG&apos;s own travel &amp; conference costs sit inside the{" "}
             <span className="font-medium text-amber-700">ZCG operations</span>{" "}
-            budget above — the pool has no standalone &ldquo;travel&rdquo; line.
+            budget above. The pool has no standalone &ldquo;travel&rdquo; line.
           </p>
         </Card>
       </section>
@@ -281,8 +281,8 @@ export default async function TotaisPage() {
           The published grants total (the pivot minus ZCG&apos;s own operations
           &amp; stipends) vs. the paid grant + contractor ledger, compared live.
           The two internal buckets are excluded here because the pivot counts
-          them at a broader scope than their tabs — they&apos;re reconciled on
-          their own pages. See{" "}
+          them at a broader scope than their tabs. They are reconciled on their
+          own pages. See{" "}
           <Link
             href="/zcg/methodology"
             className="text-amber-700 hover:underline"

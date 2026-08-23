@@ -174,7 +174,7 @@ export default async function CoinholderPage() {
             <span className="text-stone-700">
               {COINHOLDER_ROUND.ballotOptions.join(" · ")}
             </span>
-            . Both reject options tally as “no” votes — the lower-amount option
+            . Both reject options tally as “no” votes. The lower-amount option
             only signals that the requested amount was the blocker.
           </p>
 
@@ -224,10 +224,10 @@ export default async function CoinholderPage() {
                   Coinholder Copilot
                 </h2>
                 <p className="mt-1 max-w-xl text-sm text-stone-300">
-                  Run diligence with your own agent before you vote: every
-                  applicant cross-referenced against the payment ledger, prior
-                  round verdicts, and their submitted evidence — with a citation
-                  on every figure.
+                  Run diligence with your own agent before you vote. Every
+                  applicant is checked against the payment ledger, prior round
+                  verdicts, and submitted evidence, with a citation on every
+                  figure.
                 </p>
               </div>
               <span className="hidden shrink-0 items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm font-medium text-white ring-1 ring-inset ring-white/15 transition group-hover:bg-white/15 sm:inline-flex">

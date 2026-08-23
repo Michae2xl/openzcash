@@ -36,7 +36,7 @@ const EVENTS: Ev[] = [
     node: (
       <p>
         <span className="font-semibold text-emerald-400">The ask:</span> #21
-        Nozy Wallet — Leonine DAO, <USD v="$60,000" /> retroactive, for a
+        Nozy Wallet (Leonine DAO), <USD v="$60,000" /> retroactive, for a
         shielded-first wallet: CLI, desktop, companion API
       </p>
     ),
@@ -46,7 +46,7 @@ const EVENTS: Ev[] = [
     node: (
       <p>
         <span className="font-semibold text-rose-400">History:</span> rejected
-        at <USD v="$21,000" /> in the Oct 2025 round — back at nearly 3× that
+        at <USD v="$21,000" /> in the Oct 2025 round, back now at nearly 3× that
         ask
       </p>
     ),
@@ -56,7 +56,7 @@ const EVENTS: Ev[] = [
     node: (
       <p>
         <span className="font-semibold text-sky-400">Ledger:</span> no paid ZCG
-        or Coinholder rows — approval would be their first public funding
+        or Coinholder rows, so approval would be their first public funding
       </p>
     ),
   },
@@ -84,8 +84,8 @@ const EVENTS: Ev[] = [
         <span className="font-semibold text-emerald-400">
           Funded and delivered:
         </span>{" "}
-        Horizontal Systems — <USD v="$48,000" /> paid (Unstoppable Wallet,
-        completed), now asking <USD v="$80,000" /> for the next phase
+        Horizontal Systems has <USD v="$48,000" /> paid (Unstoppable Wallet,
+        completed) and now asks <USD v="$80,000" /> for the next phase
       </p>
     ),
   },
@@ -94,8 +94,8 @@ const EVENTS: Ev[] = [
     node: (
       <p>
         <span className="font-semibold text-sky-400">Two tracks:</span> ZcashMe,
-        Inc — ZcashNames <USD v="$122,400" /> here, plus an open $92,200 ZCG
-        grant with 0 ZEC settled
+        Inc asks <USD v="$122,400" /> for ZcashNames here, plus an open $92,200
+        ZCG grant with 0 ZEC settled
       </p>
     ),
   },
@@ -104,7 +104,7 @@ const EVENTS: Ev[] = [
     node: (
       <p>
         <span className="font-semibold text-rose-400">Same org, twice:</span>{" "}
-        ValarGroup — #32 + #36 add up to a <USD v="$1,802,000" /> combined ask
+        ValarGroup #32 + #36 add up to a <USD v="$1,802,000" /> combined ask
       </p>
     ),
   },

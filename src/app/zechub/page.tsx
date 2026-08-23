@@ -363,7 +363,7 @@ export default async function ZechubDaoPage() {
     <>
       <PageHeader
         title="ZecHub DAO"
-        subtitle="ZecHub governs itself on-chain (DAO DAO on Juno) and publishes its treasury in a public dashboard. Proposals are live from daodao.zone; treasury numbers mirror the dashboard spreadsheet on the same cycle as the ZCG data."
+        subtitle="ZecHub governs itself on-chain (DAO DAO on Juno). Proposals are live from daodao.zone; treasury numbers mirror the public dashboard spreadsheet, imported on the same cycle as the ZCG data."
         actions={
           <div className="flex items-center gap-2">
             <a
@@ -608,7 +608,7 @@ export default async function ZechubDaoPage() {
       ) : (
         <Card>
           <p className="text-sm text-stone-600">
-            Proposals are temporarily unavailable — the DAO DAO indexer did not
+            Proposals are temporarily unavailable: the DAO DAO indexer did not
             respond. Try again shortly, or open{" "}
             <a
               href={`${ZECHUB_DAO_URL}/proposals`}
@@ -638,7 +638,7 @@ export default async function ZechubDaoPage() {
               </h2>
               <p className="mt-1 max-w-xl text-sm text-stone-300">
                 Ask your own agent why a vote passed or failed. It computes both
-                tests a proposal has to clear — 67% of yes+no and 40% turnout —
+                tests a proposal has to clear (67% of yes+no and 40% turnout),
                 names every voter, and reads the treasury without mistaking the
                 headline total for spendable money.
               </p>

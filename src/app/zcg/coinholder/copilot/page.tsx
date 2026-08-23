@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 export const metadata = {
   title: "Coinholder Copilot · OpenZcash",
   description:
-    "An agent skill for pre-vote diligence on the Coinholder-Directed Retroactive Grants Program — live, cited answers about the open round and every applicant's funding history.",
+    "An agent skill for pre-vote diligence on the Coinholder-Directed Retroactive Grants Program: live, cited answers about the open round and every applicant's funding history.",
 };
 
 const USE_CASES = [
@@ -15,12 +15,12 @@ const USE_CASES = [
     a: "The ask, the claimed work, prior round verdicts, ledger history, announcement-vs-spreadsheet drift, and the open questions worth taking to the forum thread.",
   },
   {
-    q: "Who in this round was funded before — and did they deliver?",
+    q: "Who in this round was funded before, and did they deliver?",
     a: "Every applicant cross-referenced against the audited ledger and prior rounds: funded-and-delivered, rejected-before, two-track orgs, first-timers.",
   },
   {
     q: "How does the ballot actually work?",
-    a: "Four options, two of which are 'no' votes with different signals — plus the keyholder veto that already zeroed out a coinholder-approved $2.67M grant.",
+    a: "Four options, two of which are 'no' votes with different signals. Plus the keyholder veto that already zeroed out a coinholder-approved $2.67M grant.",
   },
   {
     q: "What has the Coinholder program actually paid so far?",
@@ -31,7 +31,7 @@ const USE_CASES = [
 const SOURCES = [
   {
     name: "Round mirror",
-    desc: "The open review round — proposals, asks, key dates, ballot options — curated from FPF's announcement, which runs ahead of the spreadsheet.",
+    desc: "The open review round (proposals, asks, key dates, ballot options), curated from FPF's announcement, which runs ahead of the spreadsheet.",
   },
   {
     name: "OpenZcash ledger",
@@ -81,8 +81,8 @@ export default function CoinholderCopilotPage() {
             Retroactive grants ask you to judge work already done. This skill
             turns your coding agent into a diligence copilot for the review
             round: every applicant cross-referenced against the audited payment
-            ledger, prior round verdicts, and their own submitted evidence —
-            with a citation on every figure. Never from the model&apos;s memory.
+            ledger, prior round verdicts, and their own submitted evidence.
+            Every figure is cited, never recalled from the model&apos;s memory.
           </p>
           <div className="mt-8 inline-block border border-stone-900 bg-[#0b0d10] px-5 py-3.5 shadow-lg shadow-stone-400/30">
             <code className="font-mono text-sm text-emerald-400">
@@ -141,8 +141,8 @@ export default function CoinholderCopilotPage() {
           The skill also encodes the round&apos;s real traps: repeat submissions
           at higher asks, same-org multiple proposals, third-party bonus
           nominations, announcement-vs-spreadsheet drift, and the difference
-          between coinholder approval and actual payment. It never tells you how
-          to vote — it lays out the evidence. Methodology:{" "}
+          between coinholder approval and actual payment. It lays out the
+          evidence and never tells you how to vote. Methodology:{" "}
           <Link
             href="/zcg/methodology"
             className="text-amber-700 hover:underline"

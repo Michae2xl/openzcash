@@ -109,7 +109,7 @@ export default async function NewsPage() {
       <NewsSeen latest={latest} />
       <PageHeader
         title="News"
-        subtitle="What's new across the Zcash ecosystem — community forum, core GitHub releases, and the latest ZCG spreadsheet entries. Forum and GitHub are live; spreadsheet rows follow the daily mirror."
+        subtitle="What's new across the Zcash ecosystem: community forum, core GitHub releases and the latest ZCG spreadsheet entries. Forum and GitHub are live; spreadsheet rows follow the daily mirror."
         actions={
           newCount > 0 ? (
             <Badge tone="rose">{newCount} new · 48h</Badge>
@@ -120,7 +120,7 @@ export default async function NewsPage() {
       <Card className="space-y-1 p-2">
         {items.length === 0 ? (
           <p className="px-3 py-8 text-center text-sm text-stone-500">
-            No recent activity — sources may be momentarily unreachable.
+            No recent activity. Sources may be momentarily unreachable.
           </p>
         ) : null}
         {items.map((i: NewsItem) => {

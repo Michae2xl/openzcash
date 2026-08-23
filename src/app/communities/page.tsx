@@ -17,11 +17,11 @@ async function LiveDirectory() {
 }
 
 export default function CommunitiesPage() {
-    return (
+  return (
     <>
       <PageHeader
         title="Global Communities"
-        subtitle="The regional groups building Zcash adoption around the world: who is active right now, who ZCG and the ZecHub DAO fund, and where to find every one of them. Activity is live from the community forum and YouTube; X and Instagram profiles are linked."
+        subtitle="The regional groups building Zcash adoption worldwide: who is active now, who ZCG and the ZecHub DAO fund, and where to find them. Activity is live from the community forum and YouTube; X and Instagram profiles are linked."
       />
 
       <Suspense
@@ -37,7 +37,7 @@ export default function CommunitiesPage() {
       <p className="mt-8 text-xs leading-relaxed text-stone-500">
         Funding figures mirror the official ZCG spreadsheet (budgeted USD, not
         paid; see the methodology). Communities with no ledger rows are marked
-        accordingly — some are funded through other channels (ZecHub DAO
+        accordingly; some are funded through other channels (ZecHub DAO
         ambassador program, direct donations), noted per card. Links seeded from
         ZecHub&apos;s community directory and verified individually.
       </p>

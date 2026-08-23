@@ -34,8 +34,8 @@ const EVENTS: Ev[] = [
     kind: "line",
     node: (
       <p>
-        <span className="font-semibold text-rose-400">No — it failed.</span>{" "}
-        A116 &ldquo;Zcash Ukraine Regional Community Initiative&rdquo;:{" "}
+        <span className="font-semibold text-rose-400">No. It failed.</span> A116
+        &ldquo;Zcash Ukraine Regional Community Initiative&rdquo;:{" "}
         <Num v="12 yes" />, <Num v="6 no" />, 18 of 24 members voting
       </p>
     ),
@@ -65,7 +65,7 @@ const EVENTS: Ev[] = [
     node: (
       <p className="text-stone-400">
         ZecHub needs <span className="text-stone-200">67% of yes+no</span>, not
-        a majority. One more yes — or one fewer no — and it passes.
+        a majority. One more yes (or one fewer no) and it passes.
       </p>
     ),
   },

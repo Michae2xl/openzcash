@@ -27,7 +27,7 @@ const SOURCES: { name: string; what: string }[] = [
   },
   {
     name: "GitHub issue tracker",
-    what: "Live grant applications (ZcashCommunityGrants/zcashcommunitygrants) — the raw, first-hand stage before anything reaches the spreadsheet, read straight from open issues labelled “Grant Application / Ready For Review”.",
+    what: "Live grant applications (ZcashCommunityGrants/zcashcommunitygrants), read straight from open issues labelled “Grant Application / Ready For Review”. This is the first-hand stage, before anything reaches the spreadsheet.",
   },
   {
     name: "Zcash Community Forum",
@@ -35,7 +35,7 @@ const SOURCES: { name: string; what: string }[] = [
   },
   {
     name: "On-chain (lightwalletd)",
-    what: "The live Lockbox / ZIP-1016 balance and the day's ZEC/USD rate — the only figures read directly from the chain.",
+    what: "The live Lockbox / ZIP-1016 balance and the day's ZEC/USD rate. These are the only figures read directly from the chain.",
   },
 ];
 
@@ -44,14 +44,14 @@ export default function MethodologyPage() {
     <>
       <PageHeader
         title="How we compute this"
-        subtitle="OpenZcash is a read-only mirror. It never holds spend keys and moves no funds. Every figure is derived from public sources — here is exactly how."
+        subtitle="OpenZcash is a read-only mirror: it never holds spend keys and moves no funds. Every figure comes from public sources. Here is how."
       />
 
       <Section title="Where the data comes from">
         <ul className="space-y-2">
           {SOURCES.map((s) => (
             <li key={s.name}>
-              <span className="font-medium text-stone-800">{s.name}</span> —{" "}
+              <span className="font-medium text-stone-800">{s.name}</span>:{" "}
               {s.what}
             </li>
           ))}
@@ -69,11 +69,11 @@ export default function MethodologyPage() {
         </p>
         <ul className="space-y-1.5">
           <li>
-            <span className="font-medium text-emerald-700">Grant</span> —
-            funding paid to an external project or contributor.
+            <span className="font-medium text-emerald-700">Grant</span>: funding
+            paid to an external project or contributor.
           </li>
           <li>
-            <span className="font-medium text-amber-700">ZCG operations</span> —
+            <span className="font-medium text-amber-700">ZCG operations</span>:
             the committee&apos;s own budget (travel, conferences, tooling); the{" "}
             <span className="font-mono text-xs">ZCG Discretionary Budget</span>{" "}
             bucket.
@@ -81,8 +81,8 @@ export default function MethodologyPage() {
           <li>
             <span className="font-medium text-violet-700">
               Committee stipends
-            </span>{" "}
-            — salaries paid to ZCG members; see{" "}
+            </span>
+            : salaries paid to ZCG members; see{" "}
             <Link
               href="/zcg/stipends"
               className="text-amber-700 hover:underline"
@@ -92,8 +92,8 @@ export default function MethodologyPage() {
             .
           </li>
           <li>
-            <span className="font-medium text-sky-700">Security · audits</span>{" "}
-            — third-party security audits and bug bounties (the{" "}
+            <span className="font-medium text-sky-700">Security · audits</span>:
+            third-party security audits and bug bounties (the{" "}
             <span className="font-mono text-xs">Audits</span> classification).
             Bounties also appear as milestones inside individual grants.
           </li>
@@ -102,14 +102,14 @@ export default function MethodologyPage() {
 
       <Section title="Why the two “discretionary” figures differ">
         <p>
-          You will see the discretionary budget expressed two ways, and they are
-          not the same number on purpose:
+          The discretionary budget appears two ways, and the two numbers differ
+          on purpose:
         </p>
         <ul className="mt-2 space-y-1.5">
           <li>
             The <span className="font-medium">ZCG operations</span> figure on
             the totals split (~$1.8M) comes from the{" "}
-            <span className="font-medium">totals pivot</span> — the cumulative
+            <span className="font-medium">totals pivot</span>: the cumulative
             classification total published in the spreadsheet.
           </li>
           <li>
@@ -118,8 +118,8 @@ export default function MethodologyPage() {
           </li>
         </ul>
         <p className="mt-2">
-          They are two readings of the same programme at different scopes
-          (cumulative pivot vs. annual budget), which is exactly why the{" "}
+          Two readings of the same programme at different scopes (cumulative
+          pivot vs. annual budget). That is why the{" "}
           <Link href="/zcg/totals" className="text-amber-700 hover:underline">
             totals
           </Link>{" "}
@@ -141,7 +141,7 @@ export default function MethodologyPage() {
       <Section title="Reproduce it yourself">
         <p>
           Every number here is queryable. The read-only API exposes the same
-          ledger, recipients and grant milestones this site renders — see{" "}
+          ledger, recipients and grant milestones this site renders. See{" "}
           <Link href="/api/zcg" className="text-amber-700 hover:underline">
             /api/zcg
           </Link>{" "}

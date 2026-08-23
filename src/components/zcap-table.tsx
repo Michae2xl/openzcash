@@ -22,7 +22,7 @@ const COLUMNS: Column<ZcapMember>[] = [
       m.handle ? (
         <span className="text-stone-600">@{m.handle}</span>
       ) : (
-        <span className="text-stone-400">—</span>
+        <span className="text-stone-400">·</span>
       ),
   },
   {
@@ -33,7 +33,7 @@ const COLUMNS: Column<ZcapMember>[] = [
     filterable: true,
     sortValue: (m) => m.joinedSort,
     render: (m) => (
-      <span className="text-stone-600 tnum">{m.joined || "—"}</span>
+      <span className="text-stone-600 tnum">{m.joined || "·"}</span>
     ),
   },
 ];

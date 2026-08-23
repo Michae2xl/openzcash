@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 export const metadata = {
   title: "ZCG Copilot · OpenZcash",
   description:
-    "An agent skill that turns your coding agent into a ZCG grants copilot — live, cited answers about Zcash Community Grants funding.",
+    "An agent skill that turns your coding agent into a ZCG grants copilot: live, cited answers about Zcash Community Grants funding.",
 };
 
 const USE_CASES = [
@@ -16,7 +16,7 @@ const USE_CASES = [
   },
   {
     q: "I'm applying for a wallet grant. Who got funded before, and how much?",
-    a: "Every wallet grant in the ledger: grantee, budget, milestones paid, dates. Your ask lands in the committee's real range.",
+    a: "Every wallet grant in the ledger: grantee, budget, milestones paid, dates.",
   },
   {
     q: "What's ZCG's burn rate this year, month by month?",
@@ -24,7 +24,7 @@ const USE_CASES = [
   },
   {
     q: "How much has ZCG paid to QEDIT in total?",
-    a: "Budgeted vs actually paid, across how many grants and payments. The distinction most answers get wrong.",
+    a: "Budgeted vs actually paid, across how many grants and payments.",
   },
 ];
 
@@ -81,8 +81,7 @@ export default function CopilotPage() {
             A skill that turns your coding agent into a ZCG grants copilot. Ask
             about grants, spending, recipients, and proposals under review.
             Answers come from the live public ledger, GitHub, and the forum,
-            with exact numbers and a citation on every figure. Never from the
-            model&apos;s memory.
+            with a citation on every figure, never from the model&apos;s memory.
           </p>
           <div className="mt-8 inline-block border border-stone-900 bg-[#0b0d10] px-5 py-3.5 shadow-lg shadow-stone-400/30">
             <code className="font-mono text-sm text-emerald-400">
@@ -140,8 +139,7 @@ export default function CopilotPage() {
         <p className="mt-6 max-w-3xl text-xs leading-relaxed text-stone-400">
           The skill also encodes the data&apos;s real failure modes: same-title
           collisions between re-applications, requested vs paid confusion,
-          milestone double counting. Agents answer correctly, not just
-          confidently. Methodology:{" "}
+          milestone double counting. Methodology:{" "}
           <Link
             href="/zcg/methodology"
             className="text-amber-700 hover:underline"

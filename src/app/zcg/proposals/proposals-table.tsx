@@ -69,7 +69,7 @@ function DiligenceCell({ d }: { d: RowDiligence }) {
           target="_blank"
           rel="noreferrer"
           className={`${chip} bg-amber-500/10 text-amber-800 ring-amber-500/20 hover:bg-amber-500/20`}
-          title={`Zcash forum account with the same handle: ${d.forumAgeYears < 1 ? "under a year" : `${d.forumAgeYears} year(s)`} old${d.forumPosts != null ? `, ${d.forumPosts} posts` : ""} (best-effort handle match) — opens the forum profile`}
+          title={`Zcash forum account with the same handle: ${d.forumAgeYears < 1 ? "under a year" : `${d.forumAgeYears} year(s)`} old${d.forumPosts != null ? `, ${d.forumPosts} posts` : ""} (best-effort handle match). Opens the forum profile.`}
         >
           forum {years(d.forumAgeYears)}
           {d.forumPosts != null ? ` · ${plural(d.forumPosts, "post")}` : ""}
@@ -81,7 +81,7 @@ function DiligenceCell({ d }: { d: RowDiligence }) {
           target="_blank"
           rel="noreferrer"
           className={`${chip} bg-stone-500/10 text-stone-700 ring-stone-500/20 hover:bg-stone-500/20`}
-          title={`GitHub account: ${d.accountAgeYears < 1 ? "under a year" : `${d.accountAgeYears} year(s)`} old, ${d.publicRepos ?? 0} public repos — opens the GitHub profile`}
+          title={`GitHub account: ${d.accountAgeYears < 1 ? "under a year" : `${d.accountAgeYears} year(s)`} old, ${d.publicRepos ?? 0} public repos. Opens the GitHub profile.`}
         >
           GH {years(d.accountAgeYears)} · {plural(d.publicRepos ?? 0, "repo")}
         </a>
@@ -94,8 +94,8 @@ function DiligenceCell({ d }: { d: RowDiligence }) {
           className={`${chip} bg-sky-500/10 text-sky-800 ring-sky-500/20 hover:bg-sky-500/20`}
           title={
             d.priorApps === 0
-              ? "No earlier grant applications from this GitHub account in the ZCG repo — opens the author's issue history"
-              : `${d.priorApps} earlier ZCG application(s) from this account: ${d.priorApproved ?? 0} approved, ${d.priorDeclined ?? 0} declined — opens the author's issue history`
+              ? "No earlier applications from this GitHub account in the ZCG repo. Opens the author's issue history."
+              : `${d.priorApps} earlier ZCG application(s) from this account: ${d.priorApproved ?? 0} approved, ${d.priorDeclined ?? 0} declined. Opens the author's issue history.`
           }
         >
           {d.priorApps === 0
@@ -109,7 +109,7 @@ function DiligenceCell({ d }: { d: RowDiligence }) {
           target="_blank"
           rel="noreferrer"
           className={`${chip} bg-emerald-500/10 text-emerald-800 ring-emerald-500/20 hover:bg-emerald-500/20`}
-          title="The application thread required by the ZCG terms exists on the community forum — opens it"
+          title="The application thread required by the ZCG terms exists on the community forum. Opens it."
         >
           forum thread
         </a>
@@ -119,7 +119,7 @@ function DiligenceCell({ d }: { d: RowDiligence }) {
           target="_blank"
           rel="noreferrer"
           className={`${chip} bg-rose-500/10 text-rose-800 ring-rose-500/20 hover:bg-rose-500/20`}
-          title="The ZCG terms require posting the application on the community forum, and a title search found no thread — opens a forum search to verify (fuzzy match, may miss renamed threads)"
+          title="The ZCG terms require posting the application on the community forum, and a title search found no thread. Opens a forum search to verify (fuzzy match, may miss renamed threads)."
         >
           no forum thread
         </a>
@@ -130,7 +130,7 @@ function DiligenceCell({ d }: { d: RowDiligence }) {
           target="_blank"
           rel="noreferrer"
           className={`${chip} bg-violet-500/10 text-violet-800 ring-violet-500/20 hover:bg-violet-500/20`}
-          title="A ZCG meeting-minutes post mentions this proposal — opens the exact post"
+          title="A ZCG meeting-minutes post mentions this proposal. Opens that post."
         >
           in meeting minutes
         </a>
@@ -141,7 +141,7 @@ function DiligenceCell({ d }: { d: RowDiligence }) {
           target="_blank"
           rel="noreferrer"
           className={`${chip} bg-rose-500/10 text-rose-800 ring-rose-500/20 hover:bg-rose-500/20`}
-          title="Issues elsewhere on GitHub share this proposal's title — opens the GitHub search so you can check for the same pitch filed with other ecosystems"
+          title="Issues elsewhere on GitHub share this proposal's title. Opens the search so you can check for the same pitch filed with other ecosystems."
         >
           ⚠ similar title elsewhere
         </a>
@@ -222,7 +222,7 @@ const columns: Column<ProposalTableRow>[] = [
           )}
           title={
             r.dateSuspect
-              ? "This date lies in the future — mirrored exactly as recorded in the official spreadsheet, most likely a data-entry typo"
+              ? "This date lies in the future. Mirrored exactly as recorded in the official spreadsheet, most likely a data-entry typo."
               : undefined
           }
         >

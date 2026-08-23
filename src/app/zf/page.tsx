@@ -145,7 +145,7 @@ export default async function ZfPage() {
     <>
       <PageHeader
         title="Zcash Foundation"
-        subtitle="The Zcash Foundation's quarterly transparency reports and the Zcon conference series — engineering, finances, activities and community, straight from the source."
+        subtitle="The Zcash Foundation's quarterly transparency reports, covering engineering, finances, activities and community, plus the Zcon conference series."
         actions={
           <a
             href={FORUM_CATEGORY}
@@ -269,8 +269,8 @@ export default async function ZfPage() {
       ) : (
         <Card>
           <p className="text-sm text-stone-600">
-            Roster temporarily unavailable — the public sheet may be
-            unreachable. It refreshes automatically.
+            Roster temporarily unavailable. The public sheet may be unreachable;
+            it refreshes automatically.
           </p>
         </Card>
       )}

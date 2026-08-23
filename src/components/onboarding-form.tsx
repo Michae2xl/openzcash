@@ -89,7 +89,7 @@ export function OnboardingForm({
       {!token ? (
         <p className="rounded-lg bg-amber-500/10 px-3 py-2 text-sm text-amber-700 ring-1 ring-inset ring-amber-500/20">
           This registration needs an invite link. Ask the OpenZcash admin for
-          one — your link will look like <code>/onboarding?token=…</code>.
+          one. Your link will look like <code>/onboarding?token=…</code>.
         </p>
       ) : null}
       <div className="grid grid-cols-2 gap-2">

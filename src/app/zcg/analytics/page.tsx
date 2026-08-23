@@ -155,7 +155,7 @@ export default async function AnalyticsPage() {
     <>
       <PageHeader
         title="Insights"
-        subtitle="Trends the raw tables don't show — derived entirely from the disbursement ledger and totals we already import. No new data, just the questions people actually ask."
+        subtitle="Trends derived entirely from the disbursement ledger and totals we already import. No new data."
       />
 
       {/* #6 Spend over time */}
@@ -304,8 +304,7 @@ export default async function AnalyticsPage() {
           <p className="mb-2 text-xs text-stone-500">
             Paid in the last 12 months by category. The ▲▼ delta compares each
             category&apos;s share of the last 12 months with its all-time share,
-            in percentage points: which themes the committee is leaning into,
-            and which cycles have wound down.
+            in percentage points.
           </p>
           <BarList items={flowBars} />
         </Card>

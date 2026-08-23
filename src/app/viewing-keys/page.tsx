@@ -31,7 +31,7 @@ export default async function ViewingKeysPage() {
     <>
       <PageHeader
         title="Treasuries"
-        subtitle="Each treasury is a viewing key (shielded) or a transparent address (public). The system pulls and refreshes each one, splits transactions by treasury, and consolidates the balance, without ever holding spend keys."
+        subtitle="Each treasury is a viewing key (shielded) or a transparent address (public). The system refreshes each one, splits transactions by treasury and consolidates the balance, without ever holding spend keys."
         actions={
           <Link
             href="/onboarding"
@@ -121,7 +121,7 @@ export default async function ViewingKeysPage() {
                     ≈{" "}
                     {liveCents != null
                       ? formatUsdCents(zatToUsdCents(balanceZat, liveCents))
-                      : "—"}
+                      : "n/a"}
                   </p>
                 </div>
                 <div className="text-right text-xs tnum">

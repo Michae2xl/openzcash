@@ -21,7 +21,7 @@ type Component = {
 const COMPONENTS: Component[] = [
   {
     name: "Zebra",
-    role: "Consensus full node (zebrad) — an independent Rust implementation of the Zcash protocol. The validating node that replaces zcashd's consensus.",
+    role: "Consensus full node (zebrad): an independent Rust implementation of the Zcash protocol, replacing zcashd's consensus.",
     status: "Production",
     tone: "emerald",
     org: "Zcash Foundation",
@@ -29,7 +29,7 @@ const COMPONENTS: Component[] = [
   },
   {
     name: "Zaino",
-    role: "Indexing & lightwallet service — the gRPC/JSON-RPC layer that serves wallets, taking over the role lightwalletd played for zcashd.",
+    role: "Indexing & lightwallet service: the gRPC/JSON-RPC layer that serves wallets, taking over the role lightwalletd played for zcashd.",
     status: "Feature-complete",
     tone: "amber",
     org: "Zingo Labs",
@@ -37,7 +37,7 @@ const COMPONENTS: Component[] = [
   },
   {
     name: "Zallet",
-    role: "Full-node wallet — the wallet daemon and RPCs that replace zcashd's built-in wallet, paired with Zebra + Zaino.",
+    role: "Full-node wallet: the daemon and RPCs that replace zcashd's built-in wallet, paired with Zebra + Zaino.",
     status: "Alpha",
     tone: "amber",
     org: "Electric Coin Co",
@@ -50,7 +50,7 @@ export default function Z3Page() {
     <>
       <PageHeader
         title="Z3 · the zcashd successor"
-        subtitle="zcashd is deprecated. The Z3 stack — Zebra + Zaino + Zallet — is its modular Rust replacement: a validating node, an indexing/lightwallet service, and a wallet, run together. This is the infrastructure much of the Dev Fund and ZCG spend is building toward."
+        subtitle="zcashd is deprecated. The Z3 stack (Zebra, Zaino, Zallet) is its modular Rust replacement: a validating node, an indexing/lightwallet service and a wallet, run together. Much of the Dev Fund and ZCG spend is building toward it."
         actions={
           <a
             href={FORUM}

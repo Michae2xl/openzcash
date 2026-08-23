@@ -98,7 +98,7 @@ export default async function MeetingsPage() {
         <a
           href="/api/feeds/meetings.ics"
           className="ml-auto text-xs font-normal text-stone-400 hover:text-amber-700"
-          title="Subscribe in your calendar app — updates as new minutes are published"
+          title="Subscribe in your calendar app: updates as new minutes are published"
         >
           Calendar (ICS) ↗
         </a>

@@ -23,7 +23,7 @@ export default async function StipendsPage() {
 
   const byMember = new Map<string, MemberStipend>();
   for (const d of rows) {
-    const member = d.recipientNameRaw || "—";
+    const member = d.recipientNameRaw || "Unknown";
     const usd = d.amountUsdCents != null ? Number(d.amountUsdCents) : 0;
     const date = d.paidOutDate ?? "";
     const cur = byMember.get(member);
@@ -53,7 +53,7 @@ export default async function StipendsPage() {
     <>
       <PageHeader
         title="Committee stipends"
-        subtitle="What each ZCG committee member has been paid in monthly stipends — the committee's own compensation, not a grant. Mirrored from the ZCG monthly-payments sheet."
+        subtitle="Monthly stipends paid to each ZCG committee member. This is the committee's own compensation, not a grant. Mirrored from the ZCG monthly-payments sheet."
         actions={
           <Link
             href="/zcg/totals"
@@ -138,7 +138,7 @@ export default async function StipendsPage() {
           <Link href="/zcg/totals" className="text-amber-700 hover:underline">
             &ldquo;Committee stipends&rdquo;
           </Link>{" "}
-          classification on the totals page is a broader, all-time figure — two
+          classification on the totals page is a broader, all-time figure. Two
           scopes of the same programme (see{" "}
           <Link
             href="/zcg/methodology"

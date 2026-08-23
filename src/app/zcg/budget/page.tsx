@@ -10,7 +10,7 @@ export default function ZcgBudgetPage() {
     <>
       <PageHeader
         title="Discretionary budget"
-        subtitle="ZCG's annual discretionary budget — fixed in ZEC and drawn down over the year. Read two ways (USD and ZEC), which is why the two figures diverge as the price moves."
+        subtitle="ZCG's annual discretionary budget: fixed in ZEC and drawn down over the year. Shown in USD and ZEC, which is why the two figures diverge as the price moves."
       />
 
       <BudgetCards />

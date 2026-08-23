@@ -61,7 +61,7 @@ const SOFTWARE: Wallet[] = [
     platforms: ["iOS", "Android"],
     shielded: "full",
     flagship: true,
-    note: "Formerly Zashi — shielded by default, by the original core team.",
+    note: "Formerly Zashi. Shielded by default, from the original core team.",
     source: "https://github.com/zodl-inc",
   },
   {
@@ -92,7 +92,7 @@ const SOFTWARE: Wallet[] = [
     logo: "/wallet-logos/zkool.png",
     platforms: ["iOS", "Android", "Desktop"],
     shielded: "full",
-    note: "hanh's successor to Ywallet — full shielded with UFVK import.",
+    note: "hanh's successor to Ywallet. Full shielded, with UFVK import.",
     source: "https://github.com/hhanh00/zkool2",
   },
   {
@@ -121,7 +121,7 @@ const SOFTWARE: Wallet[] = [
     logo: "/wallet-logos/metamask.png",
     platforms: ["Browser extension"],
     shielded: "full",
-    note: "Shielded ZEC inside MetaMask — ZCG-funded, Hacken-audited.",
+    note: "Shielded ZEC inside MetaMask. ZCG-funded, Hacken-audited.",
     source: "https://github.com/ChainSafe/WebZjs",
     audit: "https://hacken.io/audits/zcash/dapp-zcash-snap-may2025/",
   },
@@ -221,7 +221,7 @@ const HARDWARE: Wallet[] = [
     logo: "/wallet-logos/keystone.png",
     platforms: ["Hardware"],
     shielded: "full",
-    note: "First hardware wallet with native shielded (Orchard) ZEC — air-gapped.",
+    note: "First air-gapped hardware wallet with native shielded (Orchard) ZEC.",
     source: "https://github.com/KeystoneHQ/keystone3-firmware",
     audit:
       "https://blog.keyst.one/deep-dive-into-next-gen-hardware-wallet-crashing-keystone3-pro-audit-2729bc551d7b",
@@ -243,7 +243,7 @@ const HARDWARE: Wallet[] = [
     logo: "/wallet-logos/trezor.png",
     platforms: ["Hardware"],
     shielded: "transparent",
-    note: "Transparent (t-address) only — no shielded support.",
+    note: "Transparent (t-address) only; no shielded support.",
     source: "https://github.com/trezor/trezor-firmware",
   },
 ];
@@ -380,7 +380,7 @@ function WalletCard({ w, led }: { w: Wallet; led: string }) {
                 href={w.source}
                 target="_blank"
                 rel="noreferrer"
-                title={`Fully open source — code at ${w.source.replace("https://", "")}`}
+                title={`Fully open source. Code at ${w.source.replace("https://", "")}`}
                 className="relative z-20 rounded-md bg-sky-500/10 px-2 py-0.5 text-[11px] font-medium text-sky-800 ring-1 ring-inset ring-sky-500/20 transition hover:bg-sky-500/20"
               >
                 Open source
@@ -391,7 +391,7 @@ function WalletCard({ w, led }: { w: Wallet; led: string }) {
                 href={w.audit}
                 target="_blank"
                 rel="noreferrer"
-                title="Public third-party security audit — opens the report"
+                title="Opens the public third-party security audit report"
                 className="relative z-20 rounded-md bg-violet-500/10 px-2 py-0.5 text-[11px] font-medium text-violet-800 ring-1 ring-inset ring-violet-500/20 transition hover:bg-violet-500/20"
               >
                 Audited
@@ -418,7 +418,7 @@ export default function WalletsPage() {
     <>
       <PageHeader
         title="Zcash Wallets"
-        subtitle="Self-custody wallets for ZEC. Shielded (z-address) support is what makes Zcash private — prefer a 'Full shielded' wallet to send and receive privately."
+        subtitle="Self-custody wallets for ZEC. Only shielded (z-address) support makes Zcash private, so prefer a 'Full shielded' wallet."
       />
 
       <Card className="mb-7 flex items-start gap-3 border-emerald-500/20 bg-emerald-500/[0.05]">
@@ -466,14 +466,14 @@ export default function WalletsPage() {
         </span>{" "}
         badge links to the public repository and appears only when the wallet
         itself (app or firmware) is fully open source, verified per repo and
-        license; Ledger is excluded because its device OS is proprietary even
+        license; Ledger is excluded because its device OS is proprietary, even
         though its Zcash app is open. The{" "}
         <span className="rounded-md bg-violet-500/10 px-1.5 py-px text-[10px] font-medium text-violet-800 ring-1 ring-inset ring-violet-500/20">
           Audited
         </span>{" "}
-        badge links to a public third-party security audit report of the wallet
-        itself (for Ledger, of its Zcash app) — absence means no public report
-        was found, not that the wallet is unsafe. Deprecated (Nighthawk) and
+        badge links to a public third-party security audit of the wallet itself
+        (for Ledger, of its Zcash app). No badge means no public report was
+        found, not that the wallet is unsafe. Deprecated (Nighthawk) and
         non-Zcash (Coinbase Wallet) options are omitted.
       </p>
     </>

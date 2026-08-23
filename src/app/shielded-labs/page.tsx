@@ -39,7 +39,7 @@ export default function ShieldedLabsPage() {
     <>
       <PageHeader
         title="Shielded Labs"
-        subtitle="An independent, donation-funded Zcash organization — the first that has never taken Development Fund or block-reward money. It drives two protocol-economics efforts: Crosslink (hybrid Proof-of-Stake) and the Network Sustainability Mechanism."
+        subtitle="An independent, donation-funded Zcash organization and the first that has never taken Development Fund or block-reward money. It drives two protocol-economics efforts: Crosslink (hybrid Proof-of-Stake) and the Network Sustainability Mechanism."
         actions={
           <a
             href={SITE}

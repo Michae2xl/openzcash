@@ -19,7 +19,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "OpenZcash · Dev Fund treasury and public transparency",
   description:
-    "OpenZcash — public transparency for the Zcash Dev Fund: ZCG and FPF grant accounting, the live Lockbox, and governance, read-only and mirrored from the official sources.",
+    "Public transparency for the Zcash Dev Fund: ZCG and FPF grant accounting, the live Lockbox, and governance, read-only and mirrored from the official sources.",
   applicationName: "OpenZcash",
   appleWebApp: {
     capable: true,

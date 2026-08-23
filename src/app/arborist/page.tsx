@@ -32,7 +32,7 @@ async function Archive() {
 
   const withVideo = calls.filter((c) => c.video).length;
   const dated = calls.filter((c) => c.date).map((c) => c.date!);
-  const firstYear = dated.length ? dated.sort()[0]!.slice(0, 4) : "—";
+  const firstYear = dated.length ? dated.sort()[0]!.slice(0, 4) : "n/a";
   const latest = calls.find((c) => c.date);
 
   return (
@@ -47,7 +47,7 @@ async function Archive() {
         <Stat label="Running since" value={firstYear} />
         <Stat
           label="Latest call"
-          value={latest ? `#${latest.number}` : "—"}
+          value={latest ? `#${latest.number}` : "n/a"}
           sub={latest?.date ?? undefined}
         />
       </section>
@@ -62,7 +62,7 @@ export default function ArboristPage() {
     <>
       <PageHeader
         title="Arborist Calls"
-        subtitle="The Zcash protocol's standing engineering call: agendas, moderators, notes and recordings for every meeting. Read live from the community notes repository, so a new call appears here as soon as its notes are published."
+        subtitle="The Zcash protocol's standing engineering call: agendas, moderators, notes and recordings for every meeting, read live from the community notes repository."
       />
 
       <Suspense
@@ -84,11 +84,11 @@ export default function ArboristPage() {
           className="text-amber-700 hover:underline"
         >
           ZcashCommunityGrants/arboretum-notes ↗
-        </a>{" "}
-        — the community-maintained record of every call. Dates, durations,
+        </a>
+        , the community-maintained record of every call. Dates, durations,
         moderators and recording links are parsed from each note&apos;s header;
         where a header omitted the year, it is inferred from the neighbouring
-        calls. Nothing here is hand-copied.
+        calls.
       </p>
     </>
   );

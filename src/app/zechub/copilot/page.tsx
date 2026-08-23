@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 export const metadata = {
   title: "ZecHub Copilot · OpenZcash",
   description:
-    "An agent skill for the ZecHub DAO — live, cited answers about proposals, votes, members and the treasury, with the decision rule that actually decides a vote.",
+    "An agent skill for the ZecHub DAO: live, cited answers about proposals, votes, members and the treasury, plus the rule that actually decides a vote.",
 };
 
 const USE_CASES = [
@@ -16,7 +16,7 @@ const USE_CASES = [
   },
   {
     q: "What is ZecHub voting on right now?",
-    a: "Every open proposal with its current tally, turnout, and exactly what it still needs — more votes for quorum, or more yes for the 67% bar.",
+    a: "Every open proposal with its tally, turnout, and what it still needs: more votes for quorum, or more yes for the 67% bar.",
   },
   {
     q: "How much can ZecHub actually spend?",
@@ -24,14 +24,14 @@ const USE_CASES = [
   },
   {
     q: "What has ZecHub paid contributors?",
-    a: "The payout table reconciled against the dashboard total — they differ by $5,200 because one is per-period and the other cumulative.",
+    a: "The payout table reconciled against the dashboard total. They differ by $5,200 because one is per-period and the other cumulative.",
   },
 ];
 
 const SOURCES = [
   {
     name: "DAO indexer",
-    desc: "Proposals, votes, and members straight from the ZecHub DAO on Juno — 173 proposals of history, each vote attributable.",
+    desc: "Proposals, votes, and members straight from the ZecHub DAO on Juno: 173 proposals of history, each vote attributable.",
   },
   {
     name: "Juno LCD",
@@ -82,8 +82,8 @@ export default function ZechubCopilotPage() {
             it looks: a proposal needs 67% of yes+no <em>and</em> 40% turnout.
             This skill turns your coding agent into a copilot that computes both
             tests from the live indexer, names every voter, and reads the
-            treasury without falling into its traps — with a citation on every
-            figure.
+            treasury without falling into its traps. Every figure comes with a
+            citation.
           </p>
           <div className="mt-8 inline-block border border-stone-900 bg-[#0b0d10] px-5 py-3.5 shadow-lg shadow-stone-400/30">
             <code className="font-mono text-sm text-emerald-400">
@@ -144,8 +144,8 @@ export default function ZechubCopilotPage() {
           and <code>rejected</code> both meaning defeat, milestones marked
           complete next to money still pending, a member count that is
           snapshotted per proposal, and the difference between what the DAO
-          holds on-chain and what ZecHub can actually spend. It is read-only —
-          it never submits or votes.
+          holds on-chain and what ZecHub can actually spend. It is read-only and
+          never submits or votes.
         </p>
       </section>
     </div>

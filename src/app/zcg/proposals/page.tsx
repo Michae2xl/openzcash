@@ -236,7 +236,7 @@ export default async function PropostasPage({
     <>
       <PageHeader
         title="Proposals · Pipeline"
-        subtitle="ZCG governance funnel: every submitted proposal, with its verdict. Upstream of grants, only the approved ones become funded projects."
+        subtitle="Every proposal submitted to ZCG, with its verdict. Only the approved ones become funded grants."
         actions={
           <a
             href={submitUrl}
@@ -399,7 +399,7 @@ export default async function PropostasPage({
           {ghRejected + ghApproved} under-review{" "}
           {ghRejected + ghApproved === 1 ? "entry" : "entries"} from the
           spreadsheet already {ghRejected + ghApproved === 1 ? "has" : "have"} a
-          committee decision on GitHub (issue closed and labelled) — shown with
+          committee decision on GitHub (issue closed and labelled). They show
           the GitHub verdict until the spreadsheet catches up.
         </p>
       ) : null}
