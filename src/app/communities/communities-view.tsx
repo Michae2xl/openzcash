@@ -46,16 +46,20 @@ function usd(n: number): string {
   return `$${n}`;
 }
 
-/** Recency signal: the committee's at-a-glance "is this group alive". */
+/**
+ * Recency signal: the committee's at-a-glance "is this group alive".
+ * Calibrated to a monthly reporting cadence: a community whose latest
+ * report is 3 weeks old is on schedule, not idle.
+ */
 function RecencyDot({ iso }: { iso?: string }) {
   const days = iso ? daysSince(iso) : Infinity;
   return (
     <span
       className={cn(
         "inline-block h-2 w-2 shrink-0 rounded-full",
-        days <= 7
+        days <= 35
           ? "bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.6)]"
-          : days <= 30
+          : days <= 90
             ? "bg-amber-400"
             : "bg-stone-300",
       )}
@@ -129,9 +133,9 @@ export function CommunitiesView({
   const countries = new Set(
     communities.filter((c) => c.country !== "Global").map((c) => c.country),
   ).size;
-  const activeWeek = communities.filter((c) => {
+  const activeMonth = communities.filter((c) => {
     const l = lastByCommunity.get(c.id);
-    return l && daysSince(l.lastPostedAt) <= 7;
+    return l && daysSince(l.lastPostedAt) <= 35;
   }).length;
 
   return (
@@ -250,16 +254,16 @@ export function CommunitiesView({
                         <span
                           className={cn(
                             "font-semibold tnum",
-                            daysSince(last.lastPostedAt) <= 7
+                            daysSince(last.lastPostedAt) <= 35
                               ? "text-emerald-700"
-                              : daysSince(last.lastPostedAt) <= 30
+                              : daysSince(last.lastPostedAt) <= 90
                                 ? "text-amber-700"
                                 : "text-stone-500",
                           )}
                         >
                           {timeAgo(last.lastPostedAt)}
                         </span>{" "}
-                        · {last.kind} · {last.postsCount} posts
+                        · {last.kind}{last.source === "forum" ? ` · ${last.postsCount} posts` : ""}
                       </p>
                     </a>
                   ) : (
@@ -332,6 +336,11 @@ export function CommunitiesView({
                       Discord
                     </a>
                   ) : null}
+                  {c.links.instagram ? (
+                    <a className="text-stone-600 hover:text-amber-800" href={c.links.instagram} target="_blank" rel="noreferrer">
+                      Instagram
+                    </a>
+                  ) : null}
                   {c.links.youtube ? (
                     <a
                       className="text-stone-600 hover:text-amber-800"
@@ -379,8 +388,8 @@ export function CommunitiesView({
         <Stat label="Communities" value={String(communities.length)} />
         <Stat label="Countries" value={String(countries)} />
         <Stat
-          label="Active this week"
-          value={`${activeWeek} of ${communities.length}`}
+          label="Active this month"
+          value={`${activeMonth} of ${communities.length}`}
         />
         <Stat
           label="ZCG-funded"

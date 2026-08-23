@@ -21,6 +21,9 @@ export interface CommunityLinks {
   telegram?: string;
   discord?: string;
   youtube?: string;
+  instagram?: string;
+  /** YouTube channel id (UC...) — enables activity tracking via public RSS. */
+  youtubeChannelId?: string;
   site?: string;
   /** Forum username of the lead / official account, without @. */
   forumUser?: string;
@@ -75,7 +78,7 @@ export const COMMUNITIES: Community[] = [
     flag: "🌐",
     region: "Global",
     language: "English",
-    links: {"x": "https://x.com/zechub", "discord": "https://discord.gg/zcash", "site": "https://zechub.wiki", "forumUser": "squirrel"},
+    links: {"x": "https://x.com/zechub", "discord": "https://discord.gg/zcash", "site": "https://zechub.wiki", "youtubeChannelId": "UC3-KM00kjCUheRzO5cq3PAA", "forumUser": "squirrel"},
     zcg: {"funded": true, "recipient": "ZecHub", "budgetedUsd": 822392.43, "grants": 5, "lastPaid": "2026-08-03"},
     forumTopics: [{ id: 53686, title: "ZecHub 2026", kind: "report" }, { id: 56030, title: "ZecHub DAO — Proposal A149: Phase 1 Progress Report", kind: "report" }],
     about: "The community-owned education DAO: wiki, bounties, and the umbrella funding regional ambassadors from its own treasury.",

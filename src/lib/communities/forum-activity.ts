@@ -15,6 +15,24 @@ import type { Community } from "./data";
 const FORUM = "https://forum.zcashcommunity.com";
 const TTL_MS = 10 * 60_000;
 
+/** Last upload date for a channel via YouTube's public RSS (no API key). */
+async function fetchYoutubeLatest(channelId: string): Promise<string | null> {
+  try {
+    const res = await fetch(
+      `https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`,
+      { signal: AbortSignal.timeout(5_000), cache: "no-store" },
+    );
+    if (!res.ok) return null;
+    const xml = await res.text();
+    const m = xml.match(/<published>([^<]+)<\/published>/g);
+    if (!m || m.length < 2) return null;
+    const first = m[1]?.replace(/<\/?published>/g, "");
+    return first ?? null;
+  } catch {
+    return null;
+  }
+}
+
 export interface TopicActivity {
   topicId: number;
   communityId: string;
@@ -24,6 +42,8 @@ export interface TopicActivity {
   /** ISO timestamp of the newest post in the topic. */
   lastPostedAt: string;
   postsCount: number;
+  /** Where the signal came from: the forum, or a YouTube upload. */
+  source: "forum" | "youtube";
 }
 
 interface DiscourseTopic {
@@ -80,6 +100,7 @@ export async function getCommunityActivity(
       kind: topic.kind,
       lastPostedAt: d.last_posted_at,
       postsCount: d.posts_count ?? 0,
+      source: "forum" as const,
     };
   };
   const results: (TopicActivity | null)[] = [];
@@ -89,6 +110,27 @@ export async function getCommunityActivity(
     if (i + CHUNK < wanted.length)
       await new Promise((r) => setTimeout(r, 1_200));
   }
+  // YouTube uploads count as activity too (public RSS; X and Instagram have
+  // no free read API, so those profiles stay links-only).
+  const ytResults = await Promise.all(
+    communities
+      .filter((c) => c.links.youtubeChannelId)
+      .map(async (c): Promise<TopicActivity | null> => {
+        const at = await fetchYoutubeLatest(c.links.youtubeChannelId!);
+        if (!at) return null;
+        return {
+          topicId: -1,
+          communityId: c.id,
+          title: "Latest YouTube upload",
+          url: c.links.youtube ?? `https://www.youtube.com/channel/${c.links.youtubeChannelId}`,
+          kind: "video",
+          lastPostedAt: at,
+          postsCount: 0,
+          source: "youtube" as const,
+        };
+      }),
+  );
+  results.push(...ytResults);
   const items = results
     .filter((x): x is TopicActivity => x !== null)
     .sort((a, b) => b.lastPostedAt.localeCompare(a.lastPostedAt));
