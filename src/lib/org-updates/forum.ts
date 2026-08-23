@@ -34,6 +34,14 @@ interface DiscourseTopic {
   reply_count?: number;
 }
 
+/** Discourse keeps emoji as :shortcodes: in titles; they render as raw text. */
+function cleanTitle(title: string): string {
+  return title
+    .replace(/:[a-z0-9_+-]+:/gi, "")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+}
+
 function classify(title: string): UpdateKind {
   const t = title.toLowerCase();
   if (t.includes("engineering update")) return "engineering";
@@ -85,7 +93,7 @@ function toUpdates(topics: DiscourseTopic[], limit: number): OrgUpdate[] {
     if (!t?.id || !t.title || !t.created_at) continue;
     byId.set(t.id, {
       id: t.id,
-      title: t.title,
+      title: cleanTitle(t.title),
       url: `${FORUM}/t/${t.slug ?? "topic"}/${t.id}`,
       date: t.created_at.slice(0, 10),
       kind: classify(t.title),
