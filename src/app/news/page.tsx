@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import { Badge, Card, PageHeader } from "@/components/ui";
+import { COMMUNITIES } from "@/lib/communities/data";
 import {
   getNews,
   nowMs,
@@ -41,6 +42,18 @@ function SheetsMark({ className }: { className?: string }) {
     </svg>
   );
 }
+
+/**
+ * Forum handle to community, so a post by a community lead is badged with
+ * that community instead of the generic forum mark. Handles are matched
+ * case-insensitively against the curated directory.
+ */
+const BY_HANDLE = new Map(
+  COMMUNITIES.filter((c) => c.links.forumUser).map((c) => [
+    c.links.forumUser!.toLowerCase(),
+    c,
+  ]),
+);
 
 /** Each source shows its real brand mark, all served locally (strict CSP). */
 const SOURCE: Record<NewsSource, { label: string; logo: React.ReactNode }> = {
@@ -125,6 +138,9 @@ export default async function NewsPage() {
         ) : null}
         {items.map((i: NewsItem) => {
           const s = SOURCE[i.source];
+          const community = i.author
+            ? BY_HANDLE.get(i.author.toLowerCase())
+            : undefined;
           const isNew = Date.parse(i.ts) > newCut;
           const external = i.url.startsWith("http");
           return (
@@ -135,8 +151,15 @@ export default async function NewsPage() {
               rel={external ? "noreferrer" : undefined}
               className="flex items-center gap-3 rounded-lg px-3 py-3 transition hover:bg-stone-100"
             >
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white ring-1 ring-inset ring-stone-200">
-                {s.logo}
+              <span
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white ring-1 ring-inset ring-stone-200"
+                title={community?.name}
+              >
+                {community ? (
+                  <span className="text-lg leading-none">{community.flag}</span>
+                ) : (
+                  s.logo
+                )}
               </span>
               <div className="min-w-0 flex-1">
                 <p className="flex items-center gap-2 text-sm font-medium text-stone-900">
@@ -146,9 +169,11 @@ export default async function NewsPage() {
                   ) : null}
                 </p>
                 <p className="truncate text-xs text-stone-600">
-                  {i.source === "proposal" || i.source === "github"
-                    ? i.kind
-                    : s.label}
+                  {community
+                    ? community.name
+                    : i.source === "proposal" || i.source === "github"
+                      ? i.kind
+                      : s.label}
                 </p>
               </div>
               <span className="shrink-0 text-xs text-stone-600 tnum">

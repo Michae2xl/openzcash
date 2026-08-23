@@ -23,6 +23,9 @@ export type NewsItem = {
   title: string;
   url: string;
   ts: string; // ISO 8601 (normalized to milliseconds for stable ordering)
+  /** Forum username of the original poster, when the source exposes one.
+   * Lets the UI badge an item with the community that published it. */
+  author?: string;
 };
 
 const TTL_MS = 10 * 60_000;
@@ -52,15 +55,18 @@ async function fetchForum(): Promise<NewsItem[]> {
     });
     if (!res.ok) return [];
     const j = (await res.json()) as {
+      users?: Array<{ id: number; username: string }>;
       topic_list?: {
         topics?: Array<{
           id: number;
           title: string;
           slug: string;
           created_at: string;
+          posters?: Array<{ user_id: number }>;
         }>;
       };
     };
+    const byId = new Map((j.users ?? []).map((u) => [u.id, u.username]));
     const cutoff = Date.now() - FORUM_MAX_AGE_MS;
     return (j.topic_list?.topics ?? [])
       .filter((t) => t.created_at && Date.parse(t.created_at) > cutoff)
@@ -70,6 +76,7 @@ async function fetchForum(): Promise<NewsItem[]> {
         title: t.title,
         url: `${FORUM}/t/${t.slug}/${t.id}`,
         ts: iso(t.created_at),
+        author: byId.get(t.posters?.[0]?.user_id ?? -1),
       }));
   } catch {
     return [];
