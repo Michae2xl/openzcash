@@ -187,18 +187,6 @@ export const COMMUNITIES: Community[] = [
     about: "Developer-focused education in Mexico, in the Español ecosystem.",
   },
   {
-    id: "genzcash",
-    name: "genzcash",
-    country: "Global",
-    flag: "🌐",
-    region: "Global",
-    language: "English",
-    links: {"x": "https://x.com/genzcash"},
-    zcg: {"funded": false},
-    forumTopics: [{ id: 51311, title: "GenZcash Posts", kind: "thread" }],
-    about: "Youth-focused global community introducing Gen Z to financial privacy.",
-  },
-  {
     id: "pesa-ya-siri-zcash-tanzania",
     name: "Pesa Ya Siri (Zcash Tanzania)",
     country: "Tanzania",
