@@ -27,7 +27,7 @@ const columns: Column<RecipientRow>[] = [
     sortable: true,
     sortValue: (r) => r.rank,
     render: (r) => (
-      <span className="text-xs text-stone-500 tnum">{r.rank}</span>
+      <span className="text-xs text-stone-600 tnum">{r.rank}</span>
     ),
   },
   {

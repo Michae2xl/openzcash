@@ -97,7 +97,7 @@ export default async function MeetingsPage() {
         ) : null}
         <a
           href="/api/feeds/meetings.ics"
-          className="ml-auto text-xs font-normal text-stone-400 hover:text-amber-700"
+          className="ml-auto text-xs font-normal text-stone-600 hover:text-amber-700"
           title="Subscribe in your calendar app: updates as new minutes are published"
         >
           Calendar (ICS) ↗
@@ -142,7 +142,7 @@ export default async function MeetingsPage() {
                 url={m.url}
               />
             ) : (
-              <span className="shrink-0 text-stone-500">›</span>
+              <span className="shrink-0 text-stone-600">›</span>
             )}
           </div>
         ))}
@@ -152,7 +152,7 @@ export default async function MeetingsPage() {
         <section className="mt-8">
           <h2 className="mb-3 text-sm font-semibold text-stone-700">
             Config links
-            <span className="ml-2 text-xs font-normal text-stone-500">
+            <span className="ml-2 text-xs font-normal text-stone-600">
               admin · used across the site
             </span>
           </h2>

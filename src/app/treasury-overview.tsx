@@ -41,11 +41,11 @@ function PoolCard({
         <span className="bg-gradient-to-br from-amber-700 to-amber-500 bg-clip-text text-transparent">
           {zec}
         </span>
-        <span className="ml-1.5 text-base font-medium text-stone-500">ZEC</span>
+        <span className="ml-1.5 text-base font-medium text-stone-600">ZEC</span>
       </p>
       <p className="relative mt-1 text-sm text-stone-600 tnum">
         ≈ {usd}
-        {sub ? <span className="text-stone-500"> · {sub}</span> : null}
+        {sub ? <span className="text-stone-600"> · {sub}</span> : null}
       </p>
     </div>
   );
@@ -82,7 +82,7 @@ export async function TreasuryOverview() {
         <h2 className="text-sm font-semibold text-stone-700">
           Treasury at a glance
         </h2>
-        <p className="text-xs text-stone-500 tnum">
+        <p className="text-xs text-stone-600 tnum">
           {height != null
             ? `block ${Number(height).toLocaleString("en-US")}`
             : null}

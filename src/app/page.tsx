@@ -58,7 +58,7 @@ export default async function LauncherPage() {
 
         <TreasuryOverview />
 
-        <p className="mt-6 text-center text-xs text-stone-500">
+        <p className="mt-6 text-center text-xs text-stone-600">
           ZCG and FPF grant accounting for the Zcash Dev Fund.
           <span className="mx-1 text-stone-300">·</span>
           Spreadsheet {syncedAgo(lastImport)}, auto-refreshes daily

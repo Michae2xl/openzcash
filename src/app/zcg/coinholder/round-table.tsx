@@ -48,7 +48,7 @@ const columns: Column<RoundRow>[] = [
     sortable: true,
     sortValue: (r) => r.rank,
     render: (r): ReactNode => (
-      <span className="text-xs text-stone-500 tnum">{r.rank}</span>
+      <span className="text-xs text-stone-600 tnum">{r.rank}</span>
     ),
   },
   {
@@ -67,7 +67,7 @@ const columns: Column<RoundRow>[] = [
         >
           {r.project}
         </a>
-        <span className="block truncate text-xs text-stone-500">
+        <span className="block truncate text-xs text-stone-600">
           {r.summary}
         </span>
       </span>
@@ -119,7 +119,7 @@ const columns: Column<RoundRow>[] = [
         href={r.githubUrl}
         target="_blank"
         rel="noreferrer"
-        className="text-xs text-stone-500 underline decoration-stone-300 underline-offset-2 hover:text-amber-700"
+        className="text-xs text-stone-600 underline decoration-stone-300 underline-offset-2 hover:text-amber-700"
       >
         GitHub ↗
       </a>

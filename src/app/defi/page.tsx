@@ -91,19 +91,19 @@ export default async function DefiPage() {
                 </div>
                 <div className="mt-4 grid grid-cols-3 gap-3">
                   <div className="min-w-0">
-                    <p className="text-[11px] text-stone-500">ZEC depth</p>
+                    <p className="text-[11px] text-stone-600">ZEC depth</p>
                     <p className="truncate text-sm font-semibold text-stone-900 tnum">
                       {zec(p.zecDepth)}
                     </p>
                   </div>
                   <div className="min-w-0">
-                    <p className="text-[11px] text-stone-500">TVL</p>
+                    <p className="text-[11px] text-stone-600">TVL</p>
                     <p className="truncate text-sm font-semibold text-stone-900 tnum">
                       {usd0(p.tvlUsd)}
                     </p>
                   </div>
                   <div className="min-w-0">
-                    <p className="text-[11px] text-stone-500">ZEC price</p>
+                    <p className="text-[11px] text-stone-600">ZEC price</p>
                     <p className="truncate text-sm font-semibold text-stone-900 tnum">
                       {usd0(p.priceUsd)}
                     </p>
@@ -182,7 +182,7 @@ export default async function DefiPage() {
         </section>
       ) : null}
 
-      <p className="mt-6 text-xs text-stone-500">
+      <p className="mt-6 text-xs text-stone-600">
         Data: Maya &amp; THORChain (Midgard v2) and NEAR / Rhea Finance
         (GeckoTerminal). NEAR Intents holds further large cross-chain ZEC
         liquidity across many bridged pairs, not summed here to avoid

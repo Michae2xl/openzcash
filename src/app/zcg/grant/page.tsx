@@ -145,7 +145,7 @@ export default async function GrantDetailPage({
                 <tr>
                   <td
                     colSpan={5}
-                    className="px-4 py-8 text-center text-sm text-stone-500"
+                    className="px-4 py-8 text-center text-sm text-stone-600"
                   >
                     No milestones paid yet.
                   </td>

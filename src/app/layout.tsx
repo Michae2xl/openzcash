@@ -49,7 +49,7 @@ export default async function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${inter.variable} ${geistMono.variable} h-full`}
     >
       <body className="min-h-full">
         <TapFeedback />

@@ -101,7 +101,7 @@ export function GrantsTable({ rows }: GrantsTableProps) {
             {formatZec(BigInt(r._zec), { symbol: false })}
           </span>
         ) : (
-          <span className="text-stone-500">·</span>
+          <span className="text-stone-600">·</span>
         ),
     },
     {
@@ -118,7 +118,7 @@ export function GrantsTable({ rows }: GrantsTableProps) {
           className="inline-flex items-center gap-0.5 rounded-md px-2 py-1 text-xs tnum ring-1 ring-inset ring-stone-200 hover:ring-amber-500/40"
         >
           <span className="text-amber-700">{r.paidCount}</span>
-          <span className="text-stone-500">/{r.milestoneCount}</span>
+          <span className="text-stone-600">/{r.milestoneCount}</span>
         </Link>
       ),
     },

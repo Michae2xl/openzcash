@@ -102,7 +102,7 @@ export default function Z3Page() {
               <p className="mt-2 text-xs leading-relaxed text-stone-600">
                 {c.role}
               </p>
-              <p className="mt-3 text-[11px] uppercase tracking-wider text-stone-500">
+              <p className="mt-3 text-[11px] uppercase tracking-wider text-stone-600">
                 {c.org} · GitHub ↗
               </p>
             </Card>

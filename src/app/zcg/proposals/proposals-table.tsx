@@ -233,7 +233,7 @@ const columns: Column<ProposalTableRow>[] = [
           <span
             className={cn(
               "whitespace-nowrap text-[10px] font-medium tnum",
-              r.reviewOverdue ? "text-amber-700" : "text-stone-400",
+              r.reviewOverdue ? "text-amber-700" : "text-stone-600",
             )}
             title={
               r.reviewOverdue

@@ -281,9 +281,9 @@ const SHIELDED: Record<
   },
   transparent: {
     ringColor: "ring-stone-300",
-    monoBg: "bg-stone-100 text-stone-500",
+    monoBg: "bg-stone-100 text-stone-600",
     label: "Transparent",
-    text: "text-stone-500",
+    text: "text-stone-600",
   },
 };
 
@@ -340,7 +340,7 @@ function WalletCard({ w, led }: { w: Wallet; led: string }) {
                 </span>
               ) : null}
             </div>
-            <p className="truncate text-xs font-medium text-stone-500">
+            <p className="truncate text-xs font-medium text-stone-600">
               {w.maker}
             </p>
           </div>
@@ -458,7 +458,7 @@ export default function WalletsPage() {
         </div>
       </section>
 
-      <p className="mt-7 text-xs text-stone-500">
+      <p className="mt-7 text-xs text-stone-600">
         {SOFTWARE.length + HARDWARE.length} wallets · curated from official
         sources, 2026 · shielded support verified per wallet. The{" "}
         <span className="rounded-md bg-sky-500/10 px-1.5 py-px text-[10px] font-medium text-sky-800 ring-1 ring-inset ring-sky-500/20">

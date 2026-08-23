@@ -189,7 +189,7 @@ export async function ElectionsSection() {
             Past elections
           </p>
           {past.length > 0 ? (
-            <span className="tnum text-xs font-medium text-stone-500">
+            <span className="tnum text-xs font-medium text-stone-600">
               {past.length} closed
             </span>
           ) : null}
@@ -197,7 +197,7 @@ export async function ElectionsSection() {
 
         {past.length === 0 ? (
           <Card className="border-dashed border-stone-200 px-4 py-10 text-center">
-            <p className="text-sm text-stone-400">No past elections yet.</p>
+            <p className="text-sm text-stone-600">No past elections yet.</p>
           </Card>
         ) : (
           <ul className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
@@ -253,12 +253,12 @@ export async function ElectionsSection() {
                       ))}
                     </ul>
                   ) : (
-                    <p className="text-[11px] italic text-stone-400">
+                    <p className="text-[11px] italic text-stone-600">
                       Results pending.
                     </p>
                   )}
 
-                  <p className="tnum mt-auto pt-0.5 text-[11px] text-stone-500">
+                  <p className="tnum mt-auto pt-0.5 text-[11px] text-stone-600">
                     {e.resultsBy
                       ? fmt(e.resultsBy)
                       : e.votingCloses

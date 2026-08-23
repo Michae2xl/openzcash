@@ -57,7 +57,7 @@ export default async function StipendsPage() {
         actions={
           <Link
             href="/zcg/totals"
-            className="text-xs text-stone-500 hover:text-stone-800"
+            className="text-xs text-stone-600 hover:text-stone-800"
           >
             ‹ Totals
           </Link>
@@ -87,7 +87,7 @@ export default async function StipendsPage() {
         <Card className="p-0">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-stone-100 text-left text-xs text-stone-500">
+              <tr className="border-b border-stone-100 text-left text-xs text-stone-600">
                 <th className="px-4 py-2.5 font-medium">Member</th>
                 <th className="px-4 py-2.5 text-right font-medium">Paid</th>
                 <th className="px-4 py-2.5 text-right font-medium">Payments</th>
@@ -113,7 +113,7 @@ export default async function StipendsPage() {
                   <td className="px-4 py-2.5 text-right text-stone-600 tnum">
                     {m.payments}
                   </td>
-                  <td className="hidden px-4 py-2.5 text-right text-xs text-stone-400 tnum sm:table-cell">
+                  <td className="hidden px-4 py-2.5 text-right text-xs text-stone-600 tnum sm:table-cell">
                     {m.firstPaid ? m.firstPaid.slice(0, 7) : "?"} →{" "}
                     {m.lastPaid ? m.lastPaid.slice(0, 7) : "?"}
                   </td>
@@ -124,7 +124,7 @@ export default async function StipendsPage() {
         </Card>
       ) : (
         <Card>
-          <p className="text-sm text-stone-500">
+          <p className="text-sm text-stone-600">
             No monthly stipend rows are present in the ledger yet.
           </p>
         </Card>
@@ -132,7 +132,7 @@ export default async function StipendsPage() {
 
       <div className="mt-4 flex items-start gap-2">
         <Badge tone="violet">Committee salaries</Badge>
-        <p className="text-xs leading-relaxed text-stone-500">
+        <p className="text-xs leading-relaxed text-stone-600">
           These are internal ZCG payments, excluded from the external recipient
           tables. This page sums the monthly-payments tab; the cumulative{" "}
           <Link href="/zcg/totals" className="text-amber-700 hover:underline">

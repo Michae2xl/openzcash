@@ -119,7 +119,7 @@ export default async function NewsPage() {
 
       <Card className="space-y-1 p-2">
         {items.length === 0 ? (
-          <p className="px-3 py-8 text-center text-sm text-stone-500">
+          <p className="px-3 py-8 text-center text-sm text-stone-600">
             No recent activity. Sources may be momentarily unreachable.
           </p>
         ) : null}
@@ -151,7 +151,7 @@ export default async function NewsPage() {
                     : s.label}
                 </p>
               </div>
-              <span className="shrink-0 text-xs text-stone-500 tnum">
+              <span className="shrink-0 text-xs text-stone-600 tnum">
                 {rel(i.ts, now)}
               </span>
             </a>

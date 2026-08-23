@@ -140,7 +140,7 @@ export default async function TotaisPage() {
         >
           Coinholder grants pool →
         </Link>
-        <span className="px-1 text-xs text-stone-500">
+        <span className="px-1 text-xs text-stone-600">
           Two separate pools. You&apos;re viewing the{" "}
           <span className="font-medium text-stone-700">ZCG</span> committee
           pool.
@@ -152,7 +152,7 @@ export default async function TotaisPage() {
           <h2 className="text-sm font-semibold text-stone-700">
             Where the money goes
           </h2>
-          <span className="text-xs text-stone-400">
+          <span className="text-xs text-stone-600">
             click a card to drill in ↓
           </span>
         </div>
@@ -182,17 +182,17 @@ export default async function TotaisPage() {
                   <span className="text-lg font-semibold text-stone-900 tnum group-hover:text-amber-700">
                     {formatUsdCents(s.usd, { compact: true })}
                   </span>
-                  <span className="text-xs font-medium text-stone-400 tnum">
+                  <span className="text-xs font-medium text-stone-600 tnum">
                     {pct(s.usd).toFixed(1)}%
                   </span>
                 </p>
-                <p className="mt-0.5 text-xs leading-snug text-stone-500">
+                <p className="mt-0.5 text-xs leading-snug text-stone-600">
                   {s.sub}
                 </p>
               </Link>
             ))}
           </div>
-          <p className="mt-4 border-t border-stone-100 pt-3 text-xs leading-relaxed text-stone-500">
+          <p className="mt-4 border-t border-stone-100 pt-3 text-xs leading-relaxed text-stone-600">
             Of the grants, {formatUsdCents(securityUsd, { compact: true })} went
             to third-party security{" "}
             <span className="font-medium text-sky-700">
@@ -250,19 +250,19 @@ export default async function TotaisPage() {
         </div>
         <div className="mt-3 grid gap-3 sm:grid-cols-3">
           <div>
-            <p className="text-xs text-stone-500">Published grants total</p>
+            <p className="text-xs text-stone-600">Published grants total</p>
             <p className="text-sm font-semibold text-stone-900 tnum">
               {formatUsdCents(grantsUsd)}
             </p>
           </div>
           <div>
-            <p className="text-xs text-stone-500">Paid grants ledger</p>
+            <p className="text-xs text-stone-600">Paid grants ledger</p>
             <p className="text-sm font-semibold text-stone-900 tnum">
               {formatUsdCents(ledgerGrants)}
             </p>
           </div>
           <div>
-            <p className="text-xs text-stone-500">Difference</p>
+            <p className="text-xs text-stone-600">Difference</p>
             <p
               className={
                 reconciled
@@ -277,7 +277,7 @@ export default async function TotaisPage() {
             </p>
           </div>
         </div>
-        <p className="mt-3 text-xs leading-relaxed text-stone-500">
+        <p className="mt-3 text-xs leading-relaxed text-stone-600">
           The published grants total (the pivot minus ZCG&apos;s own operations
           &amp; stipends) vs. the paid grant + contractor ledger, compared live.
           The two internal buckets are excluded here because the pivot counts

@@ -55,7 +55,7 @@ export default async function OfficePage() {
         </div>
         <Link
           href="/zcg"
-          className="text-xs text-stone-500 hover:text-stone-800"
+          className="text-xs text-stone-600 hover:text-stone-800"
         >
           ‹ ZCG
         </Link>
@@ -65,7 +65,7 @@ export default async function OfficePage() {
         <OfficeCanvas members={MEMBERS} proposals={proposals} />
       </div>
 
-      <p className="mt-3 text-[11px] leading-relaxed text-stone-400">
+      <p className="mt-3 text-[11px] leading-relaxed text-stone-600">
         Each zebra is a live grant proposal under review (source: GitHub). Drag
         to orbit, scroll to zoom. Credits: 3D model{" "}
         <a

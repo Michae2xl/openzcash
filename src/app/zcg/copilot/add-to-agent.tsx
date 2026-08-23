@@ -123,7 +123,7 @@ export function AddToAgent({ skill = "zcg-copilot" }: { skill?: string }) {
 
   return (
     <div>
-      <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.2em] text-stone-400">
+      <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.2em] text-stone-600">
         Add to your agent
       </p>
       <div className="mt-3 grid grid-cols-2 gap-2.5 sm:grid-cols-3">
@@ -145,14 +145,14 @@ export function AddToAgent({ skill = "zcg-copilot" }: { skill?: string }) {
               <span className="block truncate text-sm font-medium text-stone-900">
                 {a.name}
               </span>
-              <span className="block font-mono text-[10px] text-stone-400">
+              <span className="block font-mono text-[10px] text-stone-600">
                 {copied === a.flag ? "copied ✓" : "click to copy"}
               </span>
             </span>
           </button>
         ))}
       </div>
-      <p className="mt-3 text-[11px] leading-relaxed text-stone-400">
+      <p className="mt-3 text-[11px] leading-relaxed text-stone-600">
         …and 40+ more agents the{" "}
         <a
           href="https://github.com/vercel-labs/skills"

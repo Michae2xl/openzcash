@@ -59,7 +59,7 @@ function SourceTag({ origin, edited }: { origin: string; edited: boolean }) {
         admin-edited
       </span>
     );
-  return <span className="text-[10px] text-stone-500">from spreadsheet</span>;
+  return <span className="text-[10px] text-stone-600">from spreadsheet</span>;
 }
 
 interface DisbursementsTableProps {
@@ -82,7 +82,7 @@ export function DisbursementsTable({
         <div>
           <div>
             <span className="font-medium text-stone-900">{r.recipient}</span>
-            <span className="ml-2 text-[10px] uppercase tracking-wide text-stone-500">
+            <span className="ml-2 text-[10px] uppercase tracking-wide text-stone-600">
               {r.type}
             </span>
           </div>
@@ -105,7 +105,7 @@ export function DisbursementsTable({
           <>
             {r.detail || "·"}
             {r.milestoneSeq ? (
-              <span className="text-stone-500"> · m{r.milestoneSeq}</span>
+              <span className="text-stone-600"> · m{r.milestoneSeq}</span>
             ) : null}
           </>
         );
@@ -134,7 +134,7 @@ export function DisbursementsTable({
         r.category ? (
           <span className="text-xs text-stone-600">{r.category}</span>
         ) : (
-          <span className="text-stone-500">·</span>
+          <span className="text-stone-600">·</span>
         ),
     },
     {

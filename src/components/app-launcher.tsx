@@ -417,7 +417,7 @@ export function AppLauncher({ isAdmin = false }: { isAdmin?: boolean }) {
       </div>
 
       {mounted && !editing && hiddenApps.length > 0 ? (
-        <p className="mt-6 text-center text-xs text-stone-500">
+        <p className="mt-6 text-center text-sm text-stone-700">
           {hiddenApps.length} more app{hiddenApps.length > 1 ? "s" : ""}{" "}
           available.{" "}
           <button

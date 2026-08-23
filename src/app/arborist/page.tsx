@@ -14,7 +14,7 @@ async function Archive() {
   const calls = await getArboristCalls();
   if (calls.length === 0) {
     return (
-      <p className="rounded-2xl border border-stone-200 bg-white p-10 text-center text-sm text-stone-500 shadow-sm">
+      <p className="rounded-2xl border border-stone-200 bg-white p-10 text-center text-sm text-stone-600 shadow-sm">
         The notes repository did not respond. Try again shortly, or browse it
         directly on{" "}
         <a
@@ -67,7 +67,7 @@ export default function ArboristPage() {
 
       <Suspense
         fallback={
-          <div className="rounded-2xl border border-stone-200 bg-white p-10 text-center text-sm text-stone-500 shadow-sm">
+          <div className="rounded-2xl border border-stone-200 bg-white p-10 text-center text-sm text-stone-600 shadow-sm">
             Loading the call archive…
           </div>
         }
@@ -75,7 +75,7 @@ export default function ArboristPage() {
         <Archive />
       </Suspense>
 
-      <p className="mt-8 text-xs leading-relaxed text-stone-500">
+      <p className="mt-8 text-xs leading-relaxed text-stone-600">
         Source:{" "}
         <a
           href={ARBORIST_REPO_URL}

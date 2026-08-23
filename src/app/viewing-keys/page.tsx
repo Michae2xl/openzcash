@@ -164,7 +164,7 @@ export default async function ViewingKeysPage() {
               <p className="mt-3 break-all rounded-md bg-white px-3 py-2 font-mono text-xs text-stone-600">
                 {vk.ufvkMasked}
               </p>
-              <p className="mt-2 text-xs text-stone-500">
+              <p className="mt-2 text-xs text-stone-600">
                 imported on {formatDateTime(vk.importedAt)}
               </p>
 
@@ -216,7 +216,7 @@ export default async function ViewingKeysPage() {
                 <tr>
                   <td
                     colSpan={5}
-                    className="px-5 py-4 text-center text-xs text-stone-500"
+                    className="px-5 py-4 text-center text-xs text-stone-600"
                   >
                     No access recorded.
                   </td>

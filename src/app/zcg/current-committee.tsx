@@ -140,7 +140,7 @@ function MemberCard({ m }: { m: Member }) {
             className="h-12 w-12 rounded-full border-2 border-white object-cover"
           />
         </span>
-        <span className="absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full border border-stone-200 bg-white text-stone-500 shadow-sm transition-colors group-hover:text-amber-700">
+        <span className="absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full border border-stone-200 bg-white text-stone-600 shadow-sm transition-colors group-hover:text-amber-700">
           <PlatformGlyph platform={m.platform} />
         </span>
       </span>
@@ -150,7 +150,7 @@ function MemberCard({ m }: { m: Member }) {
           <span className="truncate text-sm font-semibold text-stone-900 group-hover:text-amber-700">
             {m.name}
           </span>
-          <span className="tnum shrink-0 text-[11px] font-medium text-stone-500">
+          <span className="tnum shrink-0 text-[11px] font-medium text-stone-600">
             {m.term}
           </span>
         </div>
@@ -184,7 +184,7 @@ export function CurrentCommittee() {
         <h3 className="text-sm font-semibold text-stone-700">
           Current committee
         </h3>
-        <span className="text-xs font-medium text-stone-500">
+        <span className="text-xs font-medium text-stone-600">
           5 seats · from July 2026
         </span>
       </div>

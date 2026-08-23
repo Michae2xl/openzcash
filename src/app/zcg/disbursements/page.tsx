@@ -198,7 +198,7 @@ export default async function DesembolsosPage({
         <DisbursementsTable rows={tableRows} isAdmin={isAdmin} />
       </Card>
 
-      <p className="mt-4 text-xs text-stone-500">
+      <p className="mt-4 text-xs text-stone-600">
         {rows.length} disbursements{" "}
         {sheet ? "in this category" : "(most recent)"} ·{" "}
         <span className="text-stone-600">from spreadsheet</span> = mirrored from

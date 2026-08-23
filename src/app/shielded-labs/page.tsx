@@ -121,13 +121,13 @@ export default function ShieldedLabsPage() {
         <a href={ROADMAP} target="_blank" rel="noreferrer" className="block">
           <Card interactive className="flex items-center justify-between gap-3">
             <span className="text-sm font-medium text-stone-900">Roadmap</span>
-            <span className="text-xs text-stone-500">milestones ↗</span>
+            <span className="text-xs text-stone-600">milestones ↗</span>
           </Card>
         </a>
         <a href={GITHUB} target="_blank" rel="noreferrer" className="block">
           <Card interactive className="flex items-center justify-between gap-3">
             <span className="text-sm font-medium text-stone-900">GitHub</span>
-            <span className="text-xs text-stone-500">ShieldedLabs ↗</span>
+            <span className="text-xs text-stone-600">ShieldedLabs ↗</span>
           </Card>
         </a>
       </div>

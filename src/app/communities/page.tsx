@@ -26,7 +26,7 @@ export default function CommunitiesPage() {
 
       <Suspense
         fallback={
-          <div className="rounded-2xl border border-stone-200 bg-white p-10 text-center text-sm text-stone-500 shadow-sm">
+          <div className="rounded-2xl border border-stone-200 bg-white p-10 text-center text-sm text-stone-600 shadow-sm">
             Loading live forum activity…
           </div>
         }
@@ -34,7 +34,7 @@ export default function CommunitiesPage() {
         <LiveDirectory />
       </Suspense>
 
-      <p className="mt-8 text-xs leading-relaxed text-stone-500">
+      <p className="mt-8 text-xs leading-relaxed text-stone-600">
         Funding figures mirror the official ZCG spreadsheet (budgeted USD, not
         paid; see the methodology). Communities with no ledger rows are marked
         accordingly; some are funded through other channels (ZecHub DAO

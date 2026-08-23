@@ -65,7 +65,7 @@ export function ArboristView({ calls }: { calls: ArboristCall[] }) {
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder="Search calls, topics, moderators…"
-          className="w-full max-w-xs rounded-lg border border-stone-300 bg-white px-3 py-1.5 text-sm text-stone-800 placeholder:text-stone-400 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500/40 sm:w-72"
+          className="w-full max-w-xs rounded-lg border border-stone-300 bg-white px-3 py-1.5 text-sm text-stone-800 placeholder:text-stone-600 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500/40 sm:w-72"
         />
         {(
           [

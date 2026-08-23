@@ -134,7 +134,7 @@ const recipientColumns: Column<RecipientRow>[] = [
     align: "right",
     sortable: true,
     sortValue: (r) => r.rank,
-    render: (r) => <span className="text-xs text-stone-500">{r.rank}</span>,
+    render: (r) => <span className="text-xs text-stone-600">{r.rank}</span>,
   },
   {
     key: "recipient",
@@ -180,7 +180,7 @@ const recipientColumns: Column<RecipientRow>[] = [
           {formatUsdCents(r._future, { compact: true })}
         </Link>
       ) : (
-        <span className="text-stone-500">·</span>
+        <span className="text-stone-600">·</span>
       ),
   },
   pctColumn,

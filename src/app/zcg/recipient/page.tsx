@@ -30,7 +30,7 @@ export default async function RecipientPage({
     <>
       <Link
         href="/zcg/totals"
-        className="mb-4 inline-block text-xs text-stone-500 hover:text-stone-800"
+        className="mb-4 inline-block text-xs text-stone-600 hover:text-stone-800"
       >
         ‹ Totals
       </Link>
@@ -130,7 +130,7 @@ export default async function RecipientPage({
                 <tr>
                   <td
                     colSpan={4}
-                    className="px-4 py-8 text-center text-sm text-stone-500"
+                    className="px-4 py-8 text-center text-sm text-stone-600"
                   >
                     No milestones paid yet.
                   </td>

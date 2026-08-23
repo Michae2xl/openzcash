@@ -143,7 +143,7 @@ export default async function FpfCoinholderGrantsPage() {
         <Card className="p-4">
           <FpfGrantsTable grantRows={grantRows} />
         </Card>
-        <p className="mt-3 text-xs text-stone-500">
+        <p className="mt-3 text-xs text-stone-600">
           {grants.length} grants · one approved project per row · amounts in USD
           with ZEC equivalents tracked in the ledger.
         </p>
@@ -156,7 +156,7 @@ export default async function FpfCoinholderGrantsPage() {
         <Card className="p-4">
           <FpfProposalsTable proposalRows={proposalRows} />
         </Card>
-        <p className="mt-3 text-xs text-stone-500">
+        <p className="mt-3 text-xs text-stone-600">
           {proposals.length} proposals · the pipeline upstream of the grants
           above · only approved proposals become paid grants.
         </p>

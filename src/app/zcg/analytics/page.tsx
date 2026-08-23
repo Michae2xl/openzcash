@@ -193,7 +193,7 @@ export default async function AnalyticsPage() {
           </Link>
         </div>
         <Card>
-          <p className="mb-2 text-xs text-stone-500">
+          <p className="mb-2 text-xs text-stone-600">
             Monthly paid disbursements · last 24 months
           </p>
           <BarList items={monthBars} />
@@ -301,7 +301,7 @@ export default async function AnalyticsPage() {
           ) : null}
         </div>
         <Card>
-          <p className="mb-2 text-xs text-stone-500">
+          <p className="mb-2 text-xs text-stone-600">
             Paid in the last 12 months by category. The ▲▼ delta compares each
             category&apos;s share of the last 12 months with its all-time share,
             in percentage points.
@@ -317,7 +317,7 @@ export default async function AnalyticsPage() {
             Bounties paid
           </h2>
           <Card className="p-0">
-            <div className="flex items-center justify-between gap-3 border-b border-stone-100 px-4 py-2.5 text-xs text-stone-500">
+            <div className="flex items-center justify-between gap-3 border-b border-stone-100 px-4 py-2.5 text-xs text-stone-600">
               <span>{bounties.length} bounty payments</span>
               <span className="font-medium text-amber-700 tnum">
                 {formatUsdCents(bountyTotal, { compact: true })} total
@@ -333,7 +333,7 @@ export default async function AnalyticsPage() {
                   <span className="min-w-0 flex-1 truncate font-medium text-stone-800">
                     {b.recipient}
                     {b.project ? (
-                      <span className="ml-2 font-normal text-stone-400">
+                      <span className="ml-2 font-normal text-stone-600">
                         {b.project}
                       </span>
                     ) : null}
