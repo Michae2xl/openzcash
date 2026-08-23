@@ -7,10 +7,11 @@ import type { TopicActivity } from "@/lib/communities/forum-activity";
 import { cn } from "@/lib/utils";
 
 /**
- * Client view for /communities. Layout order is deliberate: the live forum
- * timeline sits at the top of the page (the "what is happening now" answer),
- * then the headline stats, then the region/funding filters over the cards.
- * All data arrives pre-fetched from the server component.
+ * Client view for /communities, designed as an assessment surface for the
+ * ZCG committee: a single dense ledger-style list, ordered by most recent
+ * forum activity, with a recency signal per row (green ≤7d, amber ≤30d,
+ * grey = quiet). The live activity strip stays at the top of the page;
+ * totals sit at the bottom.
  */
 
 const REGIONS: Region[] = [
@@ -23,9 +24,14 @@ const REGIONS: Region[] = [
 ];
 
 type FundingFilter = "all" | "funded" | "unfunded";
+type SortMode = "activity" | "name" | "region";
+
+function daysSince(iso: string): number {
+  return Math.floor((Date.now() - new Date(iso).getTime()) / 86_400_000);
+}
 
 function timeAgo(iso: string): string {
-  const days = Math.floor((Date.now() - new Date(iso).getTime()) / 86_400_000);
+  const days = daysSince(iso);
   if (days <= 0) return "today";
   if (days === 1) return "yesterday";
   if (days < 30) return `${days}d ago`;
@@ -40,16 +46,36 @@ function usd(n: number): string {
   return `$${n}`;
 }
 
-function LinkChip({ href, label }: { href: string; label: string }) {
+/** Recency signal: the committee's at-a-glance "is this group alive". */
+function RecencyDot({ iso }: { iso?: string }) {
+  const days = iso ? daysSince(iso) : Infinity;
   return (
-    <a
-      href={href}
-      target="_blank"
-      rel="noreferrer"
-      className="rounded-md bg-stone-100 px-2 py-0.5 text-[11px] font-medium text-stone-700 ring-1 ring-inset ring-stone-200 transition hover:bg-amber-500/10 hover:text-amber-800 hover:ring-amber-500/30"
-    >
-      {label} ↗
-    </a>
+    <span
+      className={cn(
+        "inline-block h-2 w-2 shrink-0 rounded-full",
+        days <= 7
+          ? "bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.6)]"
+          : days <= 30
+            ? "bg-amber-400"
+            : "bg-stone-300",
+      )}
+      title={
+        days === Infinity
+          ? "No tracked forum activity"
+          : `Last forum activity ${timeAgo(iso!)}`
+      }
+    />
+  );
+}
+
+function pill(active: boolean, accent = false): string {
+  return cn(
+    "rounded-full px-3 py-1 text-xs font-medium ring-1 ring-inset transition",
+    active
+      ? accent
+        ? "bg-amber-600 text-white ring-amber-600"
+        : "bg-stone-900 text-white ring-stone-900"
+      : "bg-white text-stone-600 ring-stone-300 hover:ring-stone-400",
   );
 }
 
@@ -62,6 +88,7 @@ export function CommunitiesView({
 }) {
   const [region, setRegion] = useState<Region | "all">("all");
   const [funding, setFunding] = useState<FundingFilter>("all");
+  const [sort, setSort] = useState<SortMode>("activity");
 
   const byId = useMemo(
     () => new Map(communities.map((c) => [c.id, c])),
@@ -69,22 +96,32 @@ export function CommunitiesView({
   );
   const lastByCommunity = useMemo(() => {
     const m = new Map<string, TopicActivity>();
-    for (const a of activity) if (!m.has(a.communityId)) m.set(a.communityId, a);
+    for (const a of activity)
+      if (!m.has(a.communityId)) m.set(a.communityId, a);
     return m;
   }, [activity]);
 
-  const shown = useMemo(
-    () =>
-      communities.filter(
-        (c) =>
-          (region === "all" || c.region === region) &&
-          (funding === "all" ||
-            (funding === "funded" ? c.zcg.funded : !c.zcg.funded)),
-      ),
-    [communities, region, funding],
-  );
+  const shown = useMemo(() => {
+    const filtered = communities.filter(
+      (c) =>
+        (region === "all" || c.region === region) &&
+        (funding === "all" ||
+          (funding === "funded" ? c.zcg.funded : !c.zcg.funded)),
+    );
+    const key = (c: Community) =>
+      lastByCommunity.get(c.id)?.lastPostedAt ?? "0000";
+    if (sort === "name")
+      return [...filtered].sort((a, b) => a.name.localeCompare(b.name));
+    if (sort === "region")
+      return [...filtered].sort(
+        (a, b) =>
+          a.region.localeCompare(b.region) || key(b).localeCompare(key(a)),
+      );
+    return [...filtered].sort((a, b) => key(b).localeCompare(key(a)));
+  }, [communities, region, funding, sort, lastByCommunity]);
+
   const shownIds = useMemo(() => new Set(shown.map((c) => c.id)), [shown]);
-  const timeline = useMemo(
+  const strip = useMemo(
     () => activity.filter((a) => shownIds.has(a.communityId)).slice(0, 24),
     [activity, shownIds],
   );
@@ -97,21 +134,25 @@ export function CommunitiesView({
   const countries = new Set(
     communities.filter((c) => c.country !== "Global").map((c) => c.country),
   ).size;
+  const activeWeek = communities.filter((c) => {
+    const l = lastByCommunity.get(c.id);
+    return l && daysSince(l.lastPostedAt) <= 7;
+  }).length;
 
   return (
     <>
-      {/* ---- Live forum timeline: top of the page ---- */}
-      <section className="mb-6 rounded-2xl border border-stone-200 bg-white shadow-sm ring-1 ring-inset ring-stone-900/5">
-        <div className="flex items-baseline justify-between gap-3 border-b border-stone-200 px-4 py-3">
+      {/* ---- Live forum activity: top of the page ---- */}
+      <section className="mb-6 overflow-hidden rounded-2xl border border-stone-200 bg-gradient-to-b from-white to-stone-50 shadow-sm ring-1 ring-inset ring-stone-900/5">
+        <div className="flex items-baseline justify-between gap-3 border-b border-stone-200 px-5 py-3">
           <p className="text-[11px] font-semibold uppercase tracking-wider text-stone-600">
             Latest forum activity
           </p>
           <p className="text-[11px] text-stone-400">
-            live from forum.zcashcommunity.com · scroll →
+            live from the community forum
           </p>
         </div>
-        <div className="flex snap-x gap-3 overflow-x-auto p-4">
-          {timeline.map((a) => {
+        <div className="flex snap-x gap-0 divide-x divide-stone-100 overflow-x-auto">
+          {strip.map((a) => {
             const c = byId.get(a.communityId);
             return (
               <a
@@ -119,10 +160,10 @@ export function CommunitiesView({
                 href={a.url}
                 target="_blank"
                 rel="noreferrer"
-                className="w-56 shrink-0 snap-start rounded-xl border border-stone-200 bg-gradient-to-b from-white to-stone-50 p-3 transition hover:border-amber-400/60 hover:shadow-sm"
+                className="w-60 shrink-0 snap-start px-4 py-3.5 transition hover:bg-amber-500/[0.06]"
               >
                 <div className="flex items-baseline justify-between gap-2">
-                  <p className="truncate text-xs font-semibold text-stone-800">
+                  <p className="truncate text-xs font-semibold text-stone-900">
                     {c?.flag} {c?.name}
                   </p>
                   <span className="shrink-0 text-[10px] font-medium text-emerald-700 tnum">
@@ -135,24 +176,19 @@ export function CommunitiesView({
               </a>
             );
           })}
-          {timeline.length === 0 ? (
-            <p className="w-full py-4 text-center text-xs text-stone-400">
+          {strip.length === 0 ? (
+            <p className="w-full py-5 text-center text-xs text-stone-400">
               Forum activity unavailable right now.
             </p>
           ) : null}
         </div>
       </section>
 
-      {/* ---- Filters ---- */}
-      <div className="mb-6 flex flex-wrap items-center gap-2">
+      {/* ---- Filters + sort ---- */}
+      <div className="mb-4 flex flex-wrap items-center gap-2">
         <button
           onClick={() => setRegion("all")}
-          className={cn(
-            "rounded-full px-3 py-1 text-xs font-medium ring-1 ring-inset transition",
-            region === "all"
-              ? "bg-stone-900 text-white ring-stone-900"
-              : "bg-white text-stone-600 ring-stone-300 hover:ring-stone-400",
-          )}
+          className={pill(region === "all")}
         >
           All regions
         </button>
@@ -160,12 +196,7 @@ export function CommunitiesView({
           <button
             key={r}
             onClick={() => setRegion(region === r ? "all" : r)}
-            className={cn(
-              "rounded-full px-3 py-1 text-xs font-medium ring-1 ring-inset transition",
-              region === r
-                ? "bg-stone-900 text-white ring-stone-900"
-                : "bg-white text-stone-600 ring-stone-300 hover:ring-stone-400",
-            )}
+            className={pill(region === r)}
           >
             {r}
           </button>
@@ -181,111 +212,207 @@ export function CommunitiesView({
           <button
             key={key}
             onClick={() => setFunding(key)}
-            className={cn(
-              "rounded-full px-3 py-1 text-xs font-medium ring-1 ring-inset transition",
-              funding === key
-                ? "bg-amber-600 text-white ring-amber-600"
-                : "bg-white text-stone-600 ring-stone-300 hover:ring-stone-400",
-            )}
+            className={pill(funding === key, true)}
           >
             {label}
           </button>
         ))}
-        <span className="ml-auto text-xs text-stone-500 tnum">
-          {shown.length} of {communities.length} communities
+        <span className="ml-auto flex items-center gap-1 text-[11px] text-stone-500">
+          sort
+          {(
+            [
+              ["activity", "Activity"],
+              ["name", "Name"],
+              ["region", "Region"],
+            ] as const
+          ).map(([key, label]) => (
+            <button
+              key={key}
+              onClick={() => setSort(key)}
+              className={cn(
+                "rounded px-1.5 py-0.5 font-medium transition",
+                sort === key
+                  ? "bg-stone-900 text-white"
+                  : "text-stone-500 hover:text-stone-800",
+              )}
+            >
+              {label}
+            </button>
+          ))}
         </span>
       </div>
 
-      {/* ---- Community cards ---- */}
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {shown.map((c) => {
-          const last = lastByCommunity.get(c.id);
-          return (
-            <div
-              key={c.id}
-              className="rounded-2xl border border-stone-200 bg-gradient-to-b from-white to-stone-50 p-4 shadow-sm ring-1 ring-inset ring-stone-900/5"
+      {/* ---- The assessment list ---- */}
+      <div className="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm ring-1 ring-inset ring-stone-900/5">
+        <div className="hidden grid-cols-[minmax(210px,1.1fr)_minmax(0,1.6fr)_150px_minmax(150px,0.9fr)] gap-4 border-b border-stone-200 bg-stone-50/60 px-5 py-2.5 md:grid">
+          {[
+            "Community",
+            "Latest forum activity",
+            "ZCG funding",
+            "Channels",
+          ].map((h) => (
+            <p
+              key={h}
+              className="text-[11px] font-semibold uppercase tracking-wider text-stone-500"
             >
-              <div className="flex items-start justify-between gap-2">
-                <div className="flex items-center gap-2.5">
-                  <span className="text-2xl leading-none">{c.flag}</span>
-                  <div>
-                    <p className="text-sm font-semibold text-stone-900">
-                      {c.name}
+              {h}
+            </p>
+          ))}
+        </div>
+
+        <ul className="divide-y divide-stone-100">
+          {shown.map((c) => {
+            const last = lastByCommunity.get(c.id);
+            return (
+              <li
+                key={c.id}
+                className="grid grid-cols-1 gap-3 px-5 py-4 transition hover:bg-amber-500/[0.04] md:grid-cols-[minmax(210px,1.1fr)_minmax(0,1.6fr)_150px_minmax(150px,0.9fr)] md:items-center md:gap-4"
+              >
+                {/* Community */}
+                <div className="flex items-center gap-3">
+                  <span className="text-xl leading-none">{c.flag}</span>
+                  <div className="min-w-0">
+                    <p className="flex items-center gap-2 text-sm font-semibold text-stone-900">
+                      <span className="truncate">{c.name}</span>
+                      <RecencyDot iso={last?.lastPostedAt} />
                     </p>
-                    <p className="text-[11px] text-stone-500">
+                    <p className="truncate text-[11px] text-stone-500">
                       {c.country} · {c.language}
                     </p>
                   </div>
                 </div>
-                {last ? (
-                  <span
-                    className="shrink-0 rounded-md bg-emerald-500/10 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-700 ring-1 ring-inset ring-emerald-500/25 tnum"
-                    title={`Last forum activity: ${last.title}`}
-                  >
-                    {timeAgo(last.lastPostedAt)}
-                  </span>
-                ) : null}
-              </div>
 
-              <p className="mt-2 text-xs leading-relaxed text-stone-600">
-                {c.about}
-              </p>
-
-              <div className="mt-3">
-                {c.zcg.funded ? (
-                  <>
-                    <p className="text-[11px] font-medium text-amber-800">
-                      <span className="rounded-md bg-amber-500/10 px-1.5 py-0.5 ring-1 ring-inset ring-amber-500/25">
-                        ZCG-funded
-                      </span>
-                    </p>
-                    {c.zcg.note ? (
-                      <p className="mt-1 text-[11px] text-stone-500">
-                        {c.zcg.note}
+                {/* Latest activity */}
+                <div className="min-w-0">
+                  {last ? (
+                    <a
+                      href={last.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="group block"
+                    >
+                      <p className="truncate text-xs font-medium text-stone-800 group-hover:text-amber-800">
+                        {last.title}
                       </p>
-                    ) : null}
-                  </>
-                ) : (
-                  <p className="text-[11px] font-medium text-stone-500">
-                    <span className="rounded-md bg-stone-100 px-1.5 py-0.5 ring-1 ring-inset ring-stone-200">
+                      <p className="mt-0.5 text-[11px] text-stone-500">
+                        <span
+                          className={cn(
+                            "font-semibold tnum",
+                            daysSince(last.lastPostedAt) <= 7
+                              ? "text-emerald-700"
+                              : daysSince(last.lastPostedAt) <= 30
+                                ? "text-amber-700"
+                                : "text-stone-500",
+                          )}
+                        >
+                          {timeAgo(last.lastPostedAt)}
+                        </span>{" "}
+                        · {last.kind} · {last.postsCount} posts
+                      </p>
+                    </a>
+                  ) : (
+                    <p className="text-[11px] text-stone-400">
+                      No tracked forum activity
+                    </p>
+                  )}
+                </div>
+
+                {/* Funding */}
+                <div>
+                  {c.zcg.funded ? (
+                    <span
+                      className="rounded-md bg-amber-500/10 px-2 py-0.5 text-[11px] font-semibold text-amber-800 ring-1 ring-inset ring-amber-500/25"
+                      title={c.zcg.note ?? c.zcg.recipient}
+                    >
+                      ZCG-funded
+                    </span>
+                  ) : (
+                    <span
+                      className="rounded-md bg-stone-100 px-2 py-0.5 text-[11px] font-medium text-stone-500 ring-1 ring-inset ring-stone-200"
+                      title={c.zcg.note}
+                    >
                       No ZCG funding
                     </span>
-                    {c.zcg.note ? (
-                      <span className="ml-1.5 font-normal">{c.zcg.note}</span>
-                    ) : null}
-                  </p>
-                )}
-              </div>
+                  )}
+                  {c.zcg.note ? (
+                    <p className="mt-1 hidden max-w-[150px] text-[10px] leading-snug text-stone-400 md:line-clamp-2">
+                      {c.zcg.note}
+                    </p>
+                  ) : null}
+                </div>
 
-              <div className="mt-3 flex flex-wrap gap-1.5">
-                {c.links.x ? <LinkChip href={c.links.x} label="X" /> : null}
-                {c.links.telegram ? (
-                  <LinkChip href={c.links.telegram} label="Telegram" />
-                ) : null}
-                {c.links.discord ? (
-                  <LinkChip href={c.links.discord} label="Discord" />
-                ) : null}
-                {c.links.youtube ? (
-                  <LinkChip href={c.links.youtube} label="YouTube" />
-                ) : null}
-                {c.links.site ? (
-                  <LinkChip href={c.links.site} label="Site" />
-                ) : null}
-                {c.links.forumUser ? (
-                  <LinkChip
-                    href={`https://forum.zcashcommunity.com/u/${c.links.forumUser}`}
-                    label={`@${c.links.forumUser}`}
-                  />
-                ) : null}
-              </div>
-            </div>
-          );
-        })}
-        {shown.length === 0 ? (
-          <p className="col-span-full py-10 text-center text-sm text-stone-500">
-            No communities match these filters.
-          </p>
-        ) : null}
+                {/* Channels */}
+                <div className="flex flex-wrap gap-x-2.5 gap-y-1 text-[11px] font-medium">
+                  {c.links.x ? (
+                    <a
+                      className="text-stone-600 hover:text-amber-800"
+                      href={c.links.x}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      X
+                    </a>
+                  ) : null}
+                  {c.links.telegram ? (
+                    <a
+                      className="text-stone-600 hover:text-amber-800"
+                      href={c.links.telegram}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Telegram
+                    </a>
+                  ) : null}
+                  {c.links.discord ? (
+                    <a
+                      className="text-stone-600 hover:text-amber-800"
+                      href={c.links.discord}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Discord
+                    </a>
+                  ) : null}
+                  {c.links.youtube ? (
+                    <a
+                      className="text-stone-600 hover:text-amber-800"
+                      href={c.links.youtube}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      YouTube
+                    </a>
+                  ) : null}
+                  {c.links.site ? (
+                    <a
+                      className="text-stone-600 hover:text-amber-800"
+                      href={c.links.site}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Site
+                    </a>
+                  ) : null}
+                  {c.links.forumUser ? (
+                    <a
+                      className="text-stone-600 hover:text-amber-800"
+                      href={`https://forum.zcashcommunity.com/u/${c.links.forumUser}`}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      @{c.links.forumUser}
+                    </a>
+                  ) : null}
+                </div>
+              </li>
+            );
+          })}
+          {shown.length === 0 ? (
+            <li className="py-10 text-center text-sm text-stone-500">
+              No communities match these filters.
+            </li>
+          ) : null}
+        </ul>
       </div>
 
       {/* ---- Totals, at the bottom ---- */}
@@ -293,17 +420,16 @@ export function CommunitiesView({
         <Stat label="Communities" value={String(communities.length)} />
         <Stat label="Countries" value={String(countries)} />
         <Stat
-          label="ZCG-funded"
-          value={`${funded.length} of ${communities.length}`}
-          tone="warn"
+          label="Active this week"
+          value={`${activeWeek} of ${communities.length}`}
         />
         <Stat
-          label="Budgeted to communities"
-          value={usd(totalBudgeted)}
-          sub="per the audited ledger"
+          label="ZCG-funded"
+          value={`${funded.length} of ${communities.length}`}
+          sub={`${usd(totalBudgeted)} budgeted, per the audited ledger`}
+          tone="warn"
         />
       </section>
-
     </>
   );
 }
