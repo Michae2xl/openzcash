@@ -242,9 +242,9 @@ export const COMMUNITIES: Community[] = [
     region: "Africa",
     language: "English/Swahili",
     links: {"x": "https://x.com/ZcashEastAfrica", "forumUser": "Z.cash.EastAfrica"},
-    zcg: {"funded": false},
+    zcg: {"funded": false, "note": "Not ZCG-funded; ZecHub DAO proposals have covered specific events only (e.g. ETHSafari), not the community itself."},
     forumTopics: [{ id: 57144, title: "Zcash East Africa @ ETHSafari 2026", kind: "announcement" }, { id: 56405, title: "Zcash East Africa (June-July 2026)", kind: "report" }, { id: 55860, title: "Zcash East Africa Official Launch & Community Onboarding Meetup", kind: "announcement" }],
-    about: "Grassroots education in Uganda and Kenya, funded through ZecHub DAO proposals.",
+    about: "Grassroots education in Uganda and Kenya, with event appearances backed by one-off ZecHub DAO proposals.",
   },
   {
     id: "zcash-for-venezuela",
