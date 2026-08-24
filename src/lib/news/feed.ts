@@ -28,7 +28,15 @@ export type NewsItem = {
   author?: string;
 };
 
-const TTL_MS = 10 * 60_000;
+/** Refresh cadence: the feed is re-fetched at most once an hour per instance. */
+const TTL_MS = 60 * 60_000;
+
+/**
+ * How far back the feed goes. "News" means the last week: older ledger rows
+ * and proposals still exist on their own pages, and letting them linger here
+ * turned the list into a month-long archive that contradicted its own label.
+ */
+const NEWS_WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
 let cache: { at: number; items: NewsItem[] } | null = null;
 
 const FORUM = "https://forum.zcashcommunity.com";
@@ -227,6 +235,7 @@ export async function getNews(): Promise<NewsItem[]> {
   // dated months ahead becomes `latest`, poisons every visitor's last-seen
   // marker, and the unread badge never fires again until that date passes.
   const maxTs = new Date(now + 48 * 3600 * 1000).toISOString();
+  const minTs = new Date(now - NEWS_WINDOW_MS).toISOString();
   const items = [
     ...forum,
     ...sheet,
@@ -235,16 +244,28 @@ export async function getNews(): Promise<NewsItem[]> {
     ...apps,
     ...repos.flat(),
   ]
-    .filter((i) => i.ts && i.ts <= maxTs)
+    .filter((i) => i.ts && i.ts <= maxTs && i.ts >= minTs)
     .sort((a, b) => b.ts.localeCompare(a.ts))
     .slice(0, 60);
-  if (items.length === 0 && cache) return cache.items; // keep last good snapshot
+  // Only fall back to the previous snapshot when every source failed. A
+  // genuinely quiet week must be allowed to show an empty list rather than
+  // resurrecting last week's items.
+  const allSourcesEmpty =
+    forum.length + sheet.length + proposals.length + dao.length + apps.length +
+      repos.flat().length ===
+    0;
+  if (allSourcesEmpty && cache) return cache.items;
   cache = { at: now, items };
   return items;
 }
 
 /** How far back the badge counts for a visitor with no last-seen marker. */
 const FIRST_VISIT_WINDOW_MS = 48 * 3600 * 1000;
+
+/** When the in-process snapshot was taken, for the "updated" line. */
+export function newsFetchedAt(): number | null {
+  return cache?.at ?? null;
+}
 
 /**
  * Number of items newer than the visitor's last-seen ISO timestamp. First-time

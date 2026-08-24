@@ -3,6 +3,7 @@ import { Badge, Card, PageHeader } from "@/components/ui";
 import { COMMUNITIES } from "@/lib/communities/data";
 import {
   getNews,
+  newsFetchedAt,
   nowMs,
   type NewsItem,
   type NewsSource,
@@ -116,19 +117,28 @@ export default async function NewsPage() {
   const now = nowMs();
   const newCut = now - NEW_WINDOW_MS;
   const newCount = items.filter((i) => Date.parse(i.ts) > newCut).length;
+  const fetchedAt = newsFetchedAt();
+  const mins = fetchedAt ? Math.floor((now - fetchedAt) / 60_000) : null;
+  const fetchedAgo =
+    mins == null ? "" : mins < 1 ? "just now" : `${mins}m ago`;
 
   return (
     <>
       <NewsSeen latest={latest} />
       <PageHeader
         title="News"
-        subtitle="What's new across the Zcash ecosystem: community forum, core GitHub releases and the latest ZCG spreadsheet entries. Forum and GitHub are live; spreadsheet rows follow the daily mirror."
+        subtitle="The last seven days across the Zcash ecosystem: community forum, core GitHub releases, ZecHub DAO proposals, grant applications and new ledger entries. Refreshed hourly."
         actions={
           newCount > 0 ? (
-            <Badge tone="rose">{newCount} new · 48h</Badge>
+            <Badge tone="rose">{newCount} new</Badge>
           ) : undefined
         }
       />
+
+      <p className="mb-3 text-xs text-stone-600">
+        Showing the last 7 days{fetchedAgo ? ` · updated ${fetchedAgo}` : ""}.
+        Older entries stay on their own pages.
+      </p>
 
       <Card className="space-y-1 p-2">
         {items.length === 0 ? (
