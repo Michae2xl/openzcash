@@ -5,6 +5,7 @@ import { zcgDisbursements, zcgProposals } from "@/lib/db/schema";
 import { formatUsdCents } from "@/lib/zcg/format";
 import { getZechubProposals } from "@/lib/dao/zechub";
 import { getGrantApplications } from "@/lib/zcg/github-applications";
+import { titlesMatch } from "@/lib/zcg/match-titles";
 
 /**
  * Cross-source "what's new" feed: the Zcash forum (Discourse), GitHub releases
@@ -247,6 +248,20 @@ export async function getNews(): Promise<NewsItem[]> {
     .filter((i) => i.ts && i.ts <= maxTs && i.ts >= minTs)
     .sort((a, b) => b.ts.localeCompare(a.ts))
     .slice(0, 60);
+  // The same event often lands twice: a grant application on GitHub and its
+  // mandatory forum cross-post, or a proposal row mirrored from the sheet.
+  // Collapse those into one entry, keeping the newest (the list is already
+  // sorted newest-first) so the feed reads as events, not as sources.
+  const deduped: NewsItem[] = [];
+  for (const item of items) {
+    const dup = deduped.some(
+      (k) =>
+        k.source !== item.source &&
+        (k.title === item.title || titlesMatch(k.title, item.title)),
+    );
+    if (!dup) deduped.push(item);
+  }
+
   // Only fall back to the previous snapshot when every source failed. A
   // genuinely quiet week must be allowed to show an empty list rather than
   // resurrecting last week's items.
@@ -255,8 +270,8 @@ export async function getNews(): Promise<NewsItem[]> {
       repos.flat().length ===
     0;
   if (allSourcesEmpty && cache) return cache.items;
-  cache = { at: now, items };
-  return items;
+  cache = { at: now, items: deduped };
+  return deduped;
 }
 
 /** How far back the badge counts for a visitor with no last-seen marker. */
