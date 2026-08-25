@@ -28,11 +28,18 @@ export function dataResponse(
   format: string | null,
   filename: string,
   req?: Request,
+  /** Size of the full dataset before any limit, so a truncated response is
+   * never silent: when total > count the caller knows to raise ?limit. */
+  total?: number,
 ): Response {
   const isCsv = format === "csv";
   const body = isCsv
     ? toCsv(rows)
-    : JSON.stringify({ count: rows.length, data: rows });
+    : JSON.stringify({
+        count: rows.length,
+        total: total ?? rows.length,
+        data: rows,
+      });
 
   const headers: Record<string, string> = {
     "content-type": isCsv

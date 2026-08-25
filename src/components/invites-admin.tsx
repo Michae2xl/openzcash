@@ -14,7 +14,7 @@ const STATUS_TONE: Record<InviteStatus, "emerald" | "rose" | "amber" | "zinc"> =
   };
 
 const inputClass =
-  "w-full rounded-lg border border-stone-200 bg-white px-3 py-2 text-sm text-stone-900 outline-none ring-amber-500/30 placeholder:text-stone-400 focus:ring-2";
+  "w-full rounded-lg border border-stone-200 bg-white px-3 py-2 text-sm text-stone-900 outline-none ring-amber-500/30 placeholder:text-stone-600 focus:ring-2";
 
 function linkFor(token: string): string {
   const origin = typeof window !== "undefined" ? window.location.origin : "";
@@ -132,7 +132,7 @@ export function InvitesAdmin({ invites }: { invites: readonly InviteRow[] }) {
               <tr>
                 <td
                   colSpan={4}
-                  className="px-5 py-4 text-center text-xs text-stone-500"
+                  className="px-5 py-4 text-center text-xs text-stone-600"
                 >
                   No invites yet. Generate the first one above.
                 </td>
@@ -158,7 +158,7 @@ export function InvitesAdmin({ invites }: { invites: readonly InviteRow[] }) {
                         Copy link
                       </button>
                     ) : (
-                      <span className="text-xs text-stone-500">·</span>
+                      <span className="text-xs text-stone-600">·</span>
                     )}
                   </td>
                   <td className="px-5 py-3 text-right">
@@ -171,7 +171,7 @@ export function InvitesAdmin({ invites }: { invites: readonly InviteRow[] }) {
                         Revoke
                       </button>
                     ) : (
-                      <span className="text-xs text-stone-500">
+                      <span className="text-xs text-stone-600">
                         {inv.treasuryId ? `→ treasury ${inv.treasuryId}` : "·"}
                       </span>
                     )}

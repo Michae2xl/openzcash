@@ -66,7 +66,7 @@ export function LoginForm() {
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         placeholder="Password"
-        className="w-full rounded-lg border border-stone-200 bg-white px-3 py-2 text-sm text-stone-900 outline-none ring-amber-500/30 placeholder:text-stone-400 focus:ring-2"
+        className="w-full rounded-lg border border-stone-200 bg-white px-3 py-2 text-sm text-stone-900 outline-none ring-amber-500/30 placeholder:text-stone-600 focus:ring-2"
       />
       <button
         type="submit"

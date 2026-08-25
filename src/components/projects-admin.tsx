@@ -19,7 +19,7 @@ interface Project {
 }
 
 const inputClass =
-  "w-full rounded-lg border border-stone-200 bg-white px-3 py-2 text-sm text-stone-900 outline-none ring-amber-500/30 placeholder:text-stone-400 focus:ring-2";
+  "w-full rounded-lg border border-stone-200 bg-white px-3 py-2 text-sm text-stone-900 outline-none ring-amber-500/30 placeholder:text-stone-600 focus:ring-2";
 
 function thisMonth(): string {
   const d = new Date();
@@ -155,7 +155,7 @@ export function ProjectsAdmin({
       </div>
 
       {projects.length === 0 ? (
-        <div className="rounded-2xl border border-stone-200 bg-gradient-to-b from-white to-stone-50 p-8 text-center text-sm text-stone-500 shadow-sm shadow-stone-300/40 ring-1 ring-inset ring-stone-900/5">
+        <div className="rounded-2xl border border-stone-200 bg-gradient-to-b from-white to-stone-50 p-8 text-center text-sm text-stone-600 shadow-sm shadow-stone-300/40 ring-1 ring-inset ring-stone-900/5">
           No projects yet. Register the first one above.
         </div>
       ) : null}
@@ -172,7 +172,7 @@ export function ProjectsAdmin({
             <Badge tone={p.paymentKind === "bounty" ? "zinc" : "amber"}>
               {p.paymentKind}
             </Badge>
-            <span className="text-xs text-stone-500">
+            <span className="text-xs text-stone-600">
               {p.addresses.length} addresses
             </span>
           </div>

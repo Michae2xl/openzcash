@@ -6,6 +6,8 @@ import {
 
 // Static curated dataset — safe to serve as a fully static route.
 export const dynamic = "force-static";
+// A live review round must not be cached for a year at the edge.
+export const revalidate = 3600;
 
 /**
  * Public, read-only mirror of the open Coinholder-Directed Retroactive Grants

@@ -39,6 +39,7 @@ const TTL_MS = 60 * 60_000;
  */
 const NEWS_WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
 let cache: { at: number; items: NewsItem[] } | null = null;
+let inflight: Promise<NewsItem[]> | null = null;
 
 const FORUM = "https://forum.zcashcommunity.com";
 const GITHUB_REPOS = [
@@ -224,6 +225,18 @@ async function fetchApplications(): Promise<NewsItem[]> {
 export async function getNews(): Promise<NewsItem[]> {
   const now = Date.now();
   if (cache && now - cache.at < TTL_MS) return cache.items;
+  if (inflight) return cache ? cache.items : inflight;
+  inflight = (async () => {
+    try {
+      return await refreshNews(now);
+    } finally {
+      inflight = null;
+    }
+  })();
+  return cache ? cache.items : inflight;
+}
+
+async function refreshNews(now: number): Promise<NewsItem[]> {
   const [forum, sheet, proposals, dao, apps, ...repos] = await Promise.all([
     fetchForum(),
     fetchSheet(),

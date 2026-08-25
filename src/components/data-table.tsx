@@ -251,7 +251,7 @@ export function DataTable<T>({
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search…"
-            className="w-full max-w-xs rounded-lg bg-white px-3 py-1.5 text-sm text-stone-800 ring-1 ring-stone-200 placeholder:text-stone-400 focus:ring-amber-500/40"
+            className="w-full max-w-xs rounded-lg bg-white px-3 py-1.5 text-sm text-stone-800 ring-1 ring-stone-200 placeholder:text-stone-600 focus:ring-amber-500/40"
           />
           {isFiltered ? (
             <span className="shrink-0 text-xs text-stone-600 tnum">
@@ -345,7 +345,7 @@ export function DataTable<T>({
                             </button>
                           ) : null}
                           {options.length === 0 ? (
-                            <p className="px-2 py-1 text-stone-500">
+                            <p className="px-2 py-1 text-stone-600">
                               No values
                             </p>
                           ) : (
@@ -399,7 +399,7 @@ export function DataTable<T>({
                             setColumnFilter(col.key, e.target.value)
                           }
                           placeholder="Filter…"
-                          className="mt-1.5 w-full rounded bg-white px-2 py-1 text-xs font-normal normal-case tracking-normal text-stone-800 ring-1 ring-stone-200 placeholder:text-stone-400 focus:ring-amber-500/40"
+                          className="mt-1.5 w-full rounded bg-white px-2 py-1 text-xs font-normal normal-case tracking-normal text-stone-800 ring-1 ring-stone-200 placeholder:text-stone-600 focus:ring-amber-500/40"
                         />
                       )
                     ) : null}

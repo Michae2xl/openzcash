@@ -36,7 +36,7 @@ export const COINHOLDER_ROUND = {
   reviewCloses: "September 16, 2026 · 20:00 UTC",
   pollOpens: "September 17, 2026",
   proposalCount: 37,
-  totalRequestedUsdCents: 901_357_320,
+  totalRequestedUsdCents: 901_438_320,
   sourceThreadUrl:
     "https://forum.zcashcommunity.com/t/30-day-review-period-coinholder-directed-retroactive-grants-program-q3/57056",
   githubRepoUrl:
@@ -500,7 +500,7 @@ export const ROUND_PROPOSALS: RoundProposal[] = [
     rank: 33,
     project: "Ironwood zk-SNARK Formal Verification (Project Tachyon)",
     org: "Tachyon Foundation",
-    requestedUsdCents: 73813200,
+    requestedUsdCents: 73894200,
     summary:
       "Formal verification of the Ironwood zk-SNARK circuit, machine-checked in Lean",
     threadUrl:

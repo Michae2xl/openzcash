@@ -65,6 +65,18 @@ const nextConfig: NextConfig = {
         ],
       },
       {
+        source: "/logos/:path*",
+        headers: [
+          { key: "Cache-Control", value: "public, max-age=86400" },
+        ],
+      },
+      {
+        source: "/wallet-logos/:path*",
+        headers: [
+          { key: "Cache-Control", value: "public, max-age=86400" },
+        ],
+      },
+      {
         source: "/zcash-emblem.png",
         headers: [{ key: "Cache-Control", value: "public, max-age=86400" }],
       },

@@ -16,18 +16,25 @@ export async function GET(req: Request) {
     type: p.get("type") ?? undefined,
     search: p.get("search") ?? undefined,
   };
-  const limit = Math.min(Number(p.get("limit") ?? 500) || 500, MAX_LIMIT);
+  const limit = Math.min(
+    Number(p.get("limit") ?? MAX_LIMIT) || MAX_LIMIT,
+    MAX_LIMIT,
+  );
 
   // Unfiltered requests (the hot path) are served by slicing one cached
   // superset instead of hitting Postgres per request/limit combination.
   const hasFilters = Object.values(filters).some(Boolean);
-  const rows = hasFilters
-    ? await listDisbursements({ ...filters, limit })
-    : (
-        await cached("api:disbursements", LEDGER_TTL_MS, () =>
-          listDisbursements({ limit: MAX_LIMIT }),
-        )
-      ).slice(0, limit);
+  let total: number | undefined;
+  let rows;
+  if (hasFilters) {
+    rows = await listDisbursements({ ...filters, limit });
+  } else {
+    const all = await cached("api:disbursements", LEDGER_TTL_MS, () =>
+      listDisbursements({ limit: MAX_LIMIT }),
+    );
+    total = all.length;
+    rows = all.slice(0, limit);
+  }
 
   const data = rows.map((d) => ({
     id: d.id,
@@ -44,5 +51,5 @@ export async function GET(req: Request) {
     isPaid: d.isPaid,
   }));
 
-  return dataResponse(data, p.get("format"), "zcg-disbursements", req);
+  return dataResponse(data, p.get("format"), "zcg-disbursements", req, total);
 }

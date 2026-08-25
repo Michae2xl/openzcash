@@ -222,12 +222,25 @@ function inferMissingDates(calls: ArboristCall[]): ArboristCall[] {
 }
 
 let cache: { at: number; items: ArboristCall[] } | null = null;
+let inflight: Promise<ArboristCall[]> | null = null;
 
-/** Every Arborist call, newest first. Cached ~1h in-process. */
+/** Every Arborist call, newest first. Cached ~1h in-process; concurrent
+ * refreshes share one sweep, and a stale cache is served while it runs. */
 export async function getArboristCalls(): Promise<ArboristCall[]> {
   const now = Date.now();
   if (cache && now - cache.at < TTL_MS) return cache.items;
+  if (inflight) return cache ? cache.items : inflight;
+  inflight = (async () => {
+    try {
+      return await refresh(now);
+    } finally {
+      inflight = null;
+    }
+  })();
+  return cache ? cache.items : inflight;
+}
 
+async function refresh(now: number): Promise<ArboristCall[]> {
   try {
     const listRes = await fetch(
       `https://api.github.com/repos/${OWNER}/${REPO}/contents/${DIR}`,

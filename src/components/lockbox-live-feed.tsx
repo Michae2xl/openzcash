@@ -128,7 +128,7 @@ export function LockboxLiveFeed({
               {totalZec.toLocaleString("en-US", {
                 maximumFractionDigits: 4,
               })}{" "}
-              <span className="text-xl text-stone-500 sm:text-2xl">ZEC</span>
+              <span className="text-xl text-stone-600 sm:text-2xl">ZEC</span>
             </p>
             <p className="mt-1 text-sm text-stone-600 tnum">
               ≈ {usd(totalZec, zecUsd)} · accruing{" "}
@@ -197,20 +197,20 @@ export function LockboxLiveFeed({
                   </p>
                   <p className="text-xs text-stone-600">to Lockbox</p>
                 </div>
-                <div className="hidden w-20 shrink-0 text-right text-xs text-stone-500 sm:block">
+                <div className="hidden w-20 shrink-0 text-right text-xs text-stone-600 sm:block">
                   {ago(b.seenAt, now)}
                 </div>
               </div>
             ))}
           </div>
         ) : (
-          <p className="px-5 py-12 text-center text-sm text-stone-500">
+          <p className="px-5 py-12 text-center text-sm text-stone-600">
             Waiting for the next block…
           </p>
         )}
       </Card>
 
-      <p className="mt-4 text-xs text-stone-500">
+      <p className="mt-4 text-xs text-stone-600">
         Protocol funding stream (ZIP-1015 / ZIP-1016) read live from the chain
         tip. No viewing keys involved.
       </p>

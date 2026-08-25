@@ -22,7 +22,7 @@ const COLUMNS: Column<ZcapMember>[] = [
       m.handle ? (
         <span className="text-stone-600">@{m.handle}</span>
       ) : (
-        <span className="text-stone-400">·</span>
+        <span className="text-stone-600">·</span>
       ),
   },
   {

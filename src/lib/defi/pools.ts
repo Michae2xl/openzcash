@@ -1,4 +1,5 @@
 import "server-only";
+import { currentZecUsdCents } from "@/lib/pricing/live-price";
 
 /**
  * Live native-ZEC cross-chain DeFi liquidity from public APIs:
@@ -76,8 +77,13 @@ async function fetchMidgard(s: MidgardSource): Promise<PoolStat | null> {
     if (!res.ok) return null;
     const j = (await res.json()) as Record<string, string>;
     const zecDepth = Number(j.assetDepth) / 1e8;
-    const priceUsd = Number(j.assetPriceUSD);
-    if (!(zecDepth > 0) || !(priceUsd > 0)) return null;
+    const venuePriceUsd = Number(j.assetPriceUSD);
+    if (!(zecDepth > 0) || !(venuePriceUsd > 0)) return null;
+    // Midgard's assetPriceUSD can depeg badly from spot (observed 3x under).
+    // Value the ZEC depth with the site's shared oracle so TVLs across venues
+    // share one price basis; keep the venue's own quote for display.
+    const oracleCents = await currentZecUsdCents();
+    const priceUsd = oracleCents != null ? oracleCents / 100 : venuePriceUsd;
     const apy = Number(j.poolAPY ?? j.annualPercentageRate ?? 0);
     return {
       venue: s.venue,

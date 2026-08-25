@@ -174,7 +174,7 @@ export const COMMUNITIES: Community[] = [
     language: "Arabic",
     links: {"x": "https://x.com/ZcashArabia", "forumUser": "ZArabia"},
     zcg: {"funded": true, "recipient": "ZcashArabia", "budgetedUsd": 11500, "grants": 2, "lastPaid": "2026-05-27"},
-    forumTopics: [{ id: 56866, title: "Grant Application - Zcash Arabia (August to December 2026)", kind: "application" }, { id: 56580, title: "Zcash Arabia (June to September 2026)", kind: "report" }],
+    forumTopics: [{ id: 57170, title: "Grant Application - Zcash Arabia (August to December 2026)", kind: "application" }, { id: 56580, title: "Zcash Arabia (June to September 2026)", kind: "report" }],
     about: "Arabic-language content and community building across the MENA region.",
     since: 2025,
   },

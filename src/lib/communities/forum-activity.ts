@@ -55,6 +55,7 @@ interface DiscourseTopic {
 }
 
 let cache: { at: number; items: TopicActivity[] } | null = null;
+let inflight: Promise<TopicActivity[]> | null = null;
 
 async function fetchTopic(id: number): Promise<DiscourseTopic | null> {
   try {
@@ -80,6 +81,24 @@ export async function getCommunityActivity(
 ): Promise<TopicActivity[]> {
   const now = Date.now();
   if (cache && now - cache.at < TTL_MS) return cache.items;
+  // Single-flight: concurrent visitors on an expired cache share one sweep
+  // instead of each firing ~54 forum requests. A stale cache is served
+  // immediately while the shared refresh runs (stale-while-revalidate).
+  if (inflight) return cache ? cache.items : inflight;
+  inflight = (async () => {
+    try {
+      return await refresh(communities, now);
+    } finally {
+      inflight = null;
+    }
+  })();
+  return cache ? cache.items : inflight;
+}
+
+async function refresh(
+  communities: Community[],
+  now: number,
+): Promise<TopicActivity[]> {
 
   const wanted = communities.flatMap((c) =>
     c.forumTopics.map((t) => ({ community: c, topic: t })),
@@ -90,7 +109,13 @@ export async function getCommunityActivity(
     community,
     topic,
   }: (typeof wanted)[number]): Promise<TopicActivity | null> => {
-    const d = (await fetchTopic(topic.id)) ?? (await fetchTopic(topic.id));
+    let d = await fetchTopic(topic.id);
+    if (!d) {
+      // One retry with backoff: an immediate re-hit doubles the pressure at
+      // the exact moment the forum is rate limiting.
+      await new Promise((r) => setTimeout(r, 2_000));
+      d = await fetchTopic(topic.id);
+    }
     if (!d?.last_posted_at) return null;
     return {
       topicId: topic.id,

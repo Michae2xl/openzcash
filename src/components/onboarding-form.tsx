@@ -28,7 +28,7 @@ async function sealUfvk(ufvk: string, pubKeyB64: string): Promise<string> {
 }
 
 const inputClass =
-  "w-full rounded-lg border border-stone-200 bg-white px-3 py-2 text-sm text-stone-900 outline-none ring-amber-500/30 placeholder:text-stone-400 focus:ring-2";
+  "w-full rounded-lg border border-stone-200 bg-white px-3 py-2 text-sm text-stone-900 outline-none ring-amber-500/30 placeholder:text-stone-600 focus:ring-2";
 
 export function OnboardingForm({
   publicKey,
