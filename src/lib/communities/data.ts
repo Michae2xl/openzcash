@@ -14,7 +14,13 @@
  */
 
 export type Region =
-  "Latin America" | "Africa" | "Asia" | "Europe" | "Middle East" | "Global";
+  | "North America"
+  | "Latin America"
+  | "Africa"
+  | "Asia"
+  | "Europe"
+  | "Middle East"
+  | "Global";
 
 export interface CommunityLinks {
   x?: string;
@@ -229,6 +235,19 @@ export const COMMUNITIES: Community[] = [
     forumTopics: [{ id: 38485, title: "Русскоязычный блог pro.zcash.ru", kind: "thread" }, { id: 55305, title: "Кошелёк Zodl больше недоступен в российских магазинах приложений", kind: "announcement" }, { id: 53449, title: "Artkor aka ruzcash for ZCG (December 2025) — candidatura ao comitê", kind: "thread" }],
     about: "Russian-language content, translations and community for the CIS region.",
     since: 2021,
+  },
+  {
+    id: "boston-zcash",
+    name: "Boston Zcash",
+    country: "United States",
+    flag: "🇺🇸",
+    region: "North America",
+    language: "English",
+    links: {"x": "https://x.com/BostonZcash", "site": "https://linktr.ee/BostonZcash", "forumUser": "BostonZcash"},
+    zcg: {"funded": false, "note": "Self-declared unfunded; runs on its own."},
+    forumTopics: [{ id: 56748, title: "Boston Zcash Meetup – July 28 – Ironwood Launch Event", kind: "announcement" }, { id: 50373, title: "Boston Zcash Meetup – March 06", kind: "announcement" }],
+    about: "The Boston meetup, running since the Sapling era: protocol launch events and community gatherings.",
+    since: 2018,
   },
   {
     id: "zcash-china",

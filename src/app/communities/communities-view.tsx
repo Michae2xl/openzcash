@@ -16,6 +16,7 @@ import { cn } from "@/lib/utils";
 
 const REGIONS: Region[] = [
   "Africa",
+  "North America",
   "Latin America",
   "Asia",
   "Europe",
