@@ -73,6 +73,38 @@ function RecencyDot({ iso }: { iso?: string }) {
   );
 }
 
+
+/** Gold shield for the OGs: communities with five or more years of verified
+ * public record. Computed from `since`, so entries age into it on their own. */
+function OgShield({ since }: { since?: number }) {
+  if (!since) return null;
+  const years = new Date().getFullYear() - since;
+  if (years < 5) return null;
+  return (
+    <span
+      title={`OG community: ${years} years of verified public record (since ${since})`}
+      className="inline-flex shrink-0 items-center"
+    >
+      <svg
+        viewBox="0 0 24 24"
+        className="h-3.5 w-3.5"
+        fill="url(#og-gold)"
+        stroke="#92400e"
+        strokeWidth="1.4"
+        aria-label="OG community, five or more years"
+      >
+        <defs>
+          <linearGradient id="og-gold" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stopColor="#fde68a" />
+            <stop offset="1" stopColor="#f59e0b" />
+          </linearGradient>
+        </defs>
+        <path d="M12 2l8 3.5v5.2c0 5-3.4 8.6-8 11.3-4.6-2.7-8-6.3-8-11.3V5.5L12 2z" />
+      </svg>
+    </span>
+  );
+}
+
 function pill(active: boolean, accent = false): string {
   return cn(
     "rounded-full px-3 py-1 text-xs font-medium ring-1 ring-inset transition",
@@ -231,6 +263,7 @@ export function CommunitiesView({
                   <div className="min-w-0">
                     <p className="flex items-center gap-2 text-sm font-semibold text-stone-900">
                       <span className="truncate">{c.name}</span>
+                      <OgShield since={c.since} />
                       <RecencyDot iso={last?.lastPostedAt} />
                     </p>
                     <p className="truncate text-[11px] text-stone-500">
