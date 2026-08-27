@@ -103,8 +103,8 @@ export const COMMUNITIES: Community[] = [
     links: {"x": "https://x.com/zcashbrazil", "forumUser": "Michae2xl"},
     zcg: {"funded": true, "recipient": "Zcash Brazil", "budgetedUsd": 655955.43, "grants": 7, "lastPaid": "2026-08-03"},
     forumTopics: [{ id: 53702, title: "Zcash Brazil | 2026", kind: "report" }, { id: 49458, title: "Zcash Brazil | 2025", kind: "report" }, { id: 54628, title: "ZECA: The Shielded Voice", kind: "announcement" }],
-    about: "The largest regional community in the ZCG ledger: education, events, ZECA voice assistant, and monthly public reports since 2023.",
-    since: 2023,
+    about: "The largest regional community in the ZCG ledger: education, events, ZECA voice assistant, and monthly public reports since 2022.",
+    since: 2022,
   },
   {
     id: "zk-av-club",
