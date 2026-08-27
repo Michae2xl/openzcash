@@ -66,6 +66,10 @@ export interface Community {
   country: string;
   /** Emoji flag (or 🌐 for non-geographic groups). */
   flag: string;
+  /** Official community logo (public path) — the mark the community itself
+   * uses on X/the forum. Shown instead of the flag when present; person
+   * avatars are never used here. */
+  logo?: string;
   region: Region;
   language: string;
   links: CommunityLinks;
@@ -85,6 +89,7 @@ export const COMMUNITIES: Community[] = [
     name: "ZecHub",
     country: "Global",
     flag: "🌐",
+    logo: "/community-logos/zechub.png",
     region: "Global",
     language: "English",
     links: {"x": "https://x.com/zechub", "discord": "https://discord.gg/zcash", "site": "https://zechub.wiki", "youtubeChannelId": "UC3-KM00kjCUheRzO5cq3PAA", "forumUser": "squirrel"},
@@ -98,6 +103,7 @@ export const COMMUNITIES: Community[] = [
     name: "Zcash Brazil",
     country: "Brazil",
     flag: "🇧🇷",
+    logo: "/community-logos/zcash-brazil.png",
     region: "Latin America",
     language: "Portuguese",
     links: {"x": "https://x.com/zcashbrazil", "forumUser": "Michae2xl"},
@@ -111,6 +117,7 @@ export const COMMUNITIES: Community[] = [
     name: "ZK AV Club",
     country: "Global",
     flag: "🌐",
+    logo: "/community-logos/zk-av-club.png",
     region: "Global",
     language: "English",
     links: {"x": "https://x.com/ZkAv_Club", "forumUser": "ryan.taylor"},
@@ -124,6 +131,7 @@ export const COMMUNITIES: Community[] = [
     name: "Zcash en Español",
     country: "Hispanic America & Spain",
     flag: "🇪🇸",
+    logo: "/community-logos/zcash-en-espanol.png",
     region: "Latin America",
     language: "Spanish",
     links: {"site": "https://zcashesp.com", "forumUser": "yoditar"},
@@ -137,6 +145,7 @@ export const COMMUNITIES: Community[] = [
     name: "Zcash Türkiye",
     country: "Türkiye",
     flag: "🇹🇷",
+    logo: "/community-logos/zcash-turkiye.png",
     region: "Europe",
     language: "Turkish",
     links: {"x": "https://x.com/ZcashTR", "forumUser": "Batuhan"},
@@ -150,6 +159,7 @@ export const COMMUNITIES: Community[] = [
     name: "Zcash Nigeria",
     country: "Nigeria",
     flag: "🇳🇬",
+    logo: "/community-logos/zcash-nigeria.png",
     region: "Africa",
     language: "English",
     links: {"x": "https://x.com/ZcashNigeria", "forumUser": "lisa001"},
@@ -176,6 +186,7 @@ export const COMMUNITIES: Community[] = [
     name: "Zcash Arabia",
     country: "MENA region",
     flag: "🕌",
+    logo: "/community-logos/zcash-arabia.png",
     region: "Middle East",
     language: "Arabic",
     links: {"x": "https://x.com/ZcashArabia", "forumUser": "ZArabia"},
@@ -241,6 +252,7 @@ export const COMMUNITIES: Community[] = [
     name: "Boston Zcash",
     country: "United States",
     flag: "🇺🇸",
+    logo: "/community-logos/boston-zcash.png",
     region: "North America",
     language: "English",
     links: {"x": "https://x.com/BostonZcash", "site": "https://linktr.ee/BostonZcash", "forumUser": "BostonZcash"},
@@ -267,6 +279,7 @@ export const COMMUNITIES: Community[] = [
     name: "Zcash Club Querétaro",
     country: "Mexico",
     flag: "🇲🇽",
+    logo: "/community-logos/zcash-club-queretaro.png",
     region: "Latin America",
     language: "Spanish",
     links: {"x": "https://x.com/zcashqro", "forumUser": "palmar"},
@@ -280,6 +293,7 @@ export const COMMUNITIES: Community[] = [
     name: "Zcash East Africa",
     country: "East Africa",
     flag: "🌍",
+    logo: "/community-logos/zcash-east-africa.png",
     region: "Africa",
     language: "English/Swahili",
     links: {"x": "https://x.com/ZcashEastAfrica", "forumUser": "Z.cash.EastAfrica"},
@@ -384,6 +398,7 @@ export const COMMUNITIES: Community[] = [
     name: "Zcash Ukraine",
     country: "Ukraine",
     flag: "🇺🇦",
+    logo: "/community-logos/zcash-ukraine.png",
     region: "Europe",
     language: "Ukrainian",
     links: {"x": "https://x.com/Zcash_ua", "telegram": "https://t.me/zcash_ua", "forumUser": "beyond"},
@@ -397,6 +412,7 @@ export const COMMUNITIES: Community[] = [
     name: "ZcashSA (Zcash South Africa)",
     country: "South Africa",
     flag: "🇿🇦",
+    logo: "/community-logos/zcashsa-zcash-south-africa.png",
     region: "Africa",
     language: "English",
     links: {"x": "https://x.com/Zcash_SA", "telegram": "https://t.me/zcashSA", "forumUser": "Inspire_s"},
@@ -410,6 +426,7 @@ export const COMMUNITIES: Community[] = [
     name: "Zcast",
     country: "Global",
     flag: "🎙️",
+    logo: "/community-logos/zcast.png",
     region: "Global",
     language: "Spanish",
     links: {"x": "https://x.com/ZcastEsp"},

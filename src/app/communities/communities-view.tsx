@@ -259,7 +259,17 @@ export function CommunitiesView({
               >
                 {/* Community */}
                 <div className="flex items-center gap-3">
-                  <span className="text-xl leading-none">{c.flag}</span>
+                  {c.logo ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={c.logo}
+                      alt=""
+                      loading="lazy"
+                      className="h-8 w-8 shrink-0 rounded-lg object-contain ring-1 ring-stone-200"
+                    />
+                  ) : (
+                    <span className="text-xl leading-none">{c.flag}</span>
+                  )}
                   <div className="min-w-0">
                     <p className="flex items-center gap-2 text-sm font-semibold text-stone-900">
                       <span className="truncate">{c.name}</span>
