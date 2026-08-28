@@ -17,5 +17,5 @@ export async function GET() {
     },
     notes:
       "Amounts are in USD (dollars) and ZEC. Mirrored from the ZCG public spreadsheet; see /zcg/methodology.",
-  });
+  }, { headers: { "cache-control": "public, max-age=300" } });
 }
