@@ -15,6 +15,18 @@ describe("current committee public record", () => {
     }
   });
 
+  it("gives every seated member the same public-ledger access", () => {
+    expect(
+      MEMBERS.map((member) => [member.name, member.ledger?.recipient]),
+    ).toEqual([
+      ["GGuy", "GGuy"],
+      ["Paul Brigner", "PGP for Crypto, LLC"],
+      ["hanh", "Hanh"],
+      ["Zerodartz", "Zerodartz"],
+      ["Artkor", "Artkor"],
+    ]);
+  });
+
   it("separates Hanh's project history from current work and grant status", () => {
     const hanh = MEMBERS.find((member) => member.name === "hanh");
 

@@ -1,8 +1,9 @@
-import { and, asc, eq, sql } from "drizzle-orm";
+import { and, asc, eq, inArray, sql } from "drizzle-orm";
 import { getDb } from "@/lib/db/client";
 import { zcgDisbursements } from "@/lib/db/schema";
 import type { DisbRow } from "./disbursements-repo";
 import { sortRecipientMilestonesNewestFirst } from "./milestone-order";
+import { recipientLedgerKeys } from "./recipient-aliases";
 
 /**
  * Um GRANT (proposta aprovada) = um `project` único, agregando seus milestones.
@@ -94,10 +95,15 @@ export async function recipientMilestones(
   recipientKey: string,
 ): Promise<DisbRow[]> {
   const db = getDb();
+  const recipientKeys = recipientLedgerKeys(recipientKey);
   const rows = await db
     .select()
     .from(zcgDisbursements)
-    .where(eq(zcgDisbursements.recipientKey, recipientKey));
+    .where(
+      recipientKeys.length === 1
+        ? eq(zcgDisbursements.recipientKey, recipientKeys[0])
+        : inArray(zcgDisbursements.recipientKey, recipientKeys),
+    );
 
   return sortRecipientMilestonesNewestFirst(rows);
 }

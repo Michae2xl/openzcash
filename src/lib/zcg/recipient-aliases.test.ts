@@ -3,6 +3,7 @@ import {
   canonicalRecipient,
   isAliasName,
   RECIPIENT_ALIASES,
+  recipientLedgerKeys,
 } from "./recipient-aliases";
 
 describe("canonicalRecipient", () => {
@@ -49,5 +50,18 @@ describe("canonicalRecipient", () => {
   it("flags alias rows so aggregation can fold them", () => {
     expect(isAliasName("NightHawk")).toBe(true);
     expect(isAliasName("RedDev")).toBe(true);
+  });
+
+  it("expands a recipient detail lookup to its complete alias family", () => {
+    const pgpKeys = [
+      "pgp for crypto, llc",
+      "pgp for crypto (paul brigner)",
+    ];
+
+    expect(recipientLedgerKeys("PGP for Crypto, LLC")).toEqual(pgpKeys);
+    expect(recipientLedgerKeys("pgp for crypto (paul brigner)")).toEqual(
+      pgpKeys,
+    );
+    expect(recipientLedgerKeys("GGuy")).toEqual(["gguy"]);
   });
 });

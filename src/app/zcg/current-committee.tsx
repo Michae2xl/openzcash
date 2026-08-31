@@ -40,7 +40,7 @@ const LEDGER_FACT_STYLE: Record<LedgerFact["tone"], string> = {
   history: "bg-sky-50 text-sky-800 ring-sky-200 hover:bg-sky-100",
 };
 
-// All five hold active seats — every member gets the emerald "seated" ring.
+// Current members use the emerald seated-state ring.
 const RING = "from-emerald-300 to-emerald-500";
 
 function ForumGlyph() {
@@ -62,9 +62,6 @@ function MemberCard({
   ledgerAvailable: boolean;
 }) {
   const hasGrantHistory = (record?.grantCount ?? 0) > 0;
-  const hasPublicLedgerHistory =
-    record != null &&
-    (record.externalUsdCents > 0n || record.externalZecZat > 0n);
 
   return (
     <article className="group flex h-full flex-col rounded-xl border border-stone-200/80 bg-white p-3 transition-colors hover:border-amber-300/70">
@@ -139,15 +136,11 @@ function MemberCard({
         </p>
         <div className="flex items-end justify-between gap-3">
           <div className="flex min-w-0 flex-wrap gap-1">
-            {record && m.ledger ? (
+            {record ? (
               <>
                 {hasGrantHistory ? (
                   <span className="rounded-md bg-sky-50 px-2 py-0.5 text-[10px] font-semibold text-sky-800 ring-1 ring-inset ring-sky-200">
                     {record.grantCount} grant projects
-                  </span>
-                ) : hasPublicLedgerHistory ? (
-                  <span className="rounded-md bg-sky-50 px-2 py-0.5 text-[10px] font-semibold text-sky-800 ring-1 ring-inset ring-sky-200">
-                    Public ledger history
                   </span>
                 ) : null}
                 {m.ledger.relation === "organization" ? (
@@ -156,13 +149,13 @@ function MemberCard({
                   </span>
                 ) : null}
               </>
-            ) : m.ledger && !ledgerAvailable ? (
+            ) : !ledgerAvailable ? (
               <span className="rounded-md bg-amber-50 px-2 py-0.5 text-[10px] font-medium text-amber-800 ring-1 ring-inset ring-amber-200">
                 Ledger temporarily unavailable
               </span>
             ) : (
-              <span className="rounded-md bg-stone-100 px-2 py-0.5 text-[10px] font-medium text-stone-600 ring-1 ring-inset ring-stone-200">
-                No external ledger match
+              <span className="rounded-md bg-amber-50 px-2 py-0.5 text-[10px] font-medium text-amber-800 ring-1 ring-inset ring-amber-200">
+                Ledger record unavailable
               </span>
             )}
             {m.ledgerFacts?.map((fact) => (
@@ -197,16 +190,18 @@ function MemberCard({
               )
             ))}
           </div>
-          {record && m.ledger ? (
+          {record ? (
             <Link
               href={`/zcg/recipient?r=${encodeURIComponent(record.recipientKey)}`}
+              aria-label={`${m.name} public ledger`}
               className="shrink-0 text-[10px] font-semibold text-amber-700 hover:text-amber-900"
             >
-              Open record →
+              Public ledger →
             </Link>
           ) : (
             <a
               href={OFFICIAL_LEDGER_URL}
+              aria-label={`${m.name} public source`}
               target="_blank"
               rel="noreferrer"
               className="shrink-0 text-[10px] font-semibold text-stone-500 hover:text-amber-800"
@@ -247,20 +242,10 @@ export async function CurrentCommittee() {
             key={m.name}
             m={m}
             ledgerAvailable={recipients !== null}
-            record={
-              m.ledger
-                ? recordsByName.get(m.ledger.recipient.toLowerCase())
-                : undefined
-            }
+            record={recordsByName.get(m.ledger.recipient.toLowerCase())}
           />
         ))}
       </div>
-
-      <p className="mt-3 text-xs text-stone-600">
-        All five hold active seats · profile tags link to public sources. Ledger
-        matching uses exact names and known aliases; no match is not proof that
-        no relationship exists, and no tag is a conflict-of-interest verdict.
-      </p>
     </section>
   );
 }

@@ -24,7 +24,7 @@ export interface Member {
   cohort: "june-2026" | "dec-2025";
   term: string;
   facts: PublicFact[];
-  ledger?: {
+  ledger: {
     recipient: string;
     relation: "direct" | "organization";
     relationLabel?: string;
@@ -54,6 +54,7 @@ export const MEMBERS: Member[] = [
         tone: "current",
       },
     ],
+    ledger: { recipient: "GGuy", relation: "direct" },
   },
   {
     name: "Paul Brigner",
@@ -144,14 +145,6 @@ export const MEMBERS: Member[] = [
       },
     ],
     ledger: { recipient: "Zerodartz", relation: "direct" },
-    ledgerFacts: [
-      {
-        label: "2 travel entries · 2026",
-        source: ledgerRangeUrl(ZCG_GIDS.discretionary, "A33:G35"),
-        sourceLabel: "Official ZCG discretionary ledger",
-        tone: "history",
-      },
-    ],
   },
   {
     name: "Artkor",
@@ -168,5 +161,6 @@ export const MEMBERS: Member[] = [
         tone: "identity",
       },
     ],
+    ledger: { recipient: "Artkor", relation: "direct" },
   },
 ];

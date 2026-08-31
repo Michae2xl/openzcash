@@ -10,6 +10,8 @@
  * organisations that merely collaborated on a grant are NOT merged.
  */
 
+import { normalizeKey } from "./normalize";
+
 /** Canonical name → alternate spellings found in the ledger. */
 export const RECIPIENT_ALIASES: Record<string, string[]> = {
   // Same wallet team; the sheet switched capitalisation in 2023. Both rows
@@ -38,4 +40,16 @@ export function canonicalRecipient(name: string): string {
 /** True when this row's name is an alias folded into another recipient. */
 export function isAliasName(name: string): boolean {
   return ALIAS_TO_CANONICAL.has(name.trim().toLowerCase());
+}
+
+/** All normalized ledger keys that belong to one curated recipient entity. */
+export function recipientLedgerKeys(nameOrKey: string): string[] {
+  const lookupKey = normalizeKey(nameOrKey);
+
+  for (const [canonical, aliases] of Object.entries(RECIPIENT_ALIASES)) {
+    const family = [canonical, ...aliases].map(normalizeKey);
+    if (family.includes(lookupKey)) return family;
+  }
+
+  return [lookupKey];
 }
