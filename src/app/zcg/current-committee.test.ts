@@ -63,4 +63,15 @@ describe("current committee public record", () => {
       relationLabel: "PGP for Crypto",
     });
   });
+
+  it("links Zerodartz's ZecHub DAO membership to the public member registry", () => {
+    const zerodartz = MEMBERS.find((member) => member.name === "Zerodartz");
+
+    expect(zerodartz?.facts).toContainEqual({
+      label: "ZecHub DAO · member",
+      source: "https://zechub.wiki/dao",
+      sourceLabel: "ZecHub DAO member registry",
+      tone: "current",
+    });
+  });
 });

@@ -143,6 +143,12 @@ export const MEMBERS: Member[] = [
         sourceLabel: "December 2025 election result",
         tone: "current",
       },
+      {
+        label: "ZecHub DAO · member",
+        source: "https://zechub.wiki/dao",
+        sourceLabel: "ZecHub DAO member registry",
+        tone: "current",
+      },
     ],
     ledger: { recipient: "Zerodartz", relation: "direct" },
   },
