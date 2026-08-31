@@ -4,6 +4,7 @@ import {
   type Election,
   currentElection,
   getElections,
+  isElectionClosed,
 } from "@/lib/zcg/governance-repo";
 import { cn } from "@/lib/utils";
 import {
@@ -11,7 +12,6 @@ import {
   ElectionControls,
   NewElectionButton,
 } from "./governance-admin";
-import { CurrentCommittee } from "./current-committee";
 
 function fmt(iso?: string | null): string {
   if (!iso) return "·";
@@ -81,14 +81,12 @@ export async function ElectionsSection() {
     getElections(),
   ]);
   const current = currentElection(elections);
-  const past = elections.filter((e) => e.status === "closed");
+  const past = elections.filter((e) => isElectionClosed(e));
   const left = current ? daysLeft(current.votingCloses) : null;
 
   return (
     <section className="mb-8">
-      <CurrentCommittee />
-
-      <div className="mb-3 flex items-center justify-between border-t border-stone-200/70 pt-6">
+      <div className="mb-3 flex items-center justify-between">
         <h2 className="text-sm font-semibold text-stone-700">
           Committee elections
         </h2>

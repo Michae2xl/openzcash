@@ -102,15 +102,18 @@
   {
    "id": "june-2026",
    "title": "June 2026 Election",
-   "status": "voting",
+   "status": "closed",
    "seats": 2,
-   "url": "https://forum.zcashcommunity.com/t/zcash-community-grants-zcg-nominations-now-open-for-june-election/55720",
+   "url": "https://zfnd.org/zcg-election-results-june-2026/",
    "nominations_close": "2026-06-08T00:00:00.000Z",
    "community_call": "2026-06-11T00:00:00.000Z",
    "voting_closes": "2026-06-29T00:00:00.000Z",
-   "results_by": "2026-07-01T00:00:00.000Z",
-   "elected": null,
-   "note": "Terms ending: decentralistdan and GGuy. ZCAP votes via a Special Initiative Vote after the June 11 community call.",
+   "results_by": "2026-06-29T00:00:00.000Z",
+   "elected": [
+    "GGuy",
+    "Paul Brigner"
+   ],
+   "note": "GGuy and Paul Brigner were elected and joined the committee on July 1, 2026.",
    "sort_order": 0,
    "created_at": "2026-06-24T20:10:49.750Z"
   }

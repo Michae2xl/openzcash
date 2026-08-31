@@ -21,7 +21,17 @@ export async function register() {
     try {
       const { refreshZcg } = await import("@/lib/zcg/refresh");
       const r = await refreshZcg();
-      console.log(`[cron] ZCG refresh ok=${r.ok} in ${r.ms}ms`);
+      const tabs = [
+        ...r.disbursements.map((x) => `${x.gid}=${x.status}`),
+        ...r.snapshots.map((x) =>
+          `${x.scope}=${x.ok ? (x.sheetStatus ?? "ok") : "error"}`,
+        ),
+        ...r.proposals.map((x) => `${x.gid}=${x.status}`),
+        ...r.totals.map((x) => `${x.gid}=${x.status}`),
+      ].join(" ");
+      console.log(
+        `[cron] ZCG refresh ok=${r.ok} in ${r.ms}ms warnings=${r.sourceWarnings.join(",") || "none"} ${tabs}`,
+      );
     } catch (e) {
       console.error(
         "[cron] ZCG refresh failed:",

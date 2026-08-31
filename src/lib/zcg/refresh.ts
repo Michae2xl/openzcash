@@ -6,6 +6,7 @@ import { importMeetings } from "./import-meetings";
 import { importProposals } from "./import-proposals";
 import { importSnapshots } from "./import-snapshots";
 import { importTotals } from "./import-totals";
+import { coreRefreshSucceeded } from "./refresh-status";
 
 const REFRESH_MARKER = "refresh:marker";
 
@@ -42,9 +43,10 @@ async function safe<T>(fn: () => Promise<T[]>): Promise<T[]> {
  * snapshots, proposals, totals). Idempotent. Single source of truth for the
  * CLI (`npm run import-zcg`), the cron route and the stale-on-load trigger.
  *
- * The freshness marker is stamped ONLY when at least one tab imported cleanly —
- * otherwise a total fetch failure (e.g. lost public access) would masquerade as
- * fresh data and suppress the stale-on-load self-heal. `ok` reflects that.
+ * The freshness marker is stamped ONLY when every official spreadsheet
+ * consumer imported cleanly. A single successful tab must never make a partial
+ * refresh look fresh and suppress the stale-on-load self-heal. `ok` reflects
+ * that complete-set invariant; forum meeting minutes remain best-effort.
  */
 export async function refreshZcg() {
   const startedAt = Date.now();
@@ -56,12 +58,27 @@ export async function refreshZcg() {
   const totals = await safe(importTotals);
   const meetings = await safe(importMeetings);
 
-  const ok =
-    disbursements.some((r) => !r.status.startsWith("error")) ||
-    proposals.some((r) => !r.status.startsWith("error")) ||
-    totals.some((r) => !r.status.startsWith("error")) ||
-    meetings.some((r) => !r.status.startsWith("error")) ||
-    snapshots.some((r) => r.ok);
+  const ok = coreRefreshSucceeded({
+    disbursements,
+    snapshots,
+    proposals,
+    totals,
+  });
+
+  const sourceWarnings = [
+    ...disbursements
+      .filter((r) => r.status.includes("updates_required"))
+      .map((r) => r.gid),
+    ...snapshots
+      .filter((r) => r.sheetStatus === "updates_required")
+      .map((r) => r.scope),
+    ...proposals
+      .filter((r) => r.status.includes("updates_required"))
+      .map((r) => r.gid),
+    ...totals
+      .filter((r) => r.status.includes("updates_required"))
+      .map((r) => r.gid),
+  ];
 
   if (ok) await markRefreshed();
 
@@ -79,5 +96,6 @@ export async function refreshZcg() {
     proposals,
     totals,
     meetings,
+    sourceWarnings,
   };
 }

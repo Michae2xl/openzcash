@@ -16,12 +16,17 @@ async function main() {
   console.table(r.snapshots);
   console.table(r.proposals);
   console.table(r.totals);
+  console.table(r.meetings);
 
   const total = r.disbursements.reduce((s, x) => s + x.imported, 0);
-  const errors = r.disbursements.filter((x) => x.status.startsWith("error"));
   console.log(`\nTotal importado: ${total} desembolsos (${r.ms}ms)`);
-  if (errors.length) {
-    console.error(`${errors.length} aba(s) com erro.`);
+  if (r.sourceWarnings.length) {
+    console.warn(
+      `Fonte oficial sinaliza updates_required em: ${r.sourceWarnings.join(", ")}`,
+    );
+  }
+  if (!r.ok) {
+    console.error("Refresh incompleto: pelo menos uma aba/derivação falhou.");
     process.exit(1);
   }
   process.exit(0);

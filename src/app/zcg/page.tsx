@@ -22,6 +22,7 @@ import { currentLockboxZec } from "@/lib/zcash/lockbox-live";
 import { formatUsdCents } from "@/lib/zcg/format";
 import { formatZec, formatZecCompact } from "@/lib/zcash/units";
 import { ElectionsSection } from "./elections-section";
+import { CurrentCommittee } from "./current-committee";
 import { listChangelog } from "@/lib/zcg/changelog";
 
 export const dynamic = "force-dynamic";
@@ -223,6 +224,8 @@ export default async function ZcgPage() {
           sub="orgs and individuals"
         />
       </section>
+
+      <CurrentCommittee />
 
       {changes.length > 0 ? (
         <section className="mb-8">

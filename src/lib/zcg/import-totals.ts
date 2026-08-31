@@ -1,9 +1,14 @@
 import { eq } from "drizzle-orm";
 import { getDb } from "@/lib/db/client";
-import { zcgTotals } from "@/lib/db/schema";
+import { zcgSheetImports, zcgTotals } from "@/lib/db/schema";
 import { parseCsv } from "./csv";
 import { normalizeKey, parseUsdCents } from "./normalize";
-import { fetchSheetCsv, sha256, ZCG_GIDS } from "./sheets";
+import {
+  fetchSheetCsv,
+  readSheetStatus,
+  sha256,
+  ZCG_GIDS,
+} from "./sheets";
 
 type TotalsInput = typeof zcgTotals.$inferInsert;
 
@@ -190,7 +195,9 @@ export async function importTotals(): Promise<TotalsImportResult[]> {
   for (const spec of SPECS) {
     try {
       const csvText = await fetchSheetCsv(spec.gid);
+      const hash = sha256(csvText);
       const rows = parseCsv(csvText);
+      const sheetStatus = readSheetStatus(rows);
       const capturedAt = new Date();
       const totals = parseTotals(rows, spec.gid, spec.pool, capturedAt);
       let insertedCount = 0;
@@ -207,6 +214,18 @@ export async function importTotals(): Promise<TotalsImportResult[]> {
             .returning({ id: zcgTotals.id });
           insertedCount += ins.length;
         }
+        await tx
+          .insert(zcgSheetImports)
+          .values({
+            id: `${spec.gid}:${hash.slice(0, 16)}`,
+            sheetGid: spec.gid,
+            sheetGroup: "totals",
+            contentSha256: hash,
+            rowCount: rows.length,
+            sheetStatus,
+            parsedOk: true,
+          })
+          .onConflictDoNothing();
       });
 
       const dropped = totals.length - insertedCount;
@@ -214,7 +233,10 @@ export async function importTotals(): Promise<TotalsImportResult[]> {
         gid: spec.gid,
         parsed: totals.length,
         imported: insertedCount,
-        status: dropped > 0 ? `ok · ${dropped} dropped (conflict)` : "ok",
+        status:
+          dropped > 0
+            ? `${sheetStatus} · ${dropped} dropped (conflict)`
+            : sheetStatus,
       });
     } catch (err) {
       // Best-effort por aba: uma aba instável não derruba o refresh inteiro.

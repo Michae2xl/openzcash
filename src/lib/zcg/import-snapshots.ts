@@ -17,6 +17,7 @@ import {
   zcgBalanceSnapshots,
   zcgBudgetSnapshots,
   zcgMayaTransfers,
+  zcgSheetImports,
 } from "@/lib/db/schema";
 import { parseCsv } from "./csv";
 import { parseUsdCents, parseZcgDate, parseZecToZat } from "./normalize";
@@ -26,7 +27,12 @@ type BalanceInput = typeof zcgBalanceSnapshots.$inferInsert;
 type BudgetInput = typeof zcgBudgetSnapshots.$inferInsert;
 type MayaInput = typeof zcgMayaTransfers.$inferInsert;
 
-export type ScopeResult = { scope: string; ok: boolean; note: string };
+export type ScopeResult = {
+  scope: string;
+  ok: boolean;
+  note: string;
+  sheetStatus?: string;
+};
 
 /** lower + colapsa espaços/quebras + remove pontuação de borda — chave de rótulo. */
 function normLabel(s: string): string {
@@ -515,16 +521,33 @@ export async function importSnapshots(): Promise<ScopeResult[]> {
   for (const spec of balanceSpecs) {
     try {
       const csvText = await fetchSheetCsv(spec.gid);
+      const hash = sha256(csvText);
       const rows = parseCsv(csvText);
+      const sheetStatus = readSheetStatus(rows);
       const snapshot = spec.build(rows, new Date());
-      await db
-        .insert(zcgBalanceSnapshots)
-        .values(snapshot)
-        .onConflictDoNothing();
+      await db.transaction(async (tx) => {
+        await tx
+          .insert(zcgBalanceSnapshots)
+          .values(snapshot)
+          .onConflictDoNothing();
+        await tx
+          .insert(zcgSheetImports)
+          .values({
+            id: `${spec.gid}:${hash.slice(0, 16)}`,
+            sheetGid: spec.gid,
+            sheetGroup: "snapshot",
+            contentSha256: hash,
+            rowCount: rows.length,
+            sheetStatus,
+            parsedOk: true,
+          })
+          .onConflictDoNothing();
+      });
       results.push({
         scope: spec.scope,
         ok: true,
         note: summarizeBalance(snapshot),
+        sheetStatus,
       });
     } catch (err) {
       results.push({

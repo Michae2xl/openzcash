@@ -53,6 +53,7 @@ export async function GET(req: Request) {
         proposals: r.proposals,
         totals: r.totals,
         meetings: r.meetings,
+        sourceWarnings: r.sourceWarnings,
       },
       { status: r.ok ? 200 : 502 },
     );

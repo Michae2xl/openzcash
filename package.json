@@ -15,7 +15,7 @@
     "test:watch": "vitest",
     "probe": "tsx scripts/probe-node.ts",
     "import-ufvk": "tsx scripts/import-ufvk.ts",
-    "import-zcg": "tsx scripts/import-zcg.ts",
+    "import-zcg": "node --conditions=react-server --import tsx scripts/import-zcg.ts",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate"
   },
@@ -33,6 +33,7 @@
     "postgres": "^3.4.9",
     "react": "19.2.4",
     "react-dom": "19.2.4",
+    "server-only": "^0.0.1",
     "tailwind-merge": "^3.6.0",
     "three": "^0.185.0",
     "zod": "^4.4.3"

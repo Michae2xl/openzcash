@@ -2,6 +2,7 @@ import { and, eq } from "drizzle-orm";
 import { getDb } from "@/lib/db/client";
 import { zcgDisbursements, zcgSheetImports } from "@/lib/db/schema";
 import { parseCsv } from "./csv";
+import { disambiguateDuplicateDisbursementIds } from "./disbursement-ids";
 import {
   normalizeKey,
   parseMilestoneSeq,
@@ -368,7 +369,9 @@ export async function importDisbursements(): Promise<ImportResult[]> {
       const hash = sha256(csvText);
       const rows = parseCsv(csvText);
       const status = readSheetStatus(rows);
-      const disbs = spec.parse(rows, spec.gid);
+      const disbs = disambiguateDuplicateDisbursementIds(
+        spec.parse(rows, spec.gid),
+      );
       let insertedCount = 0;
 
       await db.transaction(async (tx) => {

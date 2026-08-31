@@ -22,7 +22,7 @@ export async function Synced({ className }: { className?: string }) {
   const at = await cached("latestImportAt", 60_000, () => latestImportAt());
   return (
     <p className={cn("text-xs text-stone-600", className)}>
-      Spreadsheet data {syncedAgo(at)} · auto-refreshes daily
+      Spreadsheet data {syncedAgo(at)} · auto-refreshes every 6h
     </p>
   );
 }

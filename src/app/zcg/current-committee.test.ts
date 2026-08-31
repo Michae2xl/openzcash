@@ -1,0 +1,43 @@
+import { describe, expect, it } from "vitest";
+import { MEMBERS } from "./current-committee-data";
+
+describe("current committee public record", () => {
+  it("keeps all five forum profiles and facts source-linked", () => {
+    expect(MEMBERS).toHaveLength(5);
+
+    for (const member of MEMBERS) {
+      expect(member.url).toMatch(/^https:\/\/forum\.zcashcommunity\.com\/u\//);
+      expect(member.facts.length).toBeGreaterThan(0);
+      for (const fact of member.facts) {
+        expect(fact.source).toMatch(/^https:\/\//);
+        expect(fact.sourceLabel.length).toBeGreaterThan(0);
+      }
+    }
+  });
+
+  it("separates Hanh's project history from current work and grant status", () => {
+    const hanh = MEMBERS.find((member) => member.name === "hanh");
+
+    expect(hanh?.facts.map((fact) => fact.label)).toEqual([
+      "YWallet · creator (legacy)",
+      "Zkool · creator (current)",
+      "Coin Voting · builder",
+    ]);
+    expect(hanh?.ledgerFacts?.map((fact) => fact.label)).toEqual([
+      "zaino · completed Aug 2026",
+      "Coin Voting · open grant",
+    ]);
+  });
+
+  it("keeps Paul's current role separate from the grant-linked organization", () => {
+    const paul = MEMBERS.find((member) => member.name === "Paul Brigner");
+
+    expect(paul?.facts.map((fact) => fact.label)).toContain(
+      "ZODL · policy officer",
+    );
+    expect(paul?.ledger).toMatchObject({
+      relation: "organization",
+      relationLabel: "PGP for Crypto",
+    });
+  });
+});
