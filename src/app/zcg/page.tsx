@@ -248,11 +248,11 @@ export default async function ZcgPage() {
                   key={c.id}
                   className="flex items-center justify-between gap-3 px-4 py-2.5 text-sm"
                 >
-                  <span className="min-w-0">
+                  <span className="min-w-0 flex-1 overflow-hidden">
                     {c.kind === "proposal_status" ? (
                       <Link
                         href={`/zcg/proposals?status=${c.toVal ?? ""}`}
-                        className="text-stone-800 hover:text-amber-700"
+                        className="block truncate text-stone-800 hover:text-amber-700"
                       >
                         <span className="font-medium">{c.title}</span>
                         <span className="text-stone-500">
@@ -266,7 +266,7 @@ export default async function ZcgPage() {
                     ) : c.kind === "proposal_new" ? (
                       <Link
                         href="/zcg/proposals?status=under_review"
-                        className="text-stone-800 hover:text-amber-700"
+                        className="block truncate text-stone-800 hover:text-amber-700"
                       >
                         <span className="text-stone-500">New proposal: </span>
                         <span className="font-medium">{c.title}</span>
@@ -274,7 +274,7 @@ export default async function ZcgPage() {
                     ) : (
                       <Link
                         href="/zcg/disbursements"
-                        className="text-stone-800 hover:text-amber-700"
+                        className="block truncate text-stone-800 hover:text-amber-700"
                       >
                         <span className="font-medium">{c.title}</span>
                         <span className="text-stone-500"> · {c.detail}</span>
