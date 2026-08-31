@@ -27,6 +27,17 @@ describe("current committee public record", () => {
       "zaino · completed Aug 2026",
       "Coin Voting · open grant",
     ]);
+    expect(
+      hanh?.ledgerFacts?.map((fact) =>
+        "href" in fact ? fact.href : undefined,
+      ),
+    ).toEqual([
+      "/zcg/grant?g=zaino%20-%20Stability%2C%20Performance%20%26%20Testing",
+      "/zcg/grant?g=Maintenance%20and%20Improvements%20to%20Coin%20Voting",
+    ]);
+    expect(hanh?.ledgerFacts?.every((fact) => fact.source.includes("docs.google.com"))).toBe(
+      true,
+    );
   });
 
   it("keeps Paul's current role separate from the grant-linked organization", () => {

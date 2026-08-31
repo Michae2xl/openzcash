@@ -166,20 +166,35 @@ function MemberCard({
               </span>
             )}
             {m.ledgerFacts?.map((fact) => (
-              <a
-                key={fact.label}
-                href={fact.source}
-                target="_blank"
-                rel="noreferrer"
-                aria-label={`${m.name}: ${fact.label} — source: ${fact.sourceLabel}`}
-                title={`Source: ${fact.sourceLabel}`}
-                className={cn(
-                  "rounded-md px-2 py-0.5 text-[10px] font-semibold ring-1 ring-inset transition-colors",
-                  LEDGER_FACT_STYLE[fact.tone],
-                )}
-              >
-                {fact.label} ↗
-              </a>
+              fact.href ? (
+                <Link
+                  key={fact.label}
+                  href={fact.href}
+                  aria-label={`${m.name}: ${fact.label} — open OpenZcash ledger record`}
+                  title={`Open OpenZcash record · source: ${fact.sourceLabel}`}
+                  className={cn(
+                    "rounded-md px-2 py-0.5 text-[10px] font-semibold ring-1 ring-inset transition-colors",
+                    LEDGER_FACT_STYLE[fact.tone],
+                  )}
+                >
+                  {fact.label} →
+                </Link>
+              ) : (
+                <a
+                  key={fact.label}
+                  href={fact.source}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label={`${m.name}: ${fact.label} — source: ${fact.sourceLabel}`}
+                  title={`Source: ${fact.sourceLabel}`}
+                  className={cn(
+                    "rounded-md px-2 py-0.5 text-[10px] font-semibold ring-1 ring-inset transition-colors",
+                    LEDGER_FACT_STYLE[fact.tone],
+                  )}
+                >
+                  {fact.label} ↗
+                </a>
+              )
             ))}
           </div>
           {record && m.ledger ? (

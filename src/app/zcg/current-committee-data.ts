@@ -11,6 +11,7 @@ export interface PublicFact {
 
 export interface LedgerFact {
   label: string;
+  href?: string;
   source: string;
   sourceLabel: string;
   tone: "open" | "history";
@@ -34,6 +35,8 @@ export interface Member {
 export const OFFICIAL_LEDGER_URL = `https://docs.google.com/spreadsheets/d/${ZCG_SHEET_ID}/edit`;
 const ledgerRangeUrl = (gid: string, range: string) =>
   `${OFFICIAL_LEDGER_URL}#gid=${gid}&range=${range}`;
+const grantRecordUrl = (grant: string) =>
+  `/zcg/grant?g=${encodeURIComponent(grant)}`;
 
 export const MEMBERS: Member[] = [
   {
@@ -111,12 +114,14 @@ export const MEMBERS: Member[] = [
     ledgerFacts: [
       {
         label: "zaino · completed Aug 2026",
+        href: grantRecordUrl("zaino - Stability, Performance & Testing"),
         source: ledgerRangeUrl(ZCG_GIDS.grantsDisbursed, "A817:L817"),
         sourceLabel: "Official ZCG grants ledger",
         tone: "history",
       },
       {
         label: "Coin Voting · open grant",
+        href: grantRecordUrl("Maintenance and Improvements to Coin Voting"),
         source: ledgerRangeUrl(ZCG_GIDS.grantsDisbursed, "A587:L599"),
         sourceLabel: "Official ZCG grants ledger",
         tone: "open",
