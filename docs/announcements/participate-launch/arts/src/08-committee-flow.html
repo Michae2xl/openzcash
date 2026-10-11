@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>How a decision is born</title>
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      .head {
+        flex: none;
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 40px;
+      }
+      .head h1 {
+        font-size: 54px;
+      }
+      .steps {
+        flex: none;
+      }
+      .steps .panel {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding: 22px 20px;
+        min-height: 236px;
+      }
+      .steps .panel p {
+        font-size: 15.5px;
+        line-height: 1.4;
+      }
+      .steps .panel h3 {
+        font-size: 19px;
+      }
+      .steps .num {
+        margin-bottom: 4px;
+      }
+      .rules {
+        flex: 1 1 auto;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1.4fr;
+        gap: 18px;
+        min-height: 0;
+      }
+      .rules .panel {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 8px;
+      }
+      .rules p {
+        font-size: 16px;
+      }
+      .seats {
+        display: flex;
+        gap: 8px;
+        margin-top: 4px;
+      }
+      .seats i {
+        width: 26px;
+        height: 26px;
+        border-radius: 6px;
+        border: 1.5px solid var(--line-strong);
+        display: block;
+      }
+      .seats i.on {
+        background: var(--gold);
+        border-color: var(--gold);
+      }
+      .stamp {
+        font-family: "OpenZcash Mono", monospace;
+        font-size: 13px;
+        color: var(--muted);
+        display: grid;
+        gap: 6px;
+      }
+      .stamp b {
+        color: var(--ink);
+        font-weight: 500;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="frame">
+      <div class="top">
+        <div class="brand">
+          <img src="../../../../../public/zcash-mark.svg" alt="" />OpenZcash
+        </div>
+        <div class="kicker">Committee · how a decision is born</div>
+      </div>
+      <div class="head">
+        <h1>
+          From an invitation to a <span class="gold">signed decision</span>
+        </h1>
+        <p class="lead" style="max-width: 560px">
+          Five seats, one vote each, a public reason, and a record with a
+          timestamp and a hash.
+        </p>
+      </div>
+      <div class="flow steps">
+        <div class="panel">
+          <span class="num">01</span>
+          <h3>Invite</h3>
+          <p>
+            The Owner invites a verified email with a role. The invitee accepts
+            with a public reviewer name and consent.
+          </p>
+        </div>
+        <span class="link"></span>
+        <div class="panel">
+          <span class="num">02</span>
+          <h3>Verify email</h3>
+          <p>
+            Sign in with an email code. No password, no wallet. The seat stays
+            "not ready" until the email is verified.
+          </p>
+        </div>
+        <span class="link"></span>
+        <div class="panel">
+          <span class="num">03</span>
+          <h3>Passkey</h3>
+          <p>
+            The reviewer enrolls a passkey (WebAuthn) on their own device. Votes
+            are signed with it.
+          </p>
+        </div>
+        <span class="link"></span>
+        <div class="panel">
+          <span class="num">04</span>
+          <h3>Review opened</h3>
+          <p>
+            A Coordinator opens a review for one revision. The roster, the keys
+            and the rules freeze for that round.
+          </p>
+        </div>
+        <span class="link"></span>
+        <div class="panel">
+          <span class="num">05</span>
+          <h3>Verdicts</h3>
+          <p>
+            Each seat signs one choice, approve, reject or abstain, and a public
+            reason. The choice cannot be changed.
+          </p>
+        </div>
+        <span class="link"></span>
+        <div class="panel alt">
+          <span class="num">06</span>
+          <h3>Decision with timestamp</h3>
+          <p>
+            Computed only after all five verdicts. Recorded in the history as a
+            signed entry with a hash.
+          </p>
+        </div>
+      </div>
+      <div class="rules">
+        <div class="panel">
+          <div>
+            <div class="label">Seats</div>
+            <span class="big">5</span>
+          </div>
+          <p>
+            One vote per member. Moderators manage discussions and never vote.
+          </p>
+          <div class="seats">
+            <i class="on"></i><i class="on"></i><i class="on"></i
+            ><i class="on"></i><i class="on"></i>
+          </div>
+        </div>
+        <div class="panel">
+          <div>
+            <div class="label">Approvals to pass</div>
+            <span class="big">3<small>of 5</small></span>
+          </div>
+          <p>
+            60 percent of the committee. An abstention counts as a response, not
+            as an approval.
+          </p>
+          <div class="seats">
+            <i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i>
+          </div>
+        </div>
+        <div class="panel">
+          <div>
+            <div class="label">Quorum</div>
+            <span class="big">All 5</span>
+          </div>
+          <p>
+            No deadline. The result is published only after every seat has
+            recorded a choice.
+          </p>
+        </div>
+        <div class="panel gold">
+          <div>
+            <div class="label">Every decision</div>
+            <h2 style="color: var(--gold-ink)">Timestamp and signed record</h2>
+          </div>
+          <p>
+            Access changes, rules, review openings and decisions enter the
+            history with a sequence number and a hash. Receipts download as JSON
+            and verify with the published script.
+          </p>
+        </div>
+      </div>
+      <div class="foot">
+        <span
+          >Production today: read-only preview. The member system is in force;
+          review operations are not switched on.</span
+        >
+        <span class="url">openzcash.org/zcg/participate</span>
+      </div>
+    </div>
+  </body>
+</html>

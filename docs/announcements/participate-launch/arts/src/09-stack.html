@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Technologies so far</title>
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      .head {
+        flex: none;
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 40px;
+      }
+      .head h1 {
+        font-size: 54px;
+      }
+      .grid {
+        flex: 1 1 auto;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: 1fr 1fr;
+        gap: 18px;
+        min-height: 0;
+      }
+      .grid .panel {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        padding: 22px 24px;
+      }
+      .grid h2 {
+        font-size: 22px;
+      }
+      .grid p {
+        font-size: 15.5px;
+      }
+      .chips {
+        margin-top: auto;
+        padding-top: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="frame">
+      <div class="top">
+        <div class="brand">
+          <img src="../../../../../public/zcash-mark.svg" alt="" />OpenZcash
+        </div>
+        <div class="kicker">Technologies used so far</div>
+      </div>
+      <div class="head">
+        <h1>The stack behind <span class="gold">Participate</span></h1>
+        <p class="lead" style="max-width: 560px">
+          A portal, a participation service, a worker, a signing host and the
+          Zcash network.
+        </p>
+      </div>
+      <div class="grid">
+        <div class="panel">
+          <div class="label">Portal</div>
+          <h2>OpenZcash</h2>
+          <p>
+            Server-rendered screens, a tokenized theme shared by every page,
+            deployed on Railway.
+          </p>
+          <div class="chips">
+            <span class="chip">Next.js 16 App Router</span
+            ><span class="chip">React 19</span
+            ><span class="chip">TypeScript</span
+            ><span class="chip">CSS modules + tokens</span
+            ><span class="chip">Railway</span>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="label">Workspace and identity</div>
+          <h2>Native screens</h2>
+          <p>
+            The service's components and stylesheets, scoped into the portal.
+            Email codes to sign in, passkeys to sign.
+          </p>
+          <div class="chips">
+            <span class="chip">Scoped CSS</span><span class="chip">zod</span
+            ><span class="chip">Email codes</span
+            ><span class="chip">Passkeys · WebAuthn</span
+            ><span class="chip">Signed JWT cookies</span>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="label">Participation service</div>
+          <h2>Records and committee</h2>
+          <p>
+            Archives, revisions, discussions, committee data and chain evidence.
+          </p>
+          <div class="chips">
+            <span class="chip">Prisma</span
+            ><span class="chip">PostgreSQL 16</span><span class="chip">zod</span
+            ><span class="chip">Resend</span>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="label">Archive worker</div>
+          <h2>Timers on a VPS</h2>
+          <p>
+            Discovery, packaging, batching, verification, alerts and backups.
+          </p>
+          <div class="chips">
+            <span class="chip">systemd timers</span
+            ><span class="chip">GitHub API</span
+            ><span class="chip">SHA-256 manifests</span
+            ><span class="chip">Merkle batches</span
+            ><span class="chip">Encrypted backups</span>
+          </div>
+        </div>
+        <div class="panel alt">
+          <div class="label">Zcash</div>
+          <h2>Anchoring and verification</h2>
+          <p>
+            A wallet beside a full node on a separate machine; a public viewing
+            key for anyone to read the memo.
+          </p>
+          <div class="chips">
+            <span class="chip gold">Zallet 0.1.0-beta.3</span
+            ><span class="chip gold">Zebra full node</span
+            ><span class="chip gold">PCZT</span
+            ><span class="chip gold">Sapling memo</span
+            ><span class="chip gold">Viewing key</span>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="label">Agents</div>
+          <h2>Around the workspace</h2>
+          <p>
+            The portal's guide and a published agent skill for ZCG research.
+          </p>
+          <div class="chips">
+            <span class="chip">Zarvis · Claude Opus 5.5</span
+            ><span class="chip">ZCG Copilot 1.1.0</span
+            ><span class="chip">/.well-known/agent-skills</span>
+          </div>
+        </div>
+      </div>
+      <div class="foot">
+        <span
+          >Versions as published in the portal repository and the live
+          evidence.</span
+        >
+        <span class="url">openzcash.org/zcg/participate</span>
+      </div>
+    </div>
+  </body>
+</html>

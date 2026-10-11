@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Anchoring on Zcash mainnet</title>
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      .frame {
+        gap: 20px;
+      }
+      .head {
+        flex: none;
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 40px;
+      }
+      .head h1 {
+        font-size: 50px;
+      }
+      .head .lead {
+        font-size: 21px;
+      }
+      .chain {
+        flex: none;
+      }
+      .chain .panel {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        padding: 18px 18px;
+      }
+      .chain .panel p {
+        font-size: 14.5px;
+        line-height: 1.38;
+      }
+      .chain .panel h3 {
+        font-size: 17px;
+      }
+      .chain .panel .label {
+        margin-bottom: 6px;
+      }
+      .chain .sub {
+        font-size: 12.5px;
+        color: var(--dim);
+        font-family: "OpenZcash Mono", monospace;
+        letter-spacing: 0.04em;
+        margin-top: auto;
+        padding-top: 10px;
+      }
+      .memo {
+        flex: none;
+        display: flex;
+        align-items: center;
+        gap: 22px;
+        padding: 14px 22px;
+      }
+      .memo .label {
+        margin: 0;
+        white-space: nowrap;
+      }
+      .memo code {
+        font-family: "OpenZcash Mono", monospace;
+        font-size: 16px;
+        color: var(--ink);
+        letter-spacing: 0.01em;
+        word-break: break-all;
+      }
+      .memo code b {
+        color: var(--gold);
+        font-weight: 500;
+      }
+      .stats {
+        flex: 1 1 auto;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1.7fr;
+        gap: 16px;
+        min-height: 0;
+      }
+      .stats .panel {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 6px;
+        padding: 18px 22px;
+        overflow: hidden;
+      }
+      .stats p {
+        font-size: 15px;
+        line-height: 1.35;
+      }
+      .stats .big {
+        font-size: 40px;
+      }
+      .stats h2 {
+        font-size: 21px;
+        margin-bottom: 6px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="frame">
+      <div class="top">
+        <div class="brand">
+          <img src="../../../../../public/zcash-mark.svg" alt="" />OpenZcash
+        </div>
+        <div class="kicker">Anchoring · Zcash mainnet</div>
+      </div>
+      <div class="head">
+        <h1>Preserved files, <span class="gold">anchored on chain</span></h1>
+        <p class="lead" style="max-width: 560px">
+          Every eligible application becomes a package with a SHA-256 manifest.
+          The batch root goes into a shielded memo.
+        </p>
+      </div>
+      <div class="flow chain">
+        <div class="panel">
+          <div class="label">Source</div>
+          <h3>GitHub discovery</h3>
+          <p>
+            Open ZCG applications labelled Grant Application and Ready For ZCG
+            Review, with no decision label.
+          </p>
+          <span class="sub">every 5 min</span>
+        </div>
+        <span class="link"></span>
+        <div class="panel">
+          <div class="label">Archive worker</div>
+          <h3>Package and manifest</h3>
+          <p>
+            Markdown, source metadata and a manifest with one SHA-256 per file.
+            Manifest hashes form a Merkle tree.
+          </p>
+          <span class="sub">cycle every 1 min</span>
+        </div>
+        <span class="link"></span>
+        <div class="panel">
+          <div class="label">Signing host</div>
+          <h3>Zallet beside Zebra</h3>
+          <p>
+            A separate machine builds the PCZT and signs it. Reached only
+            through a restricted command channel, no balance reads.
+          </p>
+          <span class="sub">anchor and read actions only</span>
+        </div>
+        <span class="link"></span>
+        <div class="panel alt">
+          <div class="label">Zcash mainnet</div>
+          <h3>Shielded Sapling transaction</h3>
+          <p>
+            The memo carries the batch root. The transaction is public; the
+            receiver is shielded.
+          </p>
+          <span class="sub">memo commitment</span>
+        </div>
+        <span class="link"></span>
+        <div class="panel">
+          <div class="label">Verification</div>
+          <h3>View-only reader</h3>
+          <p>
+            After 10 confirmations the worker reads the memo with a public
+            viewing key and stores txid, block and tip.
+          </p>
+          <span class="sub">monitor every 2 min</span>
+        </div>
+        <span class="link"></span>
+        <div class="panel">
+          <div class="label">Portal</div>
+          <h3>Read &amp; verify</h3>
+          <p>
+            Transaction id, block, memo, viewing key, package and verifier, so
+            anyone can check it with their own node.
+          </p>
+          <span class="sub">public evidence</span>
+        </div>
+      </div>
+      <div class="panel memo">
+        <span class="label">Memo</span
+        ><code
+          >PARTICIPATE|ARCHIVE|v1|mainnet|<b>count:25</b>|sha256:563d2af21845dfc7680ce1d58313c91588cf8b500837f396151104c6c0035bce</code
+        >
+      </div>
+      <div class="stats">
+        <div class="panel">
+          <div>
+            <div class="label">Anchored</div>
+            <span class="big">25</span>
+          </div>
+          <p>proposals in one transaction</p>
+        </div>
+        <div class="panel">
+          <div>
+            <div class="label">Block</div>
+            <span class="big">3,512,569</span>
+          </div>
+          <p>Zcash mainnet, Sapling pool</p>
+        </div>
+        <div class="panel">
+          <div>
+            <div class="label">Policy</div>
+            <span class="big">10</span>
+          </div>
+          <p>confirmations before an anchor counts as verified</p>
+        </div>
+        <div class="panel gold">
+          <div>
+            <div class="label">What it proves</div>
+            <h2 style="color: var(--gold-ink)">
+              The bytes existed at or before the block time
+            </h2>
+          </div>
+          <p>
+            Not authorship, not endorsement, not payment. Check the package
+            offline, then the memo with your own reader.
+          </p>
+        </div>
+      </div>
+      <div class="foot">
+        <span
+          >Worker on a virtual private server with systemd timers, email alerts
+          and daily encrypted backups. No spending key leaves the signing
+          host.</span
+        >
+        <span class="url">openzcash.org/zcg/participate</span>
+      </div>
+    </div>
+  </body>
+</html>

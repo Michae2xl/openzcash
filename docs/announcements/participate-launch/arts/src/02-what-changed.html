@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>What changed today</title>
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      .head {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 40px;
+        flex: none;
+      }
+      .head h1 {
+        font-size: 54px;
+      }
+      .grid {
+        flex: 1 1 auto;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr 1fr;
+        gap: 18px;
+        min-height: 0;
+      }
+      .grid .panel {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .grid .panel .vis {
+        margin-top: auto;
+      }
+      .frame-icon {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+      .frame-icon .box {
+        width: 150px;
+        height: 54px;
+        border: 2px dashed var(--dim);
+        border-radius: 8px;
+        position: relative;
+        color: var(--dim);
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .frame-icon .box::after {
+        content: "";
+        position: absolute;
+        left: -6px;
+        right: -6px;
+        top: 50%;
+        height: 2px;
+        background: var(--gold);
+        transform: rotate(-12deg);
+      }
+      .frame-icon .arrow {
+        width: 36px;
+        height: 2px;
+        background: var(--gold-2);
+      }
+      .frame-icon .solid {
+        width: 150px;
+        height: 54px;
+        border-radius: 8px;
+        background: var(--gold);
+        color: var(--gold-ink);
+        font-size: 14px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .tabs {
+        display: flex;
+        gap: 10px;
+      }
+      .tabs span {
+        padding: 8px 14px;
+        border-radius: 8px;
+        background: var(--panel-2);
+        border: 1px solid var(--line);
+        font-size: 15px;
+        color: var(--ink);
+      }
+      .tabs span.on {
+        background: rgba(244, 183, 40, 0.14);
+        border-color: rgba(244, 183, 40, 0.45);
+        color: #e8c06a;
+      }
+      .comment {
+        border: 1px solid var(--line-strong);
+        border-radius: 10px;
+        padding: 12px 14px;
+        display: grid;
+        gap: 8px;
+        background: var(--panel-2);
+      }
+      .comment .who {
+        font-size: 13px;
+        color: var(--dim);
+      }
+      .comment .reason {
+        color: var(--gold);
+        font-size: 15px;
+        font-weight: 500;
+      }
+      .split {
+        display: flex;
+        border-radius: 10px;
+        overflow: hidden;
+        border: 1px solid var(--line-strong);
+        height: 84px;
+      }
+      .split > div {
+        flex: 1;
+        padding: 14px 16px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+      .split .light {
+        background: var(--paper);
+        color: var(--paper-ink);
+      }
+      .split .dark {
+        background: var(--bg);
+        color: var(--ink);
+      }
+      .split .sw {
+        display: flex;
+        gap: 8px;
+      }
+      .split .sw i {
+        width: 18px;
+        height: 18px;
+        border-radius: 4px;
+        display: block;
+      }
+      .split small {
+        font-size: 13px;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="frame">
+      <div class="top">
+        <div class="brand">
+          <img src="../../../../../public/zcash-mark.svg" alt="" />OpenZcash
+        </div>
+        <div class="kicker">What changed today</div>
+      </div>
+      <div class="head">
+        <h1>Four changes, <span class="gold">one system</span></h1>
+        <p class="lead" style="max-width: 620px">
+          The design is unchanged. The host changed: the portal now renders the
+          workspace, and the committee and moderation came along as native
+          screens.
+        </p>
+      </div>
+      <div class="grid">
+        <div class="panel">
+          <div class="label">01 · No iframe</div>
+          <h2>The portal renders the workspace itself</h2>
+          <p>
+            Server-rendered with the board, drafts, session, profile and
+            committee data already in hand. The browser only talks to OpenZcash.
+          </p>
+          <div class="vis frame-icon">
+            <span class="box">iframe</span><span class="arrow"></span
+            ><span class="solid">native page</span>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="label">02 · Committee</div>
+          <h2>The committee module, native</h2>
+          <p>
+            Reviews, Members, Rules and History read server-to-server. Owner,
+            Coordinators, Reviewers and Moderators. Read-only preview in
+            production today.
+          </p>
+          <div class="vis tabs">
+            <span class="on">Reviews</span><span>Members</span><span>Rules</span
+            ><span>History</span>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="label">03 · Moderation</div>
+          <h2>Hide a comment with a recorded reason</h2>
+          <p>
+            The reason, the moderator's public name and the date stay visible in
+            the discussion. The record of the action is part of the thread.
+          </p>
+          <div class="vis comment">
+            <span class="who">Comment hidden by a moderator</span
+            ><span class="reason">Reason recorded and shown here</span
+            ><span class="who">Moderator · date</span>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="label">04 · Dark mode</div>
+          <h2>Black and gold, like the rest of the portal</h2>
+          <p>
+            Light keeps the workspace's parchment palette. Dark maps its tokens
+            to the portal's palette, so both read as one system with the shell.
+          </p>
+          <div class="vis split">
+            <div class="light">
+              <small>Light</small
+              ><span class="sw"
+                ><i style="background: #ffffff; border: 1px solid #d8cfba"></i
+                ><i style="background: #b7791f"></i
+                ><i style="background: #1c1917"></i
+              ></span>
+            </div>
+            <div class="dark">
+              <small>Dark</small
+              ><span class="sw"
+                ><i
+                  style="
+                    background: #171613;
+                    border: 1px solid rgba(231, 229, 228, 0.24);
+                  "
+                ></i
+                ><i style="background: #f4b728"></i
+                ><i style="background: #f5f5f4"></i
+              ></span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="foot">
+        <span>Participate · ZCG proposals on OpenZcash</span>
+        <span class="url">openzcash.org/zcg/participate</span>
+      </div>
+    </div>
+  </body>
+</html>

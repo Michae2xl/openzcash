@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Participate is now native to OpenZcash</title>
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      .body {
+        gap: 48px;
+        align-items: stretch;
+      }
+      .copy {
+        flex: 0 0 820px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 28px;
+      }
+      .copy h1 {
+        font-size: 78px;
+      }
+      .mock {
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        justify-content: center;
+      }
+      .mock-header {
+        display: flex;
+        align-items: center;
+        gap: 26px;
+        padding: 18px 24px;
+      }
+      .mock-header img {
+        width: 30px;
+        height: 30px;
+      }
+      .mock-nav {
+        display: flex;
+        gap: 22px;
+        font-size: 17px;
+        color: var(--muted);
+        font-weight: 500;
+      }
+      .mock-nav .active {
+        color: var(--gold);
+        position: relative;
+      }
+      .mock-nav .active::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: -20px;
+        height: 2px;
+        background: var(--gold);
+      }
+      .mock-account {
+        margin-left: auto;
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: rgba(244, 183, 40, 0.14);
+        border: 1px solid rgba(244, 183, 40, 0.4);
+      }
+      .card {
+        display: grid;
+        gap: 14px;
+        padding: 22px 24px;
+      }
+      .card .title {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+      }
+      .card .title .line {
+        height: 14px;
+        width: 62%;
+      }
+      .card .status {
+        font-size: 13px;
+        padding: 5px 10px;
+        border-radius: 999px;
+        border: 1px solid var(--line-strong);
+        color: var(--muted);
+        white-space: nowrap;
+      }
+      .card .foot-row {
+        display: flex;
+        gap: 18px;
+        align-items: center;
+        font-size: 15px;
+        color: var(--muted);
+      }
+      .card .foot-row .verify {
+        margin-left: auto;
+        color: var(--gold);
+        font-weight: 600;
+      }
+      .glyph {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        border: 1.6px solid currentColor;
+        border-radius: 4px;
+        vertical-align: -3px;
+        margin-right: 6px;
+      }
+      .glyph.heart {
+        border-radius: 50% 50% 2px 50%;
+        transform: rotate(45deg) scale(0.8);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="frame">
+      <div class="top">
+        <div class="brand">
+          <img src="../../../../../public/zcash-mark.svg" alt="" />OpenZcash
+        </div>
+        <div class="kicker">ZCG participation pilot</div>
+      </div>
+      <div class="body">
+        <div class="copy">
+          <h1>
+            Participate is now <span class="gold">native</span> to OpenZcash
+          </h1>
+          <p class="lead">
+            The participation workspace for ZCG proposals runs inside the portal
+            itself: board, discussions, verifiable records and the committee,
+            with no iframe.
+          </p>
+          <div class="tags">
+            <span class="tag gold">Open demo for everyone</span>
+            <span class="tag"><span class="dot"></span>Email code sign-in</span>
+            <span class="tag"><span class="dot"></span>No wallet needed</span>
+            <span class="tag"
+              ><span class="dot"></span>25 proposals anchored on Zcash</span
+            >
+          </div>
+        </div>
+        <div class="mock">
+          <div class="panel mock-header">
+            <img src="../../../../../public/zcash-mark.svg" alt="" />
+            <div class="mock-nav">
+              <span class="active">Proposals</span><span>Decision history</span
+              ><span>Committee</span>
+            </div>
+            <span class="mock-account"></span>
+          </div>
+          <div class="panel card">
+            <div class="title">
+              <span class="line"></span><span class="status">Under review</span>
+            </div>
+            <span class="line mid"></span>
+            <span class="line short"></span>
+            <div class="foot-row">
+              <span><i class="glyph heart"></i>Like</span
+              ><span><i class="glyph"></i>Comments</span
+              ><span class="verify">Read &amp; verify</span>
+            </div>
+          </div>
+          <div class="panel card">
+            <div class="title">
+              <span class="line"></span><span class="status">Under review</span>
+            </div>
+            <span class="line mid"></span>
+            <span class="line short"></span>
+            <div class="foot-row">
+              <span><i class="glyph heart"></i>Like</span
+              ><span><i class="glyph"></i>Comments</span
+              ><span class="verify">Read &amp; verify</span>
+            </div>
+          </div>
+          <div class="panel card alt">
+            <div class="title">
+              <span class="line"></span
+              ><span class="status">Published decision</span>
+            </div>
+            <span class="line mid"></span>
+            <div class="foot-row">
+              <span><i class="glyph heart"></i>Like</span
+              ><span><i class="glyph"></i>Comments</span
+              ><span class="verify">Read &amp; verify</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="foot">
+        <span
+          >An independent OpenZcash pilot. Official ZCG decisions follow the
+          existing ZCG process.</span
+        >
+        <span class="url">openzcash.org/zcg/participate</span>
+      </div>
+    </div>
+  </body>
+</html>

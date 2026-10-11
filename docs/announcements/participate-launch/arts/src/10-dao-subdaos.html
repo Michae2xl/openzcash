@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>A DAO with sub-DAOs</title>
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      .head {
+        flex: none;
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 40px;
+      }
+      .head h1 {
+        font-size: 54px;
+      }
+      .map {
+        flex: 1 1 auto;
+        display: grid;
+        grid-template-columns: 520px 60px 1fr;
+        gap: 0;
+        min-height: 0;
+      }
+      .dao {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+      .dao h2 {
+        font-size: 30px;
+      }
+      .dao .list {
+        gap: 14px;
+      }
+      .dao .list li {
+        font-size: 16.5px;
+        display: block;
+        position: relative;
+        padding-left: 22px;
+        line-height: 1.45;
+      }
+      .dao .list li::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 8px;
+        width: 8px;
+        height: 8px;
+        background: var(--gold);
+        border-radius: 2px;
+        margin: 0;
+      }
+      .dao .chips {
+        margin-top: auto;
+      }
+      .trunk {
+        position: relative;
+      }
+      .trunk::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 50%;
+        height: 2px;
+        background: var(--gold-2);
+      }
+      .trunk::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: 12%;
+        bottom: 12%;
+        width: 2px;
+        background: var(--gold-2);
+      }
+      .subs {
+        display: grid;
+        grid-template-rows: 1fr 1fr 1fr;
+        gap: 14px;
+        position: relative;
+      }
+      .sub {
+        display: grid;
+        grid-template-columns: 1.3fr 1fr 1fr;
+        gap: 18px;
+        align-items: center;
+        padding: 18px 24px;
+        position: relative;
+      }
+      .sub::before {
+        content: "";
+        position: absolute;
+        left: -30px;
+        top: 50%;
+        width: 30px;
+        height: 2px;
+        background: var(--gold-2);
+      }
+      .sub h3 {
+        font-size: 20px;
+        margin: 0 0 4px;
+      }
+      .sub p {
+        font-size: 14.5px;
+      }
+      .cell {
+        display: grid;
+        gap: 4px;
+      }
+      .cell .label {
+        margin-bottom: 2px;
+      }
+      .cell strong {
+        color: var(--ink);
+        font-size: 15.5px;
+        font-weight: 600;
+      }
+      .leaders {
+        display: flex;
+        gap: 6px;
+        margin-top: 6px;
+      }
+      .leaders i {
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        border: 1.5px solid var(--line-strong);
+        display: block;
+      }
+      .leaders i.on {
+        background: var(--gold);
+        border-color: var(--gold);
+      }
+      .treasury {
+        width: 54px;
+        height: 22px;
+        border-radius: 5px;
+        background: rgba(244, 183, 40, 0.16);
+        border: 1.5px solid rgba(244, 183, 40, 0.5);
+        margin-top: 6px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="frame">
+      <div class="top">
+        <div class="brand">
+          <img src="../../../../../public/zcash-mark.svg" alt="" />OpenZcash
+        </div>
+        <div class="kicker">A parallel system · built, not live</div>
+      </div>
+      <div class="head">
+        <h1>A DAO with <span class="gold">sub-DAOs</span></h1>
+        <p class="lead" style="max-width: 600px">
+          The service behind Participate models communities and subcommunities.
+          Each one has its own leaders and its own sustainability treasury.
+        </p>
+      </div>
+      <div class="map">
+        <div class="panel dao">
+          <div class="label">Community</div>
+          <h2>The DAO</h2>
+          <ul class="list">
+            <li>
+              <strong>Decentralized leaders.</strong> An owner who manages
+              access and coordinators who open reviews.
+            </li>
+            <li>
+              <strong>Sustainability treasury.</strong> A scoped pool of credits
+              that belongs to this community alone.
+            </li>
+            <li>
+              <strong>The same verifiable record.</strong> Invitations, roles,
+              signed decisions with a public reason, moderation with a recorded
+              reason.
+            </li>
+          </ul>
+          <div class="chips">
+            <span class="chip gold">Roles per community</span
+            ><span class="chip gold">Credit scope per community</span
+            ><span class="chip gold">Signed decisions</span>
+          </div>
+        </div>
+        <div class="trunk"></div>
+        <div class="subs">
+          <div class="panel sub">
+            <div>
+              <h3>Sub-DAO</h3>
+              <p>
+                A working group, a region or a program with its own decisions.
+              </p>
+            </div>
+            <div class="cell">
+              <div class="label">Leaders</div>
+              <strong>Owner · coordinators</strong>
+              <div class="leaders">
+                <i class="on"></i><i class="on"></i><i class="on"></i>
+              </div>
+            </div>
+            <div class="cell">
+              <div class="label">Treasury</div>
+              <strong>Sustainability</strong>
+              <div class="treasury"></div>
+            </div>
+          </div>
+          <div class="panel sub">
+            <div>
+              <h3>Sub-DAO</h3>
+              <p>Its own members and invitations, its own review rules.</p>
+            </div>
+            <div class="cell">
+              <div class="label">Leaders</div>
+              <strong>Owner · coordinators</strong>
+              <div class="leaders">
+                <i class="on"></i><i class="on"></i><i></i>
+              </div>
+            </div>
+            <div class="cell">
+              <div class="label">Treasury</div>
+              <strong>Sustainability</strong>
+              <div class="treasury"></div>
+            </div>
+          </div>
+          <div class="panel sub alt">
+            <div>
+              <h3>Sub-DAO</h3>
+              <p>Its own discussions and moderation, on the same record.</p>
+            </div>
+            <div class="cell">
+              <div class="label">Leaders</div>
+              <strong>Owner · coordinators</strong>
+              <div class="leaders">
+                <i class="on"></i><i class="on"></i><i class="on"></i>
+              </div>
+            </div>
+            <div class="cell">
+              <div class="label">Treasury</div>
+              <strong>Sustainability</strong>
+              <div class="treasury"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="foot">
+        <span
+          >Built and ready to enable. Not live today. Nothing here changes how
+          ZCG decides.</span
+        >
+        <span class="url">openzcash.org/zcg/participate</span>
+      </div>
+    </div>
+  </body>
+</html>

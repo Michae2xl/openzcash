@@ -1,0 +1,324 @@
+/* Shared styles for the announcement arts. 1600x900, OpenZcash dark palette
+   (the values of src/app/theme.css): flat blocks, black and gold, no effects. */
+@font-face {
+  font-family: "OpenZcash Inter";
+  src: url("../../../../../public/fonts/openzcash-inter-latin.woff2")
+    format("woff2");
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: block;
+}
+@font-face {
+  font-family: "OpenZcash Mono";
+  src: url("../../../../../public/fonts/openzcash-geist-mono-latin.woff2")
+    format("woff2");
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: block;
+}
+:root {
+  --bg: #0f0e0c;
+  --panel: #171613;
+  --panel-2: #1d1b18;
+  --line: rgba(231, 229, 228, 0.12);
+  --line-strong: rgba(231, 229, 228, 0.24);
+  --ink: #f5f5f4;
+  --muted: #a8a29e;
+  --dim: #78716c;
+  --gold: #f4b728;
+  --gold-2: #d9a441;
+  --gold-ink: #201a0d;
+  --paper: #faf8f4;
+  --paper-ink: #1c1917;
+}
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--ink);
+}
+body {
+  width: 1600px;
+  height: 900px;
+  overflow: hidden;
+  position: relative;
+  font-family: "OpenZcash Inter", "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: geometricPrecision;
+}
+.frame {
+  position: absolute;
+  inset: 0;
+  padding: 52px 64px 44px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 36px;
+  flex: none;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 600;
+  font-size: 21px;
+  letter-spacing: 0.01em;
+  color: var(--ink);
+}
+.brand img {
+  width: 32px;
+  height: 32px;
+  display: block;
+}
+.kicker {
+  font-family: "OpenZcash Mono", monospace;
+  font-size: 13px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--gold-2);
+}
+.foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--dim);
+  font-size: 16px;
+  flex: none;
+  margin-top: auto;
+}
+.foot .url {
+  font-family: "OpenZcash Mono", monospace;
+  color: var(--muted);
+  font-size: 15px;
+  letter-spacing: 0.02em;
+}
+.body {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+}
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 26px 28px;
+}
+.panel.alt {
+  background: var(--panel-2);
+}
+.panel.gold {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--gold-ink);
+}
+.panel.gold p,
+.panel.gold .label {
+  color: rgba(32, 26, 13, 0.72);
+}
+.panel.outline {
+  background: transparent;
+  border-color: var(--line-strong);
+}
+h1 {
+  font-size: 66px;
+  line-height: 1.04;
+  letter-spacing: -0.032em;
+  font-weight: 650;
+  margin: 0;
+  color: var(--ink);
+}
+h1 .gold {
+  color: var(--gold);
+}
+h2 {
+  font-size: 24px;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+  font-weight: 640;
+  margin: 0 0 10px;
+  color: var(--ink);
+}
+h3 {
+  font-size: 18px;
+  line-height: 1.25;
+  font-weight: 620;
+  margin: 0 0 6px;
+  color: var(--ink);
+}
+p {
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.45;
+  color: var(--muted);
+}
+.lead {
+  font-size: 24px;
+  line-height: 1.4;
+  color: var(--muted);
+}
+.mono {
+  font-family: "OpenZcash Mono", monospace;
+}
+.label {
+  font-family: "OpenZcash Mono", monospace;
+  font-size: 12.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold-2);
+  margin-bottom: 10px;
+}
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  font-size: 16px;
+  color: var(--ink);
+  background: var(--panel);
+  white-space: nowrap;
+}
+.tag.gold {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--gold-ink);
+  font-weight: 600;
+}
+.tag .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--gold);
+  display: inline-block;
+}
+.num {
+  font-family: "OpenZcash Mono", monospace;
+  color: var(--gold);
+  font-size: 14px;
+  letter-spacing: 0.12em;
+}
+.big {
+  font-size: 56px;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  font-weight: 650;
+  color: var(--ink);
+}
+.big small {
+  font-size: 22px;
+  color: var(--muted);
+  font-weight: 500;
+  letter-spacing: 0;
+  margin-left: 6px;
+}
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+.chip {
+  font-size: 15px;
+  padding: 6px 11px;
+  border-radius: 8px;
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  white-space: nowrap;
+}
+.chip.gold {
+  background: rgba(244, 183, 40, 0.14);
+  border-color: rgba(244, 183, 40, 0.4);
+  color: #e8c06a;
+}
+/* Horizontal connector between flow blocks: a thin gold rule with a square end. */
+.flow {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+}
+.flow > .panel {
+  flex: 1 1 0;
+  min-width: 0;
+}
+.flow > .link {
+  flex: none;
+  width: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.flow > .link::before {
+  content: "";
+  width: 100%;
+  height: 2px;
+  background: var(--gold-2);
+}
+.flow > .link::after {
+  content: "";
+  position: absolute;
+  right: 2px;
+  width: 8px;
+  height: 8px;
+  background: var(--gold);
+  transform: rotate(45deg);
+}
+/* Fake text lines inside mock cards. */
+.line {
+  height: 10px;
+  border-radius: 5px;
+  background: rgba(231, 229, 228, 0.14);
+}
+.line.short {
+  width: 46%;
+}
+.line.mid {
+  width: 70%;
+}
+.line.gold {
+  background: var(--gold);
+}
+.list {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.list li {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  font-size: 17px;
+  line-height: 1.4;
+  color: var(--muted);
+}
+.list li::before {
+  content: "";
+  flex: none;
+  width: 8px;
+  height: 8px;
+  margin-top: 8px;
+  background: var(--gold);
+  border-radius: 2px;
+}
+.list li strong {
+  color: var(--ink);
+  font-weight: 600;
+}
