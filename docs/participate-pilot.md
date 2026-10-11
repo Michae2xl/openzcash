@@ -1,6 +1,6 @@
 # Participate pilot
 
-10 October 2026 · Local implementation · Not deployed
+In production at `openzcash.org/zcg/participate` since 10 October 2026 · Native workspace since 11 October 2026 · Public overview: [docs/announcements/participate-launch/participate-pilot-overview.md](announcements/participate-launch/participate-pilot-overview.md)
 
 `/zcg/participate` replaces the standalone Decisions navigation entry. Both `/decisions` and `/zcg/decisions` redirect permanently to `/zcg/participate?view=history`. The history retains the existing ZCG data, publication policy, filters, CSV export and source links. Failed history retrieval is unavailable, not zero decisions.
 
@@ -83,3 +83,5 @@ The iframe is retired. `/zcg/participate` renders the participation workspace it
 **Appearance.** Light mode keeps the service's parchment palette unchanged. Dark mode maps the service's `--dao-*` tokens to the OpenZcash palette (black canvas, gold accent, the values of `theme.css`) in `native.css`, so the workspace reads as one system with the shell; the service's grid overlay applies to light mode only.
 
 **Why.** The embed waited eight seconds per attempt for a readiness message while the service restarted after each deployment, then reported that the workspace did not open. The native screen is server-rendered with the data already in hand.
+
+**Production.** The native workspace, the committee preview and discussion moderation are live at `openzcash.org/zcg/participate`. The archive worker has anchored 25 proposals in one Sapling transaction (`1bb7383043cab4d72b7129b5e5bdc7441ac7c073af59679bb91403216b795bf1`, block 3,512,569) and no application is pending. The public description of the pilot, the anchoring architecture and the launch announcement material live in [docs/announcements/participate-launch/](announcements/participate-launch/README.md).
