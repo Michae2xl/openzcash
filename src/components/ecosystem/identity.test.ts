@@ -51,6 +51,17 @@ describe("source-backed brand marks", () => {
     expect(projectBrand(byId("zakura"))?.kind).toBe("project");
   });
 
+  it("carries a light rendition only for wallet marks drawn in ink, and renders both for the theme to pick", () => {
+    expect(projectBrand(byId("zodl-wallet"))?.darkSrc).toBe("/wallet-logos/dark/zodl.png");
+    expect(projectBrand(byId("zingo-wallet"))?.darkSrc).toBeUndefined();
+    const zodl = renderToStaticMarkup(createElement(BrandMark, { brand: projectBrand(byId("zodl-wallet")), category: byId("zodl-wallet").category }));
+    expect(zodl).toContain('src="/wallet-logos/zodl.png"');
+    expect(zodl).toContain('data-theme-logo="light"');
+    expect(zodl).toContain('src="/wallet-logos/dark/zodl.png"');
+    const zingo = renderToStaticMarkup(createElement(BrandMark, { brand: projectBrand(byId("zingo-wallet")), category: byId("zingo-wallet").category }));
+    expect(zingo).not.toContain("data-theme-logo");
+  });
+
   it("distinguishes a maintainer and shared namespace from a product logo", () => {
     const frost = projectBrand(byId("frost"))!;
     expect(frost.kind).toBe("maintainer");

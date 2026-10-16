@@ -204,6 +204,16 @@
   object-fit: contain;
   border-radius: 5px;
 }
+/* Wallet marks drawn in ink ship a light rendition; the dark theme shows it in place of the light file. */
+.mark img[data-theme-logo="dark"] {
+  display: none;
+}
+:global(.rd-shell[data-theme="dark"]) .mark img[data-theme-logo="light"] {
+  display: none;
+}
+:global(.rd-shell[data-theme="dark"]) .mark img[data-theme-logo="dark"] {
+  display: block;
+}
 .fallbackMark {
   background: var(--category-tint);
   color: var(--category-ink);

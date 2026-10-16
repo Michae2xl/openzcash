@@ -1,6 +1,7 @@
 import { WALLET_EVIDENCE } from "@/lib/wallet-finder/evidence";
 import { DEFAULT_REQUIREMENTS, matchWallets } from "@/lib/wallet-finder/matching";
 import type { WalletPlatform } from "@/lib/wallet-finder/types";
+import { darkWalletLogo } from "@/lib/wallet-logos";
 
 /** Shared catalog and evidence-derived privacy labels for /wallets/find and Zarvis. */
 /** Date of the last edit to the entries below (maintainer-set, not a review pass): update it in the same commit that adds, removes or corrects a wallet. */
@@ -21,7 +22,7 @@ export interface Wallet {
   /** Short discovery copy; full platform and release limits stay in note/evidence. */
   summary: string;
   logo?: string;
-  /** Light rendition for the dark theme, where the logo tile has no white fill; set for marks drawn in ink. */
+  /** Light rendition for the dark theme, where the logo tile has no white fill; derived from the shared map for marks drawn in ink. */
   logoDark?: string;
   flagship?: boolean;
   tag?: "Beta" | "Coming soon";
@@ -43,7 +44,6 @@ const SOFTWARE_ENTRIES: Omit<Wallet, "shielded">[] = [
     url: "https://zodl.com",
     // Official iOS AppIcon (zodl-inc/zodl-ios); content version refreshes cached artwork.
     logo: "/wallet-logos/zodl.png?v=ff209828",
-    logoDark: "/wallet-logos/dark/zodl.png",
     platforms: ["iOS", "Android"],
     flagship: true,
     note: "Formerly Zashi. Shielded by default, from the original core team.",
@@ -65,7 +65,6 @@ const SOFTWARE_ENTRIES: Omit<Wallet, "shielded">[] = [
     maker: "hanh",
     url: "https://ywallet.app",
     logo: "/wallet-logos/ywallet.png",
-    logoDark: "/wallet-logos/dark/ywallet.png",
     platforms: ["iOS", "Android", "Desktop"],
     note: "Zcash and Ycash wallet with shielded sending and receiving. Check the evidence for supported desktop systems.",
     source: "https://github.com/hhanh00/zwallet",
@@ -77,7 +76,6 @@ const SOFTWARE_ENTRIES: Omit<Wallet, "shielded">[] = [
     maker: "hanh",
     url: "https://github.com/hhanh00/zkool2",
     logo: "/wallet-logos/zkool.png",
-    logoDark: "/wallet-logos/dark/zkool.png",
     platforms: ["iOS", "Android", "Desktop"],
     note: "Shielded software wallet on mobile and desktop. Current Ledger shielded signing is not verified.",
     source: "https://github.com/hhanh00/zkool2",
@@ -216,7 +214,6 @@ const HARDWARE_ENTRIES: Omit<Wallet, "shielded">[] = [
     maker: "Keystone",
     url: "https://keyst.one",
     logo: "/wallet-logos/keystone.png",
-    logoDark: "/wallet-logos/dark/keystone.png",
     platforms: ["Hardware"],
     note: "Keystone 3 Pro with Cypherpunk firmware and a compatible Zodl or Vizor companion supports shielded ZEC.",
     source: "https://github.com/KeystoneHQ/keystone3-firmware",
@@ -229,7 +226,6 @@ const HARDWARE_ENTRIES: Omit<Wallet, "shielded">[] = [
     maker: "Ledger",
     url: "https://www.ledger.com/coin/wallet/zcash",
     logo: "/wallet-logos/ledger.png",
-    logoDark: "/wallet-logos/dark/ledger.png",
     platforms: ["Hardware"],
     note: "Shielded send and receive in Ironwood via Ledger Wallet Desktop 4.21+ and the Ledger Zcash (ZEC) app 3.9.4+, with current Ledger OS. Excludes original Nano S and mobile. Legacy Zondax accounts use a separate app.",
     audit: "https://defuse.ca/zecsec/audits/zcash-ledger-audit-report-v2.pdf",
@@ -240,7 +236,6 @@ const HARDWARE_ENTRIES: Omit<Wallet, "shielded">[] = [
     maker: "SatoshiLabs",
     url: "https://trezor.io/coins/wallet/zcash",
     logo: "/wallet-logos/trezor.png?v=675e01fc",
-    logoDark: "/wallet-logos/dark/trezor.png",
     platforms: ["Hardware"],
     note: "Transparent (t-address) only; no shielded support.",
     source: "https://github.com/trezor/trezor-firmware",
@@ -291,5 +286,9 @@ export function walletPrivacy(walletName: string, selectedPlatform = ""): {
   return { ...result, level: directionConfirmed ? "partial" : "unknown" };
 }
 
-export const SOFTWARE: Wallet[] = SOFTWARE_ENTRIES.map((wallet) => ({ ...wallet, shielded: walletPrivacy(wallet.name).level }));
-export const HARDWARE: Wallet[] = HARDWARE_ENTRIES.map((wallet) => ({ ...wallet, shielded: walletPrivacy(wallet.name).level }));
+function describeWallet(wallet: Omit<Wallet, "shielded">): Wallet {
+  const logoDark = wallet.logo ? darkWalletLogo(wallet.logo) : undefined;
+  return { ...wallet, ...(logoDark ? { logoDark } : {}), shielded: walletPrivacy(wallet.name).level };
+}
+export const SOFTWARE: Wallet[] = SOFTWARE_ENTRIES.map(describeWallet);
+export const HARDWARE: Wallet[] = HARDWARE_ENTRIES.map(describeWallet);

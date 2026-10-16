@@ -1,7 +1,10 @@
 import type { ClassifiedRepository, Project } from "@/lib/ecosystem/types";
+import { darkWalletLogo } from "@/lib/wallet-logos";
 
 export type Brand = {
   src: string;
+  /** Light rendition shown by the dark theme in place of src (wallet marks drawn in ink). */
+  darkSrc?: string;
   name: string;
   kind: "project" | "community" | "maintainer" | "namespace";
   sourceUrl: string;
@@ -41,7 +44,8 @@ export function projectBrand(project: Project): Brand | null {
   if (Object.hasOwn(PROJECT_BRANDS, project.id)) return PROJECT_BRANDS[project.id];
   // Keep the project's existing curated logo ahead of a team/namespace mark.
   if (project.logo && isLocalBrandAsset(project.logo)) {
-    return { src: project.logo, name: project.name, kind: "project", sourceUrl: project.website };
+    const darkSrc = darkWalletLogo(project.logo);
+    return { src: project.logo, name: project.name, kind: "project", sourceUrl: project.website, ...(darkSrc ? { darkSrc } : {}) };
   }
   return organizationBrand(project.organizationId);
 }

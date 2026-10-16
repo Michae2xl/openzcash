@@ -27,8 +27,12 @@ export function BrandMark({ brand, category, compact = false }: {
   const label = visibleBrand ? brandLabel(visibleBrand) : `${category} icon · no logo displayed`;
   return <span className={[styles.mark, compact ? styles.compactMark : "", !visibleBrand ? styles.fallbackMark : ""].join(" ")}
     style={categoryStyle(category)} title={label} data-brand-kind={visibleBrand?.kind || "category"}>
-    {visibleBrand ? <Image key={visibleBrand.src} src={visibleBrand.src} width={compact ? 24 : 36} height={compact ? 24 : 36}
-      alt={label} unoptimized onError={() => setFailedSource(visibleBrand.src)} />
+    {visibleBrand ? <>
+      <Image key={visibleBrand.src} src={visibleBrand.src} width={compact ? 24 : 36} height={compact ? 24 : 36}
+        alt={label} unoptimized data-theme-logo={visibleBrand.darkSrc ? "light" : undefined} onError={() => setFailedSource(visibleBrand.src)} />
+      {visibleBrand.darkSrc && <Image src={visibleBrand.darkSrc} width={compact ? 24 : 36} height={compact ? 24 : 36}
+        alt={label} unoptimized data-theme-logo="dark" />}
+    </>
       : <span role="img" aria-label={label}><CategoryIcon category={category} size={compact ? 17 : 23} /></span>}
   </span>;
 }
