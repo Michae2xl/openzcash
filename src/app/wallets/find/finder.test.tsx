@@ -27,7 +27,10 @@ const fixtures = vi.hoisted(() => {
 
 vi.mock("@/lib/wallet-finder/evidence", () => ({ WALLET_EVIDENCE: fixtures }));
 vi.mock("../catalog-data", () => ({
-  SOFTWARE: ["Matched wallet", "Unknown wallet"].map(name => ({ name, maker: "Fixture publisher", url: "https://example.org/wallet", summary: "A short wallet introduction.", note: "Full platform and release limitations." })),
+  SOFTWARE: [
+    { name: "Matched wallet", logo: "/wallet-logos/matched.png", logoDark: "/wallet-logos/dark/matched.png" },
+    { name: "Unknown wallet", logo: "/wallet-logos/unknown.png" },
+  ].map(wallet => ({ ...wallet, maker: "Fixture publisher", url: "https://example.org/wallet", summary: "A short wallet introduction.", note: "Full platform and release limitations." })),
   HARDWARE: [{ name: "Excluded wallet", maker: "Fixture publisher", url: "https://example.org/hardware", summary: "A physical signing device.", note: "Full hardware compatibility details." }],
   EDITORIAL_HIGHLIGHTS: new Set(["Matched wallet"]),
 }));
@@ -378,8 +381,14 @@ describe("Wallet Finder interactions", () => {
     expect(footer).toHaveTextContent("Requirements informed by");
     expect(footer).toHaveTextContent("Designed and built by OpenZcash");
   });
+  it("renders the dark-theme logo rendition beside the light one only when the catalog has it", () => {
+    open("?platform=android&view=results");
+    const logos = (name: string) => [...screen.getByRole("article", { name }).querySelectorAll("img")].map(img => [img.getAttribute("src"), img.getAttribute("data-theme-logo")]);
+    expect(logos("Matched wallet")).toEqual([["/wallet-logos/matched.png", "light"], ["/wallet-logos/dark/matched.png", "dark"]]);
+    expect(logos("Unknown wallet")).toEqual([["/wallet-logos/unknown.png", null]]);
+    expect(logos("Excluded wallet")).toEqual([]);
+  });
 });
-
 
 describe("Wallet Finder automated accessibility", () => {
   it.each([

@@ -42,6 +42,11 @@
 .walletDescription { align-self: center; margin: 0; color: var(--muted); font-size: 14px; line-height: 1.5; overflow-wrap: anywhere; }
 .walletHeading { display: flex; align-items: center; gap: 10px; min-width: 0; }
 .walletHeading img { width: 44px; height: 44px; border-radius: 10px; object-fit: contain; flex-shrink: 0; padding: 4px; background: #fff; border: 1px solid var(--line); }
+/* Logos are transparent PNGs. The dark theme drops the white tile and shows the light rendition where one exists. */
+.walletHeading img[data-theme-logo="dark"] { display: none; }
+:global(.rd-shell[data-theme="dark"]) .walletHeading img { background: var(--surface2); }
+:global(.rd-shell[data-theme="dark"]) .walletHeading img[data-theme-logo="light"] { display: none; }
+:global(.rd-shell[data-theme="dark"]) .walletHeading img[data-theme-logo="dark"] { display: block; }
 .walletName { display: flex; align-items: center; gap: 6px; min-width: 0; flex: 1; }
 .walletHeading h3 { margin: 0; font-size: 20px; font-weight: 600; line-height: 1.3; letter-spacing: -.025em; overflow-wrap: anywhere; }
 .editorialStar { flex: none; font-size: 14px; line-height: 1; }

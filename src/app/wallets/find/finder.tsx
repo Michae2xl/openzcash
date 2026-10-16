@@ -103,7 +103,8 @@ function WalletResult({ result, query }: { result: WalletMatch; query: string })
   return <>
     <article className={styles.wallet} aria-labelledby={id} data-highlighted={EDITORIAL_HIGHLIGHTS.has(result.walletName) || undefined}>
       <div className={styles.walletHeading}>
-        {wallet?.logo ? <img src={wallet.logo} alt="" width={44} height={44} /> : null}
+        {wallet?.logo ? <img src={wallet.logo} alt="" width={44} height={44} data-theme-logo={wallet.logoDark ? "light" : undefined} /> : null}
+        {wallet?.logoDark ? <img src={wallet.logoDark} alt="" width={44} height={44} data-theme-logo="dark" /> : null}
         <div className={styles.walletName}><h3 id={id}>{result.walletName}</h3>{EDITORIAL_HIGHLIGHTS.has(result.walletName) && <span className={styles.editorialStar} role="img" aria-label="Editorial highlight" title="OpenZcash editorial pick">⭐</span>}</div>
         {auditReport && auditedPlatform && auditEvidence && <a className={styles.auditBadge} href={auditReport.url} target="_blank" rel="noopener noreferrer" aria-label={`Audit report for ${result.walletName} on ${PLATFORM_LABELS[auditedPlatform]}`} title={`Past audit: ${auditEvidence.scope}. Historical report, not a current safety rating.`}><span aria-hidden="true">🛡️</span></a>}
       </div>
