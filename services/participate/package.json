@@ -47,7 +47,7 @@
     "eslint-config-next": "16.4.2",
     "jsdom": "^26.1.0",
     "prisma": "6.19.3",
-    "tsx": "^4.19.4",
+    "tsx": "^4.23.15",
     "typescript": "5.9.3",
     "vitest": "^4.1.12"
   },
