@@ -22,11 +22,11 @@
     "prebuild": "npm run build:verifiers"
   },
   "dependencies": {
-    "@prisma/client": "6.19.3",
+    "@prisma/client": "7.10.1",
     "@simplewebauthn/browser": "14.0.0",
     "@simplewebauthn/server": "14.1.0",
-    "bcryptjs": "^2.4.3",
-    "jose": "^5.9.6",
+    "bcryptjs": "^3.0.3",
+    "jose": "^6.2.17",
     "next": "16.4.6",
     "qrcode": "^1.5.4",
     "react": "^19.3.1",
@@ -47,7 +47,7 @@
     "eslint": "^9.25.1",
     "eslint-config-next": "16.4.6",
     "jsdom": "^26.1.0",
-    "prisma": "6.19.3",
+    "prisma": "7.10.1",
     "tsx": "^4.23.15",
     "typescript": "5.9.3",
     "vitest": "^5.1.0"
