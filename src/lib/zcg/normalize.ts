@@ -34,8 +34,9 @@ function isBlankish(s: string): boolean {
 }
 
 /**
- * "$6,950.00" → 695000n (centavos). Negativos por parênteses "($x)" ou prefixo
- * "-"/"$-". " $ -   " (dash) e vazio → 0n/null respectivamente.
+ * "$6,950.00" → 695000n (centavos). Negativos por parênteses "($x)" ou
+ * "$ (x)" (formato contábil do Sheets), ou prefixo "-"/"$-". " $ -   " (dash)
+ * e vazio → 0n/null respectivamente.
  */
 export function parseUsdCents(raw: string | undefined | null): bigint | null {
   if (raw == null) return null;
@@ -47,8 +48,9 @@ export function parseUsdCents(raw: string | undefined | null): bigint | null {
   // valor único — não dá para interpretar, então devolve null em vez de
   // concatenar os dígitos dos dois lados do hífen.
   if (/\d[\s$]*[-–—][\s$]*\d/.test(s.replace(/^\(|\)$/g, ""))) return null;
-  // Negativo só nas formas de string inteira: (1.234,56), -5, $ -5.
-  const negative = /^\(.*\)$/.test(s) || /^-/.test(s) || /^\$\s*-/.test(s);
+  // Negativo só nas formas de string inteira: (1.234,56), $ (1.234,56), -5, $ -5.
+  const negative =
+    /^\$?\s*\(.*\)$/.test(s) || /^-/.test(s) || /^\$\s*-/.test(s);
   const cleaned = s.replace(/[^0-9.]/g, "");
   if (cleaned === "" || cleaned === ".") return null;
   const num = Number(cleaned);

@@ -58,6 +58,13 @@ describe("parseUsdCents", () => {
     expect(parseUsdCents("-$5,000")).toBe(-500000n);
   });
 
+  it("negativo contábil do Sheets, com o $ antes do parêntese", () => {
+    // Células reais da aba "ZCG Discretionary Budget".
+    expect(parseUsdCents(" $ (1,090.00)")).toBe(-109000n);
+    expect(parseUsdCents(" $ (1,943,312.72)")).toBe(-194331272n);
+    expect(parseUsdCents("$(5,000)")).toBe(-500000n);
+  });
+
   it("dash e vazio", () => {
     expect(parseUsdCents(" $ -   ")).toBe(0n);
     expect(parseUsdCents("$ 0")).toBe(0n);
