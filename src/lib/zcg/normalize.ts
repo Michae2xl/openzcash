@@ -48,7 +48,7 @@ export function parseUsdCents(raw: string | undefined | null): bigint | null {
   // valor único — não dá para interpretar, então devolve null em vez de
   // concatenar os dígitos dos dois lados do hífen.
   if (/\d[\s$]*[-–—][\s$]*\d/.test(s.replace(/^\(|\)$/g, ""))) return null;
-  // Negativo só nas formas de string inteira: (1.234,56), $ (1.234,56), -5, $ -5.
+  // Negativo só nas formas de string inteira: (1,234.56), $ (1,234.56), -5, $ -5.
   const negative =
     /^\$?\s*\(.*\)$/.test(s) || /^-/.test(s) || /^\$\s*-/.test(s);
   const cleaned = s.replace(/[^0-9.]/g, "");
