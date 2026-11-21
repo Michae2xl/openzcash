@@ -6,7 +6,7 @@ body:
     id: problem
     attributes:
       label: What problem does this solve?
-      description: The situation today and why it falls short. New surfaces follow the evidence-led design standard (docs/design-and-credits.md): clear records, accessible sources, visible attribution.
+      description: "The situation today and why it falls short. New surfaces follow the evidence-led design standard (docs/design-and-credits.md): clear records, accessible sources, visible attribution."
     validations:
       required: true
   - type: textarea
