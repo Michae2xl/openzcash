@@ -37,7 +37,7 @@ body:
     id: source
     attributes:
       label: Public source that disagrees (if the issue is about a figure)
-      description: For data issues: link the ZCG spreadsheet row, forum post, or on-chain record that contradicts what the site shows.
+      description: "For data issues: link the ZCG spreadsheet row, forum post, or on-chain record that contradicts what the site shows."
   - type: textarea
     id: environment
     attributes:
