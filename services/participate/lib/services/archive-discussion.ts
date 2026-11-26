@@ -265,10 +265,12 @@ export async function readProposalParticipationBoard(communityId: string, sessio
   }, { isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead });
 }
 
-async function sourceCaptureView(revision?: { packageJson: string; manifestHash: string }) {
-  if (!revision) return {};
+type SourceCaptureRevision = { packageJson: string; manifestHash: string };
+
+async function computeSourceCaptureView(revision: SourceCaptureRevision) {
   const bundle = JSON.parse(revision.packageJson);
-  if (JSON.parse(bundle.manifest).kind === "NATIVE_PROPOSAL") {
+  const kind = JSON.parse(bundle.manifest).kind;
+  if (kind === "NATIVE_PROPOSAL") {
     const checked = await verifyArchivePackage(bundle, revision.manifestHash);
     const file = checked.bundle.files.find(file => file.path === "application.json");
     if (!file) throw new Error("NATIVE_APPLICATION_MISSING");
@@ -276,9 +278,28 @@ async function sourceCaptureView(revision?: { packageJson: string; manifestHash:
       publication: z.enum(["PILOT_DEMO", "COMMUNITY_PUBLICATION"]) }).parse(JSON.parse(new TextDecoder().decode(decodeFile(file))));
     return { application };
   }
-  if (JSON.parse(bundle.manifest).kind !== "SOURCE_PROPOSAL") return {};
+  if (kind !== "SOURCE_PROPOSAL") return {};
   // The board needs only the latest status; full source evidence loads with its selected revision.
   return sourceCaptureSummary(await verifySourceProposal(bundle, revision.manifestHash));
+}
+
+type SourceCaptureView = Awaited<ReturnType<typeof computeSourceCaptureView>>;
+
+const SOURCE_CAPTURE_CACHE_MAX = 500;
+const SOURCE_CAPTURE_CACHE_TTL_MS = 10 * 60_000;
+const sourceCaptureCache = new Map<string, { value: SourceCaptureView; expiresAt: number }>();
+
+async function sourceCaptureView(revision?: SourceCaptureRevision): Promise<SourceCaptureView> {
+  if (!revision) return {};
+  const cached = sourceCaptureCache.get(revision.manifestHash);
+  if (cached && cached.expiresAt > Date.now()) return cached.value;
+  const value = await computeSourceCaptureView(revision);
+  if (sourceCaptureCache.size >= SOURCE_CAPTURE_CACHE_MAX) {
+    const oldest = sourceCaptureCache.keys().next().value;
+    if (oldest !== undefined) sourceCaptureCache.delete(oldest);
+  }
+  sourceCaptureCache.set(revision.manifestHash, { value, expiresAt: Date.now() + SOURCE_CAPTURE_CACHE_TTL_MS });
+  return value;
 }
 
 export async function setArchiveProposalLike(communityId: string, recordId: string, session: SessionPayload, input: unknown) {
