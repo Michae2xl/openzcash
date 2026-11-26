@@ -57,7 +57,8 @@
 }
 /* Dark: near-black with a light gold-to-black gradient, the house identity.
    Chosen with the toggle only; the default is always the light workspace. */
-.rd-shell[data-theme="dark"] {
+:root[data-theme="dark"] .rd-shell, .rd-shell[data-theme="dark"] {
+  color-scheme: dark;
   --bg: #0f0e0c;
   --surface: #171613;
   --surface2: #1d1b18;
@@ -1172,7 +1173,7 @@ a.rd-treasury-pool:hover .rd-treasury-name {
   object-fit: contain;
 }
 /* Generated glyphs are drawn in ink; the dark theme flips them to light. */
-.rd-shell[data-theme="dark"] .rd-side-logo-glyph {
+:root[data-theme="dark"] .rd-shell .rd-side-logo-glyph, .rd-shell[data-theme="dark"] .rd-side-logo-glyph {
   filter: invert(1);
 }
 .rd-side-toggle {
@@ -1251,7 +1252,7 @@ a.rd-treasury-pool:hover .rd-treasury-name {
 .rd-side-app[data-nested] .rd-side-pages { margin-left: 10px; padding-left: 10px; border-left: 1px solid var(--line); }
 .rd-side-org-list > .rd-side-app > .rd-side-app-row > .rd-side-item { gap: 10px; }
 .rd-side-org-list .rd-side-app .rd-side-logo { width: 22px; height: 22px; }
-.rd-shell[data-theme="dark"] .rd-side-org-list a[href="/zechub"] .rd-side-logo {
+:root[data-theme="dark"] .rd-shell .rd-side-org-list a[href="/zechub"] .rd-side-logo, .rd-shell[data-theme="dark"] .rd-side-org-list a[href="/zechub"] .rd-side-logo {
   background: #fff;
   border-radius: 50%;
 }
@@ -1405,7 +1406,7 @@ a.rd-treasury-pool:hover .rd-treasury-name {
 .rd-content .ws-news-row:first-child { border-top: 0; }
 .rd-content .ws-news-row:hover { background: var(--accent-soft); }
 .rd-content .ws-news-mark { width: 16px; height: 16px; border-radius: 3px; object-fit: contain; }
-.rd-shell[data-theme="dark"] .ws-news-mark-glyph { filter: invert(1); }
+:root[data-theme="dark"] .rd-shell .ws-news-mark-glyph, .rd-shell[data-theme="dark"] .ws-news-mark-glyph { filter: invert(1); }
 .rd-content .ws-news-title { display: flex; align-items: center; gap: 8px; min-width: 0; font-weight: 520; color: inherit; text-decoration: none; }
 .rd-content .ws-news-title > span { overflow-wrap: anywhere; }
 .rd-content .ws-news-new { flex-shrink: 0; width: 6px; height: 6px; border-radius: 50%; background: var(--neg); }
@@ -1855,7 +1856,7 @@ a.rd-treasury-pool:hover .rd-treasury-name {
   background: #fff;
   border-radius: 4px;
 }
-.rd-shell[data-theme="dark"] .ws-agent-mark {
+:root[data-theme="dark"] .rd-shell .ws-agent-mark, .rd-shell[data-theme="dark"] .ws-agent-mark {
   filter: none;
 }
 .rd-content .ws-chat-alternatives { margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--line); }
@@ -2010,7 +2011,7 @@ a.rd-treasury-pool:hover .rd-treasury-name {
   background: var(--surface);
   color: var(--ink);
 }
-.rd-shell[data-theme="dark"] .rd-content .rd-office-entry {
+:root[data-theme="dark"] .rd-shell .rd-content .rd-office-entry, .rd-shell[data-theme="dark"] .rd-content .rd-office-entry {
   background: var(--surface2);
 }
 .rd-content .rd-office-copy {
@@ -2330,7 +2331,7 @@ a.rd-treasury-pool:hover .rd-treasury-name {
   color: var(--bg);
   --tw-ring-color: var(--ink);
 }
-.rd-shell[data-theme="dark"] .rd-content .bg-stone-900.text-white {
+:root[data-theme="dark"] .rd-shell .rd-content .bg-stone-900.text-white, .rd-shell[data-theme="dark"] .rd-content .bg-stone-900.text-white {
   background-color: var(--accent);
   color: #1c1917;
   --tw-ring-color: var(--accent);

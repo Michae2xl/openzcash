@@ -74,8 +74,15 @@ export default async function RootLayout({
     <html
       lang="en"
       className={`${inter.variable} ${geist.variable} ${geistMono.variable} h-full`}
+      suppressHydrationWarning
     >
       <body className="min-h-full">
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              'try{var t=localStorage.getItem("oz-theme");if(t==="dark"){document.documentElement.dataset.theme="dark";var m=document.querySelector(\'meta[name="theme-color"]\');if(m)m.setAttribute("content","#0f0e0c")}}catch(e){}'
+          }}
+        />
         <TapFeedback />
         <ShellGate
           isAdmin={isAdmin}

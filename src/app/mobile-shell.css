@@ -166,9 +166,9 @@ html:has(.rd-sheet[open]) {
   letter-spacing: 0;
 }
 /* Dark: the dim token is too faint for small text on the sheet surface. */
-.rd-shell[data-theme="dark"] .rd-sheet .rd-treasury-name,
-.rd-shell[data-theme="dark"] .rd-sheet .rd-treasury-asof,
-.rd-shell[data-theme="dark"] .rd-sheet .rd-treasury-meta {
+:root[data-theme="dark"] .rd-shell .rd-sheet .rd-treasury-name, .rd-shell[data-theme="dark"] .rd-sheet .rd-treasury-name,
+:root[data-theme="dark"] .rd-shell .rd-sheet .rd-treasury-asof, .rd-shell[data-theme="dark"] .rd-sheet .rd-treasury-asof,
+:root[data-theme="dark"] .rd-shell .rd-sheet .rd-treasury-meta, .rd-shell[data-theme="dark"] .rd-sheet .rd-treasury-meta {
   color: var(--muted);
 }
 .rd-sheet .rd-treasury-zec {
@@ -209,7 +209,7 @@ html:has(.rd-sheet[open]) {
   }
   /* Dark: the shell's gold glow fades in under the bar, so the bar and the
      top of the page are one surface there too. */
-  .rd-shell[data-theme="dark"] .rd-body {
+  :root[data-theme="dark"] .rd-shell .rd-body, .rd-shell[data-theme="dark"] .rd-body {
     background: linear-gradient(
       var(--bg) calc(56px + env(safe-area-inset-top)),
       transparent calc(200px + env(safe-area-inset-top))
@@ -270,7 +270,7 @@ html:has(.rd-sheet[open]) {
   }
   /* Dark: the ZecHub ring is navy on near-black; a light disc behind it keeps
      the mark legible where it stands for the app. */
-  .rd-shell[data-theme="dark"] .rd-place[data-app="zechub"] .rd-side-logo {
+  :root[data-theme="dark"] .rd-shell .rd-place[data-app="zechub"] .rd-side-logo, .rd-shell[data-theme="dark"] .rd-place[data-app="zechub"] .rd-side-logo {
     border-radius: 50%;
     background: var(--ink);
   }
@@ -454,7 +454,7 @@ html:has(.rd-sheet[open]) {
     height: 22px;
     opacity: 0.62;
   }
-  .rd-shell[data-theme="dark"] .rd-tab-glyph img {
+  :root[data-theme="dark"] .rd-shell .rd-tab-glyph img, .rd-shell[data-theme="dark"] .rd-tab-glyph img {
     filter: invert(1);
   }
   /* Only the place the visitor is on is marked; an open sheet marks no tab. */

@@ -175,6 +175,7 @@ export function AppShell({
 
   function cycleTheme() {
     const next = THEME_ORDER[(THEME_ORDER.indexOf(theme) + 1) % THEME_ORDER.length];
+    document.documentElement.dataset.theme = next;
     setTheme(next);
     try {
       window.localStorage.setItem(THEME_KEY, next);
