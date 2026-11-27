@@ -3114,7 +3114,7 @@
         "url": "https://docs.google.com/spreadsheets/d/1FQ28rDCyRW0TiNxrm3rgD8ai2KGUsXAjPieQmI1kKKg/edit#gid=803214474&range=A816"
       },
       {
-        "name": "Paid grant · Offensive Security Consulting · row 824",
+        "name": "Paid grant · Phillip Williams · row 824",
         "detail": "Offensive Security | Milestone 2 | Paid 2026-09-27 | Budgeted USD $30,000 | 18.97 ZEC | Infrastructure. Payment is not proof of delivery.",
         "url": "https://docs.google.com/spreadsheets/d/1FQ28rDCyRW0TiNxrm3rgD8ai2KGUsXAjPieQmI1kKKg/edit#gid=803214474&range=A824"
       },
@@ -4323,13 +4323,13 @@
         "periodEnd": "2026-09-30",
         "financialMonth": "2026-09",
         "designVersion": "Editorial 4.0 / Covers 2",
-        "pdf": "/monthly/editions/2026-09/7ec7518dedf0/OpenZcash-Operations-September-2026.pdf",
-        "manifest": "/monthly/editions/2026-09/7ec7518dedf0/pages.json",
+        "pdf": "/monthly/editions/2026-09/bd24ec9d3743/OpenZcash-Operations-September-2026.pdf",
+        "manifest": "/monthly/editions/2026-09/bd24ec9d3743/pages.json",
         "pageCount": 38,
-        "cover": "/monthly/editions/2026-09/7ec7518dedf0/cover.jpg",
-        "assetBase": "/monthly/editions/2026-09/7ec7518dedf0",
-        "sha256": "7ec7518dedf070455b42b7f1971e796c1a1b805d5f9a21d95e4cbd60f290791a",
-        "bytes": 1563109,
+        "cover": "/monthly/editions/2026-09/bd24ec9d3743/cover.jpg",
+        "assetBase": "/monthly/editions/2026-09/bd24ec9d3743",
+        "sha256": "bd24ec9d3743dd01926d58fa2412a2999c70548bf5fbbb5f1edbd637bb927625",
+        "bytes": 1562916,
         "pageWidth": 1200,
         "pageHeight": 675
       }
@@ -5656,13 +5656,13 @@
         "periodEnd": "2026-08-31",
         "financialMonth": "2026-08",
         "designVersion": "Editorial 4.0 / Covers 2",
-        "pdf": "/monthly/editions/2026-08/9aea00e2c7cf/OpenZcash-Operations-August-2026.pdf",
-        "manifest": "/monthly/editions/2026-08/9aea00e2c7cf/pages.json",
+        "pdf": "/monthly/editions/2026-08/95e1b5e3e02b/OpenZcash-Operations-August-2026.pdf",
+        "manifest": "/monthly/editions/2026-08/95e1b5e3e02b/pages.json",
         "pageCount": 27,
-        "cover": "/monthly/editions/2026-08/9aea00e2c7cf/cover.jpg",
-        "assetBase": "/monthly/editions/2026-08/9aea00e2c7cf",
-        "sha256": "9aea00e2c7cf5b27a8a33c6aee7ea49d4fe3ed3cdb19d4bcb9fee0f5ab70df70",
-        "bytes": 1133333,
+        "cover": "/monthly/editions/2026-08/95e1b5e3e02b/cover.jpg",
+        "assetBase": "/monthly/editions/2026-08/95e1b5e3e02b",
+        "sha256": "95e1b5e3e02bdd348d45d2c96061aaf6e15f9ca9aecd18815a731c126bb9046f",
+        "bytes": 1133075,
         "pageWidth": 1200,
         "pageHeight": 675
       }
