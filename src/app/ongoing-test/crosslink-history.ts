@@ -3,11 +3,11 @@ const forum = "https://forum.zcashcommunity.com/t/crosslink-incentivized-feature
 // Single source of truth for the guide's freshness stamp, imported by the
 // footer and checked by scripts/check-crosslink-sources.mjs. Update it only
 // after re-verifying every curated link against its original source.
-export const sourcesChecked = "2 Nov 2026";
+export const sourcesChecked = "24 Nov 2026";
 // Reference release the participation steps and hero CTA point at. Shielded
 // Labs ships weekly and only recognizes the current chain for rewards, so
 // this must track the repository's latest release.
-export const releaseTag = "v17";
+export const releaseTag = "v18";
 export const releaseNotes = `https://github.com/ShieldedLabs/crosslink_monolith/releases/tag/${releaseTag}`;
 
 export const paidRounds = [
@@ -33,4 +33,5 @@ export const history = [
   { date: "15 Oct 2026", title: "Round 2 · 25 ZEC paid", detail: "Payment report: 19.954 ZEC for mining and staking across 17 participants; 5.046 ZEC in discretionary awards to eight contributors.", source: `${forum}/117`, kind: "Paid" },
   { date: "2 Nov 2026", title: "v16 · required update", detail: "Version 16 runs on the same network as v15: replace the binary and restart, keeping existing data. It fixes crashes from malformed staking transactions, BFT proposals and vote packets, forbids staking actions in coinbase transactions, and updates the sync checkpoint. Shielded Labs recognizes only the current chain for rewards, and versions stop running two weeks after they ship.", source: "https://github.com/ShieldedLabs/crosslink_monolith/releases/tag/v16", kind: "Network" },
   { date: "5 Nov 2026", title: "v17 · required update", detail: "Version 17 runs on the same chain and network as v16 until a network upgrade scheduled for block 165000: replace the binary and restart, keeping existing data. It turns on RPC cookie authentication by default, limits the lightwallet server port to localhost, fixes two node crashes and moves the sync checkpoint to PoW height 125202. If the versions diverge, Shielded Labs recognizes only the Version 17 chain for rewards.", source: "https://github.com/ShieldedLabs/crosslink_monolith/releases/tag/v17", kind: "Network" },
+  { date: "17 Nov 2026", title: "v18 · required update", detail: "Version 18 replaces Version 17 on the same data directory: chain, wallet and finalizer key carry over. It uses new networking that cannot talk to Version 17 nodes, so each node switches over completely on restart. The FeaturenetUpgrade3 network upgrade at block 189000 follows Version 17's end of support at 188376, and every node and wallet must run Version 18 before then. Shielded Labs recognizes only the Version 18 chain for rewards.", source: "https://github.com/ShieldedLabs/crosslink_monolith/releases/tag/v18", kind: "Network" },
 ] as const;
