@@ -82,7 +82,7 @@ function buildId(
  * categoria; a linha 'Total' de cada eixo vira um único grand_total (o esquerdo,
  * que carrega também o pipeline futuro).
  */
-function parseTotals(
+export function parseTotals(
   rows: string[][],
   gid: string,
   pool: Pool,
@@ -149,7 +149,9 @@ function parseTotals(
       const future = parseUsdCents(cell(r, cFuture));
       if (isGrandTotalLabel(leftLabel)) {
         push("grand_total", leftLabel, paid ?? 0n, future, null);
-      } else {
+      } else if ((paid ?? 0n) !== 0n || (future ?? 0n) !== 0n) {
+        // A recipient row with nothing paid and nothing scheduled has no
+        // figure to cross-check against the ledger, so it is not mirrored.
         push("recipient_total", leftLabel, paid ?? 0n, future, null);
       }
     }
