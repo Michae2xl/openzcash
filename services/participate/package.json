@@ -26,14 +26,14 @@
     "@simplewebauthn/browser": "14.0.0",
     "@simplewebauthn/server": "14.1.0",
     "bcryptjs": "^3.0.3",
-    "jose": "^6.2.17",
+    "jose": "^6.2.18",
     "next": "16.4.6",
     "qrcode": "^1.5.4",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "react-markdown": "10.1.0",
     "remark-gfm": "4.0.1",
-    "resend": "6.38.0",
+    "resend": "6.39.0",
     "sharp": "0.35.5",
     "zod": "^4.6.6"
   },
@@ -50,7 +50,7 @@
     "prisma": "6.19.3",
     "tsx": "^4.23.15",
     "typescript": "5.9.3",
-    "vitest": "^5.1.0"
+    "vitest": "^5.1.1"
   },
   "engines": {
     "node": "24.22.1"
