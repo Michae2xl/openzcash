@@ -58,7 +58,7 @@
     "libsodium-wrappers": "^0.8.4",
     "mdast-util-from-markdown": "2.1.0",
     "next": "16.4.6",
-    "openai": "7.56.0",
+    "openai": "7.63.0",
     "parse5": "8.1.1",
     "postgres": "^4.1.1",
     "qrcode": "1.5.4",
@@ -67,7 +67,7 @@
     "react-markdown": "10.1.0",
     "remark-gfm": "4.0.1",
     "server-only": "^0.0.1",
-    "tailwind-merge": "^3.7.0",
+    "tailwind-merge": "^3.7.1",
     "three": "^0.187.0",
     "tsx": "^4.23.15",
     "zod": "^4.6.6"
@@ -81,15 +81,15 @@
     "@types/node": "^24",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "axe-core": "4.14.0",
+    "axe-core": "4.14.1",
     "drizzle-kit": "^0.31.10",
     "eslint": "^9",
     "eslint-config-next": "16.4.6",
-    "jsdom": "31.0.0",
-    "simple-icons": "^16.37.0",
+    "jsdom": "31.0.1",
+    "simple-icons": "^16.38.1",
     "tailwindcss": "^4",
     "typescript": "^5",
-    "vitest": "5.1.0"
+    "vitest": "5.1.1"
   },
   "overrides": {
     "@esbuild-kit/core-utils": {
